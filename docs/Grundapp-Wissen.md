@@ -27,7 +27,11 @@ Diese Datei bei jeder Sitzung lesen und mit neuen Entscheidungen ergaenzen.
 | Thema | Entscheidung | Begruendung |
 |---|---|---|
 | Frontend | React Native mit Expo, TypeScript | ein Code fuer iOS und Android, JS/TS wie bei UI5 bekannt, Cloud-Build per EAS |
-| Backend | Supabase (Postgres, Auth, Edge Functions) | kein eigener Betrieb, Auth und API fertig, Postgres als Standard unter der Haube |
+| Backend | Supabase (Postgres, Auth, Edge Functions) | kein eigener Betrieb, Auth und API fertig; entscheidend ist der Ausstieg: Schema, SQL-Migrationen und RLS bleiben Standard-Postgres und sind notfalls selbst hostbar |
+| Frontend geprueft | Flutter am 11.11.2026 erneut abgewogen, Entscheidung bleibt React Native | Flutter technisch einen Tick besser (eigenes Rendering, weniger Abhaengigkeitsbrueche), aber Dart waere neu; vorhandenes JS/TS-Wissen und Expo (Build, Updates, Store) geben den Ausschlag |
+| Verworfen | Kotlin nativ bzw. Swift | nur eine Plattform je Sprache, als Einzelentwickler doppelte Arbeit |
+| Verworfen | Firebase | dokumentenbasiert ohne echte Verknuepfungen; fuer Decks, Karten und Lernhistorie umstaendlich, Ausstieg faktisch Neubau |
+| Verworfen | eigenes Backend | Auth, Mailversand, Token-Erneuerung, Monitoring und Betrieb selbst zu bauen kostet Wochen ohne fachlichen Nutzen |
 | Verworfen | SAPUI5 mit Cordova | Cordova faktisch tot, UI5 ist Business-UI, keine Store-Optik |
 | Verworfen | MDK | an SAP Mobile Services gebunden, kein freier Store-Vertrieb |
 | Serverstandort | EU (Frankfurt) | vermeidet Drittlandtransfer-Diskussion |
@@ -211,3 +215,5 @@ Umsetzung erst, wenn die Grundapp vollstaendig funktioniert.
   zunaechst nur per E-Mail. Meilensteinplan M0 bis M7 beschlossen.
   Projektordner `base-app` angelegt (vormals `basic`, `doku` zu `docs`),
   Git initialisiert, README und .gitignore erstellt, Wissensdatei nach `docs` umgezogen.
+  Technologiewahl auf Nachfrage erneut geprueft (Flutter, Kotlin, Firebase, eigenes Backend):
+  Entscheidung fuer React Native und Supabase bestaetigt.
