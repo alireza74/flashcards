@@ -319,6 +319,8 @@ von Alireza selbst bauen, mit Pruefung danach.
 
 ## 15. Meilensteine (ueberarbeitet)
 
+Stand 20.11.2026: M0-M6 umgesetzt (Details und offene Konten-Schritte: Grundapp-Wissen.md).
+
 | Nr. | Inhalt | fertig wenn |
 |---|---|---|
 | M0 | Repo, Expo inkl. Web, Ordnerstruktur, `app.config`, Lint/TS/Jest, lokales Supabase, CI | leere App startet auf Geraet und im Browser, CI gruen |

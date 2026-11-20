@@ -1,29 +1,67 @@
 # base-app
 
-Wiederverwendbare Basis-App: Anmeldung, Rollen und Berechtigungen, Profil,
-Datenschutzfunktionen, CI und Deployment. Fachliche Anwendungen entstehen
-als Klon dieser Vorlage.
+Wiederverwendbare Basis fuer eigene Apps (iOS, Android, Web): Anmeldung, Organisationen,
+Rollen und Rechte, Profil, drei Sprachen inkl. Persisch (RTL), Datenschutzfunktionen,
+Tests, CI und Auslieferung. Fachliche Apps entstehen als Klon - siehe [docs/KLONEN.md](docs/KLONEN.md).
 
-Erste geplante Fachanwendung: Sprachlern-App nach der Leitner-Kartei.
+**Technik:** Expo / React Native (TypeScript) + Supabase (Postgres, Auth, RLS).
+
+## Schnellstart (lokal)
+
+Voraussetzungen: Node.js, Docker (Rancher Desktop).
+
+```
+cd backend
+npm install
+npm run db:start          # Supabase in Docker; Studio: http://localhost:54323
+
+cd ../frontend
+npm install
+copy .env.example .env.local   # Schluessel aus "npm run db:status" (backend) eintragen
+npm run web               # App im Browser: http://localhost:8081
+```
+
+Mails (Registrierungs-Codes) landen lokal im Testpostfach: http://localhost:54324
+
+## Pruefungen
+
+| Wo | Befehl | Prueft |
+|---|---|---|
+| `frontend/` | `npm run check` | Lint, TypeScript, Jest |
+| `frontend/` | `npm run build:web` | Web-Build |
+| `backend/` | `npm run db:test` | pgTAP: RLS, Mandantentrennung, Rollen, Datenschutz |
+| `backend/` | `npm run db:lint` | Datenbank-Linter |
+| `backend/` | `npm run db:types` | TypeScript-Typen aus dem Schema neu erzeugen |
+
+Dieselben Pruefungen laufen bei jedem Push in GitHub Actions (`.github/workflows/ci.yml`).
 
 ## Struktur
 
 | Ordner | Inhalt |
 |---|---|
-| `frontend` | Expo-App (React Native, TypeScript) |
-| `backend/supabase` | Migrationen, Edge Functions, Supabase-Konfiguration |
-| `docs` | Wissensdatei, Architektur, Entscheidungen |
-| `docs/lernen` | Lernunterlagen: Aufbau, lokal starten, Anleitungen |
-| `.github/workflows` | CI: Lint, Typen, Tests, Web-Build |
+| `frontend/src/app` | Routen (Expo Router), duenn |
+| `frontend/src/core` | Basis: Auth, Profil, Sprache, Datenschutz, Rechtliches, Mindestversion |
+| `frontend/src/shared` | Design-Bausteine (`ui/`), Hilfsfunktionen (`lib/`) |
+| `frontend/src/features` | Fachfunktionen der Klone |
+| `frontend/src/config/app-identity.json` | Name, Kennungen, Farbe - einzige Stelle je Klon |
+| `backend/supabase/migrations` | Datenbankschema (Basis: `0001`-`0099`) |
+| `backend/supabase/tests` | pgTAP-Tests |
+| `backend/supabase/templates` | Mail-Vorlagen (Code statt Link) |
+| `.github/workflows` | CI, Deploy Staging, Release Production, Build Android |
+| `docs/` | Wissen, Architektur, Lernunterlagen |
 
 ## Dokumentation
 
-Alle Entscheidungen und offenen Punkte stehen in `docs/Grundapp-Wissen.md`.
-Diese Datei bei jeder Sitzung lesen und ergaenzen.
+| Datei | Inhalt |
+|---|---|
+| [docs/Grundapp-Wissen.md](docs/Grundapp-Wissen.md) | Entscheidungen, wichtiger Code, Fehler und Loesungen, Chronik |
+| [docs/Architektur-Grundlage.md](docs/Architektur-Grundlage.md) | recherchiertes Zielbild und Regeln |
+| [docs/lernen/](docs/lernen/) | Lernunterlagen je Meilenstein und Anleitungen |
+| [docs/KLONEN.md](docs/KLONEN.md) | neue App aus der Basis erstellen, Basis-Aenderungen holen |
+| [CHANGELOG.md](CHANGELOG.md) | Aenderungen der Basis |
 
-## Eine neue App aus dieser Vorlage
+## Stand
 
-1. Repo klonen und umbenennen
-2. Neues Supabase-Projekt anlegen, Migrationen einspielen
-3. Name, Icon und Farben anpassen
-4. Fachliche Tabellen als neue Migration ergaenzen
+Meilensteine M0-M6 umgesetzt. Offen sind die Schritte, die eigene Konten brauchen
+(Supabase-Cloud, Expo, GitHub-Secrets) und die juristische Pruefung der Rechtstexte -
+siehe `docs/Grundapp-Wissen.md`, Abschnitt "Offene Punkte".

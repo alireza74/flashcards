@@ -46,10 +46,12 @@ jobs:
         run: npm ci
 
       - name: Ausstehende Migrationen anzeigen
-        run: npx supabase db push --remote=${{ vars.SUPABASE_PROJECT_REF }} --password "${{ secrets.SUPABASE_DB_PASSWORD }}" --dry-run
+        run: npx supabase db push --remote=${{ vars.SUPABASE_PROJECT_REF }} --password "${{ secrets.SUPABASE_DB_PASSWORD }}" --include-all --dry-run
 
+      # --include-all: auch Basis-Migrationen, die per upstream-Merge nachtraeglich dazukommen
+      # und aelter sind als bereits eingespielte Fachmigrationen (siehe docs/KLONEN.md)
       - name: Migrationen einspielen
-        run: npx supabase db push --remote=${{ vars.SUPABASE_PROJECT_REF }} --password "${{ secrets.SUPABASE_DB_PASSWORD }}" --yes
+        run: npx supabase db push --remote=${{ vars.SUPABASE_PROJECT_REF }} --password "${{ secrets.SUPABASE_DB_PASSWORD }}" --include-all --yes
 
   app-update:
     name: App-Update Kanal preview

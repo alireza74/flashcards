@@ -107,15 +107,26 @@ umgeht RLS bewusst, weil er kein Nutzer ist.
 ## 6. Offene Punkte
 
 
-1. Juristische Pruefung des Datenschutzteils vor Veroeffentlichung.
-2. App-Name, Icon, Farbschema noch offen.
-3. Supabase-Projekte (Staging und Produktion) noch nicht angelegt.
+Stand 20.11.2026 nach M0-M6:
+
+1. **Braucht Alirezas Konten** (Anleitung `docs/lernen/06-m5-auslieferung.md`):
+   Supabase-Projekte Staging/Produktion (EU), Auth-Einstellungen + Mail-Vorlagen + eigener SMTP,
+   Expo-Konto + `eas init` + EAS-Umgebungsvariablen, GitHub-Secrets/Variablen, erste APK,
+   Backup-Rueckspieltest mit Staging-Daten, pg_cron auf dem Cloud-Projekt pruefen.
+2. Juristische Pruefung: Datenschutzerklaerung, Impressum, Einwilligungstexte (Platzhalter in i18n).
+   AV-Vertraege (Supabase, Expo), Verzeichnis der Verarbeitungstaetigkeiten.
+3. App-Name, Icon, Farbschema, Bundle-IDs (`app-identity.json`, Platzhalter `de.example.baseapp`).
+4. Persische Texte (`fa.ts`) von Muttersprachler pruefen; RTL auf dem Handy testen.
+5. Test auf echtem Handy (Expo Go bzw. APK): Sitzungsspeicher, Export per Teilen-Dialog, RTL-Neustart.
 
 **Technische Schulden** (regelmaessig abbauen):
 - App-Start ohne Netz und mit abgelaufenem Token dauert ca. 15 s (Splash bleibt stehen).
-  Loesungsidee: Startseite sofort aus gespeicherter Sitzung zeigen, Erneuerung im Hintergrund;
-  passt zu M3 (einheitliche Lade- und Fehlerzustaende).
+  Loesungsidee: Startseite sofort aus gespeicherter Sitzung zeigen, Erneuerung im Hintergrund.
 - CI prueft Routennamen nur grob (`.expo/types/router.d.ts` entsteht nur bei `expo start`).
+- Keine Oberflaechentests (Maestro) und keine Komponententests; nur Logik (Jest) und DB (pgTAP).
+- Keine Team-Funktionen: Team-Organisation anlegen, Einladungen, Rollen vergeben in der App
+  (Datenbank kann es, UI fehlt) - Plan "spaeter" in Architektur-Grundlage Abschnitt 15.
+- Sentry/Absturzberichte nicht eingebaut (Einwilligung `crash_reports` existiert schon).
 
 Entschieden am 11.11.2026, frueher offen:
 - Mandantenfaehigkeit: am 11.11. verneint, **am 20.11.2026 revidiert: ja.**
@@ -286,3 +297,8 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
   OFFEN (braucht Alirezas Konten): Supabase-Projekte Staging/Produktion, SMTP, Expo-Konto + eas init,
   EAS-Umgebungsvariablen, GitHub-Secrets, erste APK, Rueckspieltest mit Staging-Daten.
   Anleitung: `docs/lernen/06-m5-auslieferung.md`.
+- 20.11.2026 - M6: `docs/KLONEN.md` (Klon anlegen, anpassen, Regeln, upstream holen), `CHANGELOG.md`,
+  README neu, `.gitattributes` (LF). upstream-Ablauf im Scratchpad nachgestellt: Klon mit eigener
+  Fachfunktion + Basis-Aenderung -> Merge ohne Konflikt. Erkenntnis: spaetere Basis-Migrationen sind
+  aelter als Fachmigrationen des Klons -> Workflows nutzen `db push --include-all`.
+  M0-M6 damit umgesetzt; offen nur Schritte mit Konten (siehe Offene Punkte). Version 0.1.0.
