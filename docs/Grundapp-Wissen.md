@@ -127,6 +127,8 @@ Stand 20.11.2026 nach M0-M6:
 - Keine Team-Funktionen: Team-Organisation anlegen, Einladungen, Rollen vergeben in der App
   (Datenbank kann es, UI fehlt) - Plan "spaeter" in Architektur-Grundlage Abschnitt 15.
 - Sentry/Absturzberichte nicht eingebaut (Einwilligung `crash_reports` existiert schon).
+- Tabellenrechte fuer `anon`/`authenticated` kommen aus Supabase-Standardrechten; robuster waere,
+  sie in jeder Migration ausdruecklich zu vergeben (dann unabhaengig von Projekteinstellungen).
 
 Entschieden am 11.11.2026, frueher offen:
 - Mandantenfaehigkeit: am 11.11. verneint, **am 20.11.2026 revidiert: ja.**
@@ -302,3 +304,9 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
   Fachfunktion + Basis-Aenderung -> Merge ohne Konflikt. Erkenntnis: spaetere Basis-Migrationen sind
   aelter als Fachmigrationen des Klons -> Workflows nutzen `db push --include-all`.
   M0-M6 damit umgesetzt; offen nur Schritte mit Konten (siehe Offene Punkte). Version 0.1.0.
+- 20.11.2026 - Expo-Konto angelegt. Supabase-Staging-Projekt `base-app-staging` angelegt
+  (Ref `vdjyqydnxegtbridgadp`, Free-Plan). Region wurde **West EU (Ireland, eu-west-1)** statt Frankfurt;
+  Entscheidung Alireza: so lassen (EU, kein Drittlandtransfer). Produktion gezielt in Frankfurt anlegen.
+  Optionen beim Anlegen: Data API an, "Grant API access to new tables automatically" an
+  (Migrationen verlassen sich auf die Standardrechte wie lokal), "Enable RLS automatically" an.
+  Erstes generiertes DB-Passwort war im Chat gelandet -> vor dem Anlegen neu erzeugt.
