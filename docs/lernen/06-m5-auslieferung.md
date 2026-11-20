@@ -50,8 +50,8 @@ Manuell: Release Production ("freigeben" eintippen)      .github/workflows/relea
      `easProjectId` eintragen und committen.
 2. Supabase-Werte als EAS-Umgebungsvariablen (je Umgebung, Werte aus Supabase -> Settings -> API):
    ```
-   npx eas-cli env:create --environment preview --name EXPO_PUBLIC_SUPABASE_URL --value https://<staging-ref>.supabase.co --visibility plaintext
-   npx eas-cli env:create --environment preview --name EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY --value <staging-publishable-key> --visibility plaintext
+   npx eas-cli env:set --environment preview --name EXPO_PUBLIC_SUPABASE_URL --value https://<staging-ref>.supabase.co --visibility plaintext
+   npx eas-cli env:set --environment preview --name EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY --value <staging-publishable-key> --visibility plaintext
    ```
    Dasselbe mit `--environment production` und den Werten des Produktionsprojekts.
    (Beide Werte sind oeffentlich - nie den Secret Key eintragen.)
