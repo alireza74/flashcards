@@ -177,6 +177,11 @@ Hier zentrale Code-Stellen festhalten (Datei, Zweck, Besonderheit), sobald sie e
 | `private.prevent_last_owner_removal()` | Organisation behaelt immer einen Eigentuemer | erlaubt Kaskade (Organisation/Nutzer geloescht); Fehler `P0001`, hint `last_owner` |
 | `backend/supabase/tests/database/` | 43 pgTAP-Pruefungen | Gegenprobe mit absichtlich offener Policy: Test 03 wird rot |
 | `frontend/src/core/supabase/database.types.ts` | erzeugte Typen | `npm run db:types` in backend; nie von Hand aendern |
+| `frontend/src/core/supabase/client.ts` | Supabase-Client | Handy: LargeSecureStore, Web: localStorage; `detectSessionInUrl: false`; AppState steuert Auto-Refresh |
+| `frontend/src/core/supabase/large-secure-store.ts` | verschluesselte Sitzung | Muster Supabase-Doku, aber expo-crypto statt react-native-get-random-values (in Expo Go enthalten) |
+| `frontend/src/app/_layout.tsx` | Zugangsschutz | `Stack.Protected`; Gruppe new-password nur bei `isPasswordRecovery` |
+| `frontend/src/core/auth/auth-api.ts` | Auth-Aufrufe | verifyOtp: Registrierung `type: 'email'`, Passwort `type: 'recovery'` (lokal geprueft) |
+| `backend/supabase/templates/*.html` | Mail-Vorlagen mit Code | `{{ .Token }}`; config.toml `[auth.email.template.*]`; Aenderung erst nach `supabase stop/start` |
 
 ---
 
@@ -190,6 +195,10 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
 | 20.11.2026 | `tsc`: `Cannot find name 'describe'` | TypeScript 6 laedt `@types/jest` nicht mehr automatisch | `"types": ["jest"]` in `tsconfig.json` |
 | 20.11.2026 | Jest-Pakete landeten in `dependencies` | `npx expo install ... -- --save-dev` hat das Flag nicht durchgereicht | danach `npm install --save-dev` mit denselben Versionen |
 | 20.11.2026 | `docker info`: Pipe nicht gefunden | Rancher Desktop nicht gestartet | Rancher Desktop starten, dann `npm run db:start` |
+| 20.11.2026 | Code-Aenderung erscheint nicht im Browser | Metro-Watcher bemerkt mit `sed -i` ersetzte Dateien unter Windows nicht | Dev-Server mit `--clear` neu starten; Dateien besser im Editor aendern |
+| 20.11.2026 | Schaltflaechen ohne Namen fuer Screenreader (Web) | `accessibilityLabel`/`accessibilityRole` an Pressable wirkt in react-native-web 0.21 nicht | `role`, `aria-label`, `aria-disabled`, `aria-busy` verwenden |
+| 20.11.2026 | Typfehler bei `router.push('/neue-seite')` | `.expo/types/router.d.ts` veraltet; wird nur von `expo start` erzeugt, nicht von `expo export` | Dev-Server einmal starten. In der CI fehlt die Datei, dort sind Routen nur grob typisiert |
+| 20.11.2026 | `onSubmitEditing={onSubmit}` Typfehler | react-hook-form `handleSubmit` erwartet ein anderes Event als TextInput liefert | `onSubmitEditing={() => onSubmit()}` |
 | 20.11.2026 | `supabase start` bricht ab: `timed out dialing Hyper-V socket` | Kubernetes in Rancher Desktop abgeschaltet -> VM-Neustart, Verbindung Windows-VM hing danach | Rancher Desktop komplett neu starten (`rdctl shutdown`, dann App/`rdctl start`), danach `supabase start` erneut; Images bleiben erhalten |
 
 ---
@@ -236,3 +245,11 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
   Bewusst offen: Team-Organisation anlegen (RPC) und Einladungen -> spaeter; verwaiste persoenliche
   Organisation bei Kontoloeschung -> M4. Lernunterlagen `02-m1-datenbank.md`, `anleitung-neue-tabelle.md`.
   CI auf GitHub mit beiden Jobs (frontend, database) gruen. M1 abgeschlossen.
+- 20.11.2026 - M2 umgesetzt: Registrieren, Anmelden, Passwort vergessen, Abmelden, Sitzung bleibt
+  nach Neuladen. Bestaetigung und Passwort-Reset per 6-stelligem Code statt Link (keine Deep Links,
+  keine Redirect-Listen). Lokal: Passwort min. 8 Zeichen mit Buchstaben und Ziffern, Bestaetigung an,
+  Mail-Limit lokal 30/h. Neu: supabase-js, LargeSecureStore, TanStack Query, react-hook-form + zod,
+  i18next (DE/EN, Geraetesprache). E-Mail wird zwischen Seiten im App-Zustand weitergegeben, nicht
+  in der URL (Browser-Verlauf). Im Browser komplett durchgetestet (2 Testkonten). 21 Jest-Tests.
+  Offen: eigener SMTP-Dienst (erst mit Staging in M5), Test auf dem Handy, Sprache waehlen und RTL (M3).
+  Lernunterlage `03-m2-anmeldung.md`.

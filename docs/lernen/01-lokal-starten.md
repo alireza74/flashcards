@@ -9,6 +9,10 @@
 - Fuer das Handy: App **Expo Go** aus dem Store installieren (reicht, solange keine eigenen
   nativen Module dazukommen; danach Development Build).
 
+- Verbindung App -> Supabase (ab M2): `frontend/.env.example` nach `frontend/.env.local` kopieren
+  und `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` aus `npm run db:status` (in `backend/`) eintragen.
+  Fuer das Handy statt `127.0.0.1` die WLAN-IP des Laptops (`ipconfig`).
+
 ## App starten
 
 In `frontend/`:

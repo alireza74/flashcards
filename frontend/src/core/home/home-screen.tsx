@@ -1,44 +1,52 @@
-// Startseite der leeren Grundapp (M0).
-// Wird in M2 durch Anmeldung bzw. Startseite nach Login ersetzt.
-// Texte sind hier noch fest; ab M3 nur noch ueber i18n-Schluessel.
-import { StyleSheet, Text, useColorScheme, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+// Startseite nach der Anmeldung: zeigt Profil und aktive Organisation.
+// Wird spaeter durch die Startseite der jeweiligen Fachanwendung ersetzt.
+import { useState } from 'react';
+import { ActivityIndicator, StyleSheet, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
-import { appIdentity } from '@/config/app.config';
-import { colors, spacing } from '@/shared/ui/theme';
+import { signOut } from '@/core/auth/auth-api';
+import { useAuth } from '@/core/auth/auth-provider';
+import { useProfile } from '@/core/profile/use-profile';
+import { Button } from '@/shared/ui/button';
+import { FormMessage } from '@/shared/ui/form-message';
+import { Screen } from '@/shared/ui/screen';
+import { usePalette } from '@/shared/ui/theme';
 
 export function HomeScreen() {
-  const scheme = useColorScheme() === 'dark' ? 'dark' : 'light';
-  const palette = colors[scheme];
+  const { t } = useTranslation();
+  const palette = usePalette();
+  const { session } = useAuth();
+  const profile = useProfile(session?.user.id);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+
+  const onSignOut = async () => {
+    setIsSigningOut(true);
+    // Fehler beim Abmelden (z. B. offline) ignorieren: die lokale Sitzung wird trotzdem entfernt
+    await signOut().catch(() => undefined);
+    setIsSigningOut(false);
+  };
+
+  const name = profile.data?.display_name ?? session?.user.email ?? '';
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: palette.background }]}>
-      <View style={styles.content}>
-        <Text style={[styles.title, { color: palette.text }]}>{appIdentity.name}</Text>
-        <Text style={[styles.subtitle, { color: palette.textSecondary }]}>
-          Version {appIdentity.version}
+    <Screen title={t('home.greeting', { name })}>
+      {profile.isPending ? <ActivityIndicator /> : null}
+      {profile.isError ? <FormMessage tone="error" text={t('home.loadError')} /> : null}
+
+      <Text style={[styles.text, { color: palette.textSecondary }]}>
+        {t('home.signedInAs', { email: session?.user.email ?? '' })}
+      </Text>
+      {profile.data?.active_organization ? (
+        <Text style={[styles.text, { color: palette.textSecondary }]}>
+          {t('home.organization', { name: profile.data.active_organization.name })}
         </Text>
-      </View>
-    </SafeAreaView>
+      ) : null}
+
+      <Button variant="secondary" title={t('home.signOut')} onPress={onSignOut} loading={isSigningOut} />
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.lg,
-    gap: spacing.sm,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '600',
-  },
-  subtitle: {
-    fontSize: 16,
-  },
+  text: { fontSize: 16 },
 });
