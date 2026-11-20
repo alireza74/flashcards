@@ -1,0 +1,83 @@
+# Staging automatisch aktualisieren, sobald die CI auf main gruen ist:
+#   1. Datenbank-Migrationen auf das Staging-Supabase
+#   2. App-Update (JavaScript) an alle Builds im Kanal "preview" (EAS Update)
+# Reihenfolge: erst Datenbank, dann App - neue App-Versionen setzen das neue Schema voraus.
+#
+# Aktiv erst, wenn die Repository-Variable STAGING_ENABLED = true ist.
+# Einrichtung (Secrets, Variablen, Environment "staging"): docs/lernen/06-m5-auslieferung.md
+name: Deploy Staging
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+jobs:
+  database:
+    name: Migrationen auf Staging
+    if: >-
+      vars.STAGING_ENABLED == 'true' &&
+      (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    environment: staging
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Abhaengigkeiten installieren
+        run: npm ci
+
+      - name: Ausstehende Migrationen anzeigen
+        run: npx supabase db push --remote=${{ vars.SUPABASE_PROJECT_REF }} --password "${{ secrets.SUPABASE_DB_PASSWORD }}" --dry-run
+
+      - name: Migrationen einspielen
+        run: npx supabase db push --remote=${{ vars.SUPABASE_PROJECT_REF }} --password "${{ secrets.SUPABASE_DB_PASSWORD }}" --yes
+
+  app-update:
+    name: App-Update Kanal preview
+    needs: database
+    runs-on: ubuntu-latest
+    environment: staging
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Abhaengigkeiten installieren
+        run: npm ci
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      # Die Supabase-Werte (EXPO_PUBLIC_...) kommen aus den EAS-Umgebungsvariablen "preview".
+      - name: EAS Update
+        run: eas update --channel preview --environment preview --message "Staging ${{ github.event.workflow_run.head_sha || github.sha }}" --non-interactive

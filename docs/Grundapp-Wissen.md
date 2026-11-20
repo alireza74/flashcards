@@ -201,6 +201,7 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
 | 20.11.2026 | `tsc`: `Cannot find name 'describe'` | TypeScript 6 laedt `@types/jest` nicht mehr automatisch | `"types": ["jest"]` in `tsconfig.json` |
 | 20.11.2026 | Jest-Pakete landeten in `dependencies` | `npx expo install ... -- --save-dev` hat das Flag nicht durchgereicht | danach `npm install --save-dev` mit denselben Versionen |
 | 20.11.2026 | `docker info`: Pipe nicht gefunden | Rancher Desktop nicht gestartet | Rancher Desktop starten, dann `npm run db:start` |
+| 20.11.2026 | Backup einspielen: `duplicate key ... app_settings_key_key` | Migrationen legen Startdaten an, das Daten-Backup enthaelt sie ebenfalls | vor dem Einspielen `truncate public.role_permissions, public.roles, public.permissions, public.app_settings cascade` |
 | 20.11.2026 | Nach Abmelden erscheint das Impressum statt der Anmeldeseite | Stack.Protected ohne `redirectTo` springt auf den Anker des Navigators (erste ungeschuetzte Seite) | `redirectTo` an jeder Protected-Gruppe setzen (`_layout.tsx`) |
 | 20.11.2026 | "Aktuelle Einwilligung" zufaellig bei zwei Eintraegen in einer Transaktion | `now()` ist in einer Transaktion konstant | `created_at default clock_timestamp()` |
 | 20.11.2026 | "Abmelden" tut nichts, wenn Supabase nicht erreichbar ist | `signOut()` nutzt standardmaessig `scope: 'global'`; bei Netzfehler gibt supabase-js den Fehler zurueck und laesst die lokale Sitzung stehen (Quelltext auth-js `_signOut` geprueft) | `signOut({ scope: 'local' })`: loescht zuerst lokal, informiert danach den Server. Offline und online getestet (online: Sitzung in `auth.sessions` widerrufen) |
@@ -276,3 +277,12 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
   (Platzhaltertexte). Im Browser getestet (Einwilligung, Export, Loeschen, Wiederanmelden, Abbrechen).
   Fehler gefunden: nach Abmelden landete man auf /imprint -> redirectTo an Stack.Protected gesetzt.
   Lernunterlage `05-m4-datenschutz.md`.
+- 20.11.2026 - M5 vorbereitet (ohne Konten): Mindestversion-Schalter (app_settings.min_app_version,
+  Sperrbildschirm, im Browser mit 9.9.9 getestet), eas.json (preview = APK/Kanal preview,
+  production = AAB/Kanal production), easProjectId in app-identity.json, expo-updates.
+  Workflows deploy-staging (nach gruener CI: db push + eas update), release-production (manuell,
+  Bestaetigungswort "freigeben"), build-android (APK per Knopf). Aktiv erst mit Variablen
+  STAGING_ENABLED/PRODUCTION_ENABLED. Backup-Rueckspielen lokal geprueft (Startdaten vorher leeren).
+  OFFEN (braucht Alirezas Konten): Supabase-Projekte Staging/Produktion, SMTP, Expo-Konto + eas init,
+  EAS-Umgebungsvariablen, GitHub-Secrets, erste APK, Rueckspieltest mit Staging-Daten.
+  Anleitung: `docs/lernen/06-m5-auslieferung.md`.

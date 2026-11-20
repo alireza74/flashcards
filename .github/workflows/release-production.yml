@@ -1,0 +1,101 @@
+# Freigabe nach Produktion - nur manuell (Actions -> Release Production -> Run workflow).
+# Die Freigabe ist der bewusste Start dieses Workflows plus das Bestaetigungswort.
+# Mit GitHub Pro/Team zusaetzlich im Environment "production" Pflicht-Pruefer eintragen.
+#
+#   update: Migrationen auf Produktion, danach JS-Update an Kanal "production"
+#   build:  Migrationen auf Produktion, danach Store-Build (Android App Bundle) auf EAS
+name: Release Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'update = nur JavaScript-Update, build = neuer Store-Build'
+        type: choice
+        options: [update, build]
+        default: update
+      confirm:
+        description: 'Zur Freigabe "freigeben" eintippen'
+        type: string
+        required: true
+
+concurrency:
+  group: release-production
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Freigabe pruefen
+    runs-on: ubuntu-latest
+    steps:
+      - name: Bestaetigungswort und Konfiguration
+        run: |
+          if [ "${{ inputs.confirm }}" != "freigeben" ]; then
+            echo "::error::Freigabe nicht bestaetigt (Eingabe muss 'freigeben' lauten)."
+            exit 1
+          fi
+          if [ "${{ vars.PRODUCTION_ENABLED }}" != "true" ]; then
+            echo "::error::Produktion ist noch nicht eingerichtet (Variable PRODUCTION_ENABLED)."
+            exit 1
+          fi
+
+  database:
+    name: Migrationen auf Produktion
+    needs: check
+    runs-on: ubuntu-latest
+    environment: production
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Abhaengigkeiten installieren
+        run: npm ci
+
+      - name: Ausstehende Migrationen anzeigen
+        run: npx supabase db push --remote=${{ vars.SUPABASE_PROJECT_REF }} --password "${{ secrets.SUPABASE_DB_PASSWORD }}" --dry-run
+
+      - name: Migrationen einspielen
+        run: npx supabase db push --remote=${{ vars.SUPABASE_PROJECT_REF }} --password "${{ secrets.SUPABASE_DB_PASSWORD }}" --yes
+
+  app:
+    name: App ausliefern
+    needs: database
+    runs-on: ubuntu-latest
+    environment: production
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Abhaengigkeiten installieren
+        run: npm ci
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: EAS Update (Kanal production)
+        if: inputs.mode == 'update'
+        run: eas update --channel production --environment production --message "Release ${{ github.sha }}" --non-interactive
+
+      - name: EAS Build (Android App Bundle)
+        if: inputs.mode == 'build'
+        run: eas build --platform android --profile production --non-interactive --no-wait

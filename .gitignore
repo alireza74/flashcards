@@ -16,3 +16,6 @@ backend/supabase/.branches/
 *.p8
 *.p12
 *.mobileprovision
+
+# lokale Datenbank-Sicherungen (personenbezogene Daten)
+backend/backups/

@@ -5,5 +5,6 @@
   "version": "0.1.0",
   "iosBundleIdentifier": "de.example.baseapp",
   "androidPackage": "de.example.baseapp",
-  "primaryColor": "#208AEF"
+  "primaryColor": "#208AEF",
+  "easProjectId": ""
 }

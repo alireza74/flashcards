@@ -15,6 +15,8 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 
+import { UpdateRequiredScreen } from '@/core/app-version/update-required-screen';
+import { useMinVersionCheck } from '@/core/app-version/use-min-version';
 import { AuthProvider, useAuth } from '@/core/auth/auth-provider';
 import { restoreLanguage } from '@/core/i18n/language';
 import { useSyncProfileLanguage } from '@/core/profile/use-sync-profile-language';
@@ -37,6 +39,7 @@ export default function RootLayout() {
 function RootNavigator() {
   const { session, isLoading, isPasswordRecovery } = useAuth();
   const [languageReady, setLanguageReady] = useState(false);
+  const { updateRequired } = useMinVersionCheck();
   const signedIn = session !== null;
 
   useSyncProfileLanguage();
@@ -55,6 +58,11 @@ function RootNavigator() {
 
   if (!ready) {
     return null;
+  }
+
+  // Version zu alt: nichts anderes anzeigen
+  if (updateRequired) {
+    return <UpdateRequiredScreen />;
   }
 
   // Ziel, wenn eine Seite gerade nicht erlaubt ist. Ausdruecklich gesetzt (redirectTo):
