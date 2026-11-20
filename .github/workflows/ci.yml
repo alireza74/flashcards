@@ -1,5 +1,5 @@
 # Prueft bei jedem Push und Pull Request, dass die App baut und die Tests gruen sind.
-# Ab M1 kommt ein zweiter Job dazu: Supabase starten, Migrationen einspielen, pgTAP-Tests.
+# Zwei Jobs laufen parallel: frontend (App) und database (Migrationen, RLS-Tests, Typen).
 name: CI
 
 on:
@@ -37,3 +37,35 @@ jobs:
 
       - name: Web-Build
         run: npm run build:web
+
+  database:
+    name: Datenbank (Migrationen, RLS-Tests, Typen)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Abhaengigkeiten installieren (Supabase-CLI, Prettier)
+        run: npm ci
+
+      - name: Datenbank starten und alle Migrationen einspielen
+        run: npx supabase db start
+
+      - name: pgTAP-Tests (Mandantentrennung, Rollen, Registrierung)
+        run: npm run db:test
+
+      - name: Datenbank-Linter
+        run: npm run db:lint
+
+      - name: TypeScript-Typen passen zum Schema
+        run: |
+          npm run db:types
+          git diff --exit-code -- ../frontend/src/core/supabase/database.types.ts

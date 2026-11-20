@@ -47,7 +47,8 @@ So bleiben Routen austauschbar und der eigentliche Code liegt geordnet in `src/`
 |---|---|
 | `backend/package.json` | Supabase-CLI als lokale Abhaengigkeit, Befehle `db:start` usw. |
 | `backend/supabase/config.toml` | Einstellungen des lokalen Supabase (Ports, Auth, E-Mail) |
-| `backend/supabase/migrations/` | Datenbank-Schema als SQL-Dateien (ab M1) |
+| `backend/supabase/migrations/` | Datenbank-Schema als SQL-Dateien (Details: `02-m1-datenbank.md`) |
+| `backend/supabase/tests/database/` | pgTAP-Tests: wer darf was sehen und aendern |
 | `backend/supabase/functions/` | Edge Functions (spaeter) |
 
 ## Pruefungen

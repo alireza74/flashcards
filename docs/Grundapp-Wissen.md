@@ -171,7 +171,12 @@ Hier zentrale Code-Stellen festhalten (Datei, Zweck, Besonderheit), sobald sie e
 | `frontend/src/shared/lib/version.ts` | Versionsvergleich fuer Mindestversion-Schalter (M5) | erster Jest-Test |
 | `frontend/tsconfig.json` | `types: ["jest"]` | TypeScript 6 bindet `@types/*` nicht mehr automatisch ein |
 | `backend/package.json` | Supabase-CLI als devDependency, Skripte `db:*` | keine globale Installation noetig |
-| `.github/workflows/ci.yml` | Lint, Typen, Tests, Web-Build | DB-Job folgt in M1 |
+| `.github/workflows/ci.yml` | Job frontend (Lint, Typen, Tests, Web-Build) + Job database (Migrationen, pgTAP, db lint, Typ-Abgleich) | Typ-Abgleich per `git diff --exit-code` |
+| `backend/supabase/migrations/0001-0005_*.sql` | Basisschema M1 | Basis-Nummernkreis `0001_`; Klone nutzen Zeitstempel. Systemrollen/-rechte in Migration, nicht seed.sql (seed laeuft nur lokal) |
+| `private.has_permission(org, key)` u. a. | Berechtigungspruefung fuer Policies | security definer + `search_path = ''`; umgeht RLS und vermeidet Rekursion |
+| `private.prevent_last_owner_removal()` | Organisation behaelt immer einen Eigentuemer | erlaubt Kaskade (Organisation/Nutzer geloescht); Fehler `P0001`, hint `last_owner` |
+| `backend/supabase/tests/database/` | 43 pgTAP-Pruefungen | Gegenprobe mit absichtlich offener Policy: Test 03 wird rot |
+| `frontend/src/core/supabase/database.types.ts` | erzeugte Typen | `npm run db:types` in backend; nie von Hand aendern |
 
 ---
 
@@ -223,3 +228,10 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
   Kubernetes in Rancher Desktop abgeschaltet (nicht benoetigt).
 - 20.11.2026 - Dev-Server fuer Expo Go gestartet (QR-Code, `exp://<Laptop-IP>:8081`).
   Handy-Test von Alireza noch nicht bestaetigt. Damit ist M0 abgeschlossen; weiter mit M1.
+- 20.11.2026 - M1 umgesetzt: Migrationen 0001-0005 (private-Schema, Rollen/Rechte, Organisationen,
+  Mitgliedschaften, Profile, Registrierungs-Trigger, app_settings, feature_flags, audit_log), RLS auf
+  allen Tabellen, Spaltenrechte, Schutz letzter Eigentuemer, Admin-Grenze. 43 pgTAP-Tests gruen,
+  db lint ohne Befund, Typen erzeugt, CI-Job database. Startrollen: owner (alle Rechte),
+  admin (members.read/manage, settings.manage, audit.read), member (members.read).
+  Bewusst offen: Team-Organisation anlegen (RPC) und Einladungen -> spaeter; verwaiste persoenliche
+  Organisation bei Kontoloeschung -> M4. Lernunterlagen `02-m1-datenbank.md`, `anleitung-neue-tabelle.md`.
