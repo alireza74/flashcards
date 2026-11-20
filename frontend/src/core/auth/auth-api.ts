@@ -56,7 +56,10 @@ export async function updatePassword(password: string): Promise<void> {
   if (error) throw error;
 }
 
+// scope 'local': meldet nur dieses Geraet ab. Die Sitzung wird ZUERST lokal geloescht,
+// danach wird der Server informiert. So klappt Abmelden auch ohne Netz.
+// (Standard waere 'global' = alle Geraete; bei Netzfehler bleibt die Sitzung dann stehen.)
 export async function signOut(): Promise<void> {
-  const { error } = await supabase.auth.signOut();
+  const { error } = await supabase.auth.signOut({ scope: 'local' });
   if (error) throw error;
 }
