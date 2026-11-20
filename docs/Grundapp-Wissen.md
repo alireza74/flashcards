@@ -185,6 +185,7 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
 | 20.11.2026 | `tsc`: `Cannot find name 'describe'` | TypeScript 6 laedt `@types/jest` nicht mehr automatisch | `"types": ["jest"]` in `tsconfig.json` |
 | 20.11.2026 | Jest-Pakete landeten in `dependencies` | `npx expo install ... -- --save-dev` hat das Flag nicht durchgereicht | danach `npm install --save-dev` mit denselben Versionen |
 | 20.11.2026 | `docker info`: Pipe nicht gefunden | Rancher Desktop nicht gestartet | Rancher Desktop starten, dann `npm run db:start` |
+| 20.11.2026 | `supabase start` bricht ab: `timed out dialing Hyper-V socket` | Kubernetes in Rancher Desktop abgeschaltet -> VM-Neustart, Verbindung Windows-VM hing danach | Rancher Desktop komplett neu starten (`rdctl shutdown`, dann App/`rdctl start`), danach `supabase start` erneut; Images bleiben erhalten |
 
 ---
 
@@ -214,5 +215,11 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
   `app.config.ts` + `app-identity.json`, ESLint, Jest, Web-Export, expo-doctor 20/20.
   Supabase-CLI 3.2.0 in `backend/`, `supabase init` (project_id `base-app`).
   CI-Workflow angelegt. Lernunterlagen `docs/lernen/00-ueberblick.md`, `01-lokal-starten.md`.
-  Offen fuer M0: `supabase start` (Docker lief nicht), GitHub-Repo + erster CI-Lauf,
-  Start auf dem Handy (Expo Go).
+  Offen fuer M0: `supabase start` (Docker lief nicht), Start auf dem Handy (Expo Go).
+- 20.11.2026 - GitHub-Repo `alireza74/base-app` (privat) angelegt und gepusht; erster CI-Lauf gruen.
+  Commits mit GitHub-noreply-Adresse (nur lokal fuer dieses Repo gesetzt);
+  Remote-URL enthaelt `alireza74@`, weil im Credential Manager sonst das Arbeitskonto greift.
+- 20.11.2026 - Lokales Supabase laeuft (Postgres 17, Studio unter http://127.0.0.1:54323).
+  Kubernetes in Rancher Desktop abgeschaltet (nicht benoetigt).
+- 20.11.2026 - Dev-Server fuer Expo Go gestartet (QR-Code, `exp://<Laptop-IP>:8081`).
+  Handy-Test von Alireza noch nicht bestaetigt. Damit ist M0 abgeschlossen; weiter mit M1.
