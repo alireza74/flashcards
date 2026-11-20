@@ -262,3 +262,8 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
   in der URL (Browser-Verlauf). Im Browser komplett durchgetestet (2 Testkonten). 21 Jest-Tests.
   Offen: eigener SMTP-Dienst (erst mit Staging in M5), Test auf dem Handy, Sprache waehlen und RTL (M3).
   Lernunterlage `03-m2-anmeldung.md`.
+- 20.11.2026 - M3 umgesetzt: Profilseite (Anzeigename, Sprache, Passwort aendern, Abmelden),
+  Persisch mit RTL (Web: dir am html, Handy: forceRTL + Updates.reloadAsync), Sprache in profiles.locale,
+  Design-Bausteine (AppText, Card, SegmentedControl, LoadingState, ErrorState). Im Browser getestet
+  (Name speichern, DE->FA->DE, Neuladen, Passwort aendern). Persische Texte von Muttersprachler pruefen.
+  RTL auf dem Handy noch nicht getestet. Lernunterlage `04-m3-profil-sprache.md`.

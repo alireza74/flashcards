@@ -5,6 +5,11 @@ export const en: Translations = {
   common: {
     back: 'Back',
     loading: 'Loading ...',
+    retry: 'Try again',
+    save: 'Save',
+    saved: 'Saved.',
+    cancel: 'Cancel',
+    error: 'Something went wrong. Please try again.',
   },
   validation: {
     required: 'Required',
@@ -37,6 +42,7 @@ export const en: Translations = {
       title: 'Create account',
       submit: 'Sign up',
       toSignIn: 'Already registered? Sign in',
+      legalHint: 'By signing up, our privacy policy applies.',
     },
     verifyCode: {
       titleSignUp: 'Confirm your email',
@@ -58,6 +64,10 @@ export const en: Translations = {
       submit: 'Save password',
       skip: 'Later',
     },
+    changePassword: {
+      title: 'Change password',
+      done: 'Your password has been changed.',
+    },
     errors: {
       invalid_credentials: 'Email or password is incorrect.',
       email_not_confirmed: 'Your email address is not confirmed yet.',
@@ -77,5 +87,59 @@ export const en: Translations = {
     organization: 'Organization: {{name}}',
     signOut: 'Sign out',
     loadError: 'Profile could not be loaded.',
+    toProfile: 'Profile and settings',
+  },
+  profile: {
+    title: 'Profile',
+    sectionProfile: 'Personal details',
+    email: 'Email: {{email}}',
+    sectionLanguage: 'Language',
+    language: 'App language',
+    restartHint: 'The app restarts to switch the reading direction.',
+    sectionSecurity: 'Security',
+    changePassword: 'Change password',
+    sectionPrivacy: 'Privacy',
+    sectionLegal: 'Legal',
+  },
+  privacy: {
+    consents: {
+      title: 'Consents',
+      intro: 'Voluntary and revocable at any time. The app stays fully usable without consent.',
+      analytics: 'Usage statistics (anonymized)',
+      crash_reports: 'Crash reports',
+      push: 'Push notifications',
+      personalization: 'Personalized content',
+    },
+    export: {
+      title: 'My data',
+      intro: 'Download all data stored for your account as a JSON file.',
+      button: 'Export data',
+      done: 'Export created.',
+    },
+    deletion: {
+      title: 'Delete account',
+      intro:
+        'Your account is deactivated immediately and permanently deleted after 30 days. Until then you can cancel the deletion by signing in again.',
+      button: 'Delete account',
+      confirm: 'Really delete? Tap again to confirm.',
+      confirmButton: 'Yes, delete my account',
+      scheduled: 'Your account is scheduled for deletion on {{date}}.',
+      cancel: 'Cancel deletion',
+      cancelled: 'The deletion has been cancelled.',
+      lastOwner:
+        'You are the only owner of an organization with other members. Transfer the owner role first.',
+    },
+  },
+  legal: {
+    privacyTitle: 'Privacy policy',
+    imprintTitle: 'Legal notice',
+    draftNotice: 'Draft - have it reviewed by a lawyer before publishing.',
+    privacyBody:
+      'Controller: [name, address, email]. We only process the data required for your account: email address and display name. Data is stored on servers in the EU (Frankfurt). Optional processing (e.g. crash reports) only happens with your consent, which you can revoke at any time in the settings. You can export your data and delete your account at any time. Legal bases, recipients, retention periods and your rights: [to be completed].',
+    imprintBody: 'Information according to § 5 DDG: [name, address, contact]. [to be completed]',
+  },
+  update: {
+    title: 'Update required',
+    body: 'This version of the app is no longer supported. Please install the latest version.',
   },
 };

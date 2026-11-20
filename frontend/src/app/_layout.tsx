@@ -16,8 +16,10 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 
 import { AuthProvider, useAuth } from '@/core/auth/auth-provider';
+import { restoreLanguage } from '@/core/i18n/language';
+import { useSyncProfileLanguage } from '@/core/profile/use-sync-profile-language';
 
-// Splash-Screen stehen lassen, bis die gespeicherte Sitzung geladen ist (kein Flackern der Anmeldeseite).
+// Splash-Screen stehen lassen, bis Sitzung und Sprache geladen sind (kein Flackern).
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -34,15 +36,24 @@ export default function RootLayout() {
 
 function RootNavigator() {
   const { session, isLoading, isPasswordRecovery } = useAuth();
+  const [languageReady, setLanguageReady] = useState(false);
   const signedIn = session !== null;
 
+  useSyncProfileLanguage();
+
   useEffect(() => {
-    if (!isLoading) {
+    restoreLanguage().finally(() => setLanguageReady(true));
+  }, []);
+
+  const ready = !isLoading && languageReady;
+
+  useEffect(() => {
+    if (ready) {
       SplashScreen.hideAsync();
     }
-  }, [isLoading]);
+  }, [ready]);
 
-  if (isLoading) {
+  if (!ready) {
     return null;
   }
 
@@ -64,6 +75,8 @@ function RootNavigator() {
       {/* angemeldet */}
       <Stack.Protected guard={signedIn && !isPasswordRecovery}>
         <Stack.Screen name="index" />
+        <Stack.Screen name="profile" />
+        <Stack.Screen name="change-password" />
       </Stack.Protected>
     </Stack>
   );

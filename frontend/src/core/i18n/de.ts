@@ -1,9 +1,14 @@
 // Deutsche Texte. Schluessel englisch, Werte deutsch.
-// Jeder Schluessel muss auch in en.ts existieren (TypeScript prueft das).
+// Jeder Schluessel muss auch in en.ts und fa.ts existieren (TypeScript prueft das).
 export const de = {
   common: {
     back: 'Zurück',
     loading: 'Wird geladen ...',
+    retry: 'Erneut versuchen',
+    save: 'Speichern',
+    saved: 'Gespeichert.',
+    cancel: 'Abbrechen',
+    error: 'Etwas ist schiefgelaufen. Bitte erneut versuchen.',
   },
   validation: {
     required: 'Pflichtfeld',
@@ -36,6 +41,7 @@ export const de = {
       title: 'Konto erstellen',
       submit: 'Registrieren',
       toSignIn: 'Schon registriert? Anmelden',
+      legalHint: 'Mit der Registrierung gilt unsere Datenschutzerklärung.',
     },
     verifyCode: {
       titleSignUp: 'E-Mail bestätigen',
@@ -57,6 +63,10 @@ export const de = {
       submit: 'Passwort speichern',
       skip: 'Später',
     },
+    changePassword: {
+      title: 'Passwort ändern',
+      done: 'Dein Passwort wurde geändert.',
+    },
     errors: {
       invalid_credentials: 'E-Mail oder Passwort ist falsch.',
       email_not_confirmed: 'Deine E-Mail-Adresse ist noch nicht bestätigt.',
@@ -76,6 +86,60 @@ export const de = {
     organization: 'Organisation: {{name}}',
     signOut: 'Abmelden',
     loadError: 'Profil konnte nicht geladen werden.',
+    toProfile: 'Profil und Einstellungen',
+  },
+  profile: {
+    title: 'Profil',
+    sectionProfile: 'Persönliche Angaben',
+    email: 'E-Mail: {{email}}',
+    sectionLanguage: 'Sprache',
+    language: 'Sprache der App',
+    restartHint: 'Die App startet neu, um die Leserichtung umzustellen.',
+    sectionSecurity: 'Sicherheit',
+    changePassword: 'Passwort ändern',
+    sectionPrivacy: 'Datenschutz',
+    sectionLegal: 'Rechtliches',
+  },
+  privacy: {
+    consents: {
+      title: 'Einwilligungen',
+      intro: 'Freiwillig und jederzeit widerrufbar. Ohne Einwilligung bleibt die App voll nutzbar.',
+      analytics: 'Nutzungsstatistik (anonymisiert)',
+      crash_reports: 'Absturzberichte',
+      push: 'Push-Benachrichtigungen',
+      personalization: 'Personalisierte Inhalte',
+    },
+    export: {
+      title: 'Meine Daten',
+      intro: 'Lade alle zu deinem Konto gespeicherten Daten als JSON-Datei herunter.',
+      button: 'Daten exportieren',
+      done: 'Export erstellt.',
+    },
+    deletion: {
+      title: 'Konto löschen',
+      intro:
+        'Dein Konto wird sofort deaktiviert und nach 30 Tagen endgültig gelöscht. Bis dahin kannst du die Löschung abbrechen, indem du dich wieder anmeldest.',
+      button: 'Konto löschen',
+      confirm: 'Wirklich löschen? Tippe zur Bestätigung erneut.',
+      confirmButton: 'Ja, Konto endgültig löschen',
+      scheduled: 'Dein Konto ist zur Löschung vorgemerkt und wird am {{date}} gelöscht.',
+      cancel: 'Löschung abbrechen',
+      cancelled: 'Die Löschung wurde abgebrochen.',
+      lastOwner:
+        'Du bist einziger Eigentümer einer Organisation mit weiteren Mitgliedern. Übertrage zuerst die Eigentümerrolle.',
+    },
+  },
+  legal: {
+    privacyTitle: 'Datenschutzerklärung',
+    imprintTitle: 'Impressum',
+    draftNotice: 'Entwurf - vor Veröffentlichung juristisch prüfen lassen.',
+    privacyBody:
+      'Verantwortlich: [Name, Anschrift, E-Mail]. Wir verarbeiten nur die Daten, die für dein Konto nötig sind: E-Mail-Adresse und Anzeigename. Die Daten liegen auf Servern in der EU (Frankfurt). Freiwillige Verarbeitungen (z. B. Absturzberichte) erfolgen nur mit deiner Einwilligung, die du jederzeit in den Einstellungen widerrufen kannst. Du kannst deine Daten jederzeit exportieren und dein Konto löschen. Rechtsgrundlagen, Empfänger, Speicherdauer und deine Rechte: [ergänzen].',
+    imprintBody: 'Angaben gemäß § 5 DDG: [Name, Anschrift, Kontakt]. [ergänzen]',
+  },
+  update: {
+    title: 'Update erforderlich',
+    body: 'Diese Version der App wird nicht mehr unterstützt. Bitte installiere die neueste Version.',
   },
 } as const;
 

@@ -1,21 +1,31 @@
 // Sprachsteuerung (i18next). Wird einmal im Wurzel-Layout importiert.
-// Sprache = Geraetesprache, falls unterstuetzt, sonst Deutsch.
-// Ab M3: Auswahl im Profil (profiles.locale) und Persisch mit RTL.
+// Startsprache = Geraetesprache, falls unterstuetzt, sonst Deutsch.
+// Wechsel, Speichern und RTL: siehe language.ts.
 import { getLocales } from 'expo-localization';
 import { createInstance } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 import { de } from './de';
 import { en } from './en';
+import { fa } from './fa';
 
-export const supportedLanguages = ['de', 'en'] as const;
+export const supportedLanguages = ['de', 'en', 'fa'] as const;
 export type Language = (typeof supportedLanguages)[number];
+
+// Anzeigenamen jeweils in der eigenen Sprache
+export const languageNames: Record<Language, string> = {
+  de: 'Deutsch',
+  en: 'English',
+  fa: 'فارسی',
+};
+
+export function isLanguage(value: string | null | undefined): value is Language {
+  return (supportedLanguages as readonly string[]).includes(value ?? '');
+}
 
 function detectLanguage(): Language {
   const deviceLanguage = getLocales()[0]?.languageCode;
-  return (supportedLanguages as readonly string[]).includes(deviceLanguage ?? '')
-    ? (deviceLanguage as Language)
-    : 'de';
+  return isLanguage(deviceLanguage) ? deviceLanguage : 'de';
 }
 
 // Eigene Instanz; initReactI18next macht sie fuer useTranslation() verfuegbar.
@@ -25,6 +35,7 @@ i18n.use(initReactI18next).init({
   resources: {
     de: { translation: de },
     en: { translation: en },
+    fa: { translation: fa },
   },
   lng: detectLanguage(),
   fallbackLng: 'de',

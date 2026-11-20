@@ -1,0 +1,133 @@
+// Profil und Einstellungen: Anzeigename, Sprache, Passwort, Abmelden.
+// Ab M4 zusaetzlich Datenschutz (Einwilligungen, Export, Konto loeschen) und Rechtliches.
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import { z } from 'zod';
+
+import { signOut } from '@/core/auth/auth-api';
+import { useAuth } from '@/core/auth/auth-provider';
+import i18n, { languageNames, supportedLanguages, type Language } from '@/core/i18n';
+import { changeLanguage, isRtlLanguage } from '@/core/i18n/language';
+import { AppText } from '@/shared/ui/app-text';
+import { Button } from '@/shared/ui/button';
+import { Card } from '@/shared/ui/card';
+import { FormMessage } from '@/shared/ui/form-message';
+import { FormTextField } from '@/shared/ui/form-text-field';
+import { Screen } from '@/shared/ui/screen';
+import { SegmentedControl } from '@/shared/ui/segmented-control';
+import { ErrorState, LoadingState } from '@/shared/ui/states';
+
+import { useProfile, useUpdateProfile } from './use-profile';
+
+const displayNameSchema = z.object({
+  displayName: z.string().trim().min(1, 'validation.required').max(100, 'validation.tooLong'),
+});
+type DisplayNameValues = z.infer<typeof displayNameSchema>;
+
+export function ProfileScreen() {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const { session } = useAuth();
+  const userId = session?.user.id;
+  const profile = useProfile(userId);
+  const updateProfile = useUpdateProfile(userId);
+  const [messageKey, setMessageKey] = useState<{ tone: 'info' | 'error'; key: string }>();
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting },
+  } = useForm<DisplayNameValues>({
+    resolver: zodResolver(displayNameSchema),
+    defaultValues: { displayName: '' },
+  });
+
+  // Formular fuellen, sobald das Profil geladen ist
+  const loadedName = profile.data?.display_name ?? '';
+  useEffect(() => {
+    reset({ displayName: loadedName });
+  }, [loadedName, reset]);
+
+  const onSaveName = handleSubmit(async (values) => {
+    setMessageKey(undefined);
+    try {
+      await updateProfile.mutateAsync({ display_name: values.displayName });
+      setMessageKey({ tone: 'info', key: 'common.saved' });
+    } catch {
+      setMessageKey({ tone: 'error', key: 'common.error' });
+    }
+  });
+
+  const onChangeLanguage = async (language: Language) => {
+    setMessageKey(undefined);
+    try {
+      // zuerst im Profil speichern, damit die Wahl nach einem Neustart (RTL) erhalten bleibt
+      await updateProfile.mutateAsync({ locale: language });
+      if (isRtlLanguage(language) !== isRtlLanguage(i18n.language as Language)) {
+        setMessageKey({ tone: 'info', key: 'profile.restartHint' });
+      }
+      await changeLanguage(language);
+    } catch {
+      setMessageKey({ tone: 'error', key: 'common.error' });
+    }
+  };
+
+  if (profile.isPending) {
+    return (
+      <Screen title={t('profile.title')}>
+        <LoadingState />
+      </Screen>
+    );
+  }
+
+  if (profile.isError) {
+    return (
+      <Screen title={t('profile.title')}>
+        <ErrorState message={t('home.loadError')} onRetry={() => profile.refetch()} />
+      </Screen>
+    );
+  }
+
+  return (
+    <Screen title={t('profile.title')}>
+      {messageKey ? <FormMessage tone={messageKey.tone} text={t(messageKey.key)} /> : null}
+
+      <Card title={t('profile.sectionProfile')}>
+        <AppText tone="secondary">{t('profile.email', { email: session?.user.email ?? '' })}</AppText>
+        <FormTextField
+          control={control}
+          name="displayName"
+          label={t('auth.fields.displayName')}
+          autoComplete="name"
+          onSubmitEditing={() => onSaveName()}
+        />
+        <Button title={t('common.save')} onPress={onSaveName} loading={isSubmitting} />
+      </Card>
+
+      <Card title={t('profile.sectionLanguage')}>
+        <SegmentedControl
+          label={t('profile.language')}
+          options={supportedLanguages.map((value) => ({ value, label: languageNames[value] }))}
+          value={i18n.language as Language}
+          onChange={onChangeLanguage}
+          disabled={updateProfile.isPending}
+        />
+      </Card>
+
+      <Card title={t('profile.sectionSecurity')}>
+        <Button
+          variant="secondary"
+          title={t('profile.changePassword')}
+          onPress={() => router.push('/change-password')}
+        />
+      </Card>
+
+      <Button variant="secondary" title={t('home.signOut')} onPress={() => signOut().catch(() => undefined)} />
+      <Button variant="link" title={t('common.back')} onPress={() => router.back()} />
+    </Screen>
+  );
+}
