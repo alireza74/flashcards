@@ -317,3 +317,8 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
   danach in der App mit Passwort anmelden; Passwort-Reset auf Staging funktioniert nicht; der
   eingebaute Versand geht nur an Organisationsmitglieder (eigene Adresse). SMTP (EU-Anbieter) vor
   Tests mit weiteren Personen einrichten, dann Vorlagen aus backend/supabase/templates uebernehmen.
+- 20.11.2026 - EAS-Umgebungsvariablen `preview` gesetzt (Supabase-URL, Publishable Key; `eas env:create`
+  ist veraltet -> `eas env:set`). GitHub: Secrets SUPABASE_ACCESS_TOKEN, EXPO_TOKEN, Environment
+  `staging` (SUPABASE_PROJECT_REF, SUPABASE_DB_PASSWORD), Variable STAGING_ENABLED=true.
+  Erster manueller Lauf **Deploy Staging gruen** (3:48 min, beide Jobs): Migrationen 0001-0006 auf
+  Staging (geprueft: app_settings anon lesbar, organizations anon 401), EAS Update an Kanal preview.
