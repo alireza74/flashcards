@@ -235,3 +235,4 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
   admin (members.read/manage, settings.manage, audit.read), member (members.read).
   Bewusst offen: Team-Organisation anlegen (RPC) und Einladungen -> spaeter; verwaiste persoenliche
   Organisation bei Kontoloeschung -> M4. Lernunterlagen `02-m1-datenbank.md`, `anleitung-neue-tabelle.md`.
+  CI auf GitHub mit beiden Jobs (frontend, database) gruen. M1 abgeschlossen.
