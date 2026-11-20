@@ -304,7 +304,7 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
   Fachfunktion + Basis-Aenderung -> Merge ohne Konflikt. Erkenntnis: spaetere Basis-Migrationen sind
   aelter als Fachmigrationen des Klons -> Workflows nutzen `db push --include-all`.
   M0-M6 damit umgesetzt; offen nur Schritte mit Konten (siehe Offene Punkte). Version 0.1.0.
-- 20.11.2026 - Expo-Konto angelegt. Supabase-Staging-Projekt `base-app-staging` angelegt
+- 20.11.2026 - Expo-Konto angelegt (alireza_expo), Projekt @alireza_expo/base-app, EAS-Projekt-ID in app-identity.json. Supabase-Staging-Projekt `base-app-staging` angelegt
   (Ref `vdjyqydnxegtbridgadp`, Free-Plan). Region wurde **West EU (Ireland, eu-west-1)** statt Frankfurt;
   Entscheidung Alireza: so lassen (EU, kein Drittlandtransfer). Produktion gezielt in Frankfurt anlegen.
   Optionen beim Anlegen: Data API an, "Grant API access to new tables automatically" an
