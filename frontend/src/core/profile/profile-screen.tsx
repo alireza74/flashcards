@@ -1,5 +1,5 @@
-// Profil und Einstellungen: Anzeigename, Sprache, Passwort, Abmelden.
-// Ab M4 zusaetzlich Datenschutz (Einwilligungen, Export, Konto loeschen) und Rechtliches.
+// Profil und Einstellungen: Anzeigename, Sprache, Passwort, Datenschutz
+// (Einwilligungen, Export, Konto loeschen), Rechtliches, Abmelden.
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -11,6 +11,7 @@ import { signOut } from '@/core/auth/auth-api';
 import { useAuth } from '@/core/auth/auth-provider';
 import i18n, { languageNames, supportedLanguages, type Language } from '@/core/i18n';
 import { changeLanguage, isRtlLanguage } from '@/core/i18n/language';
+import { PrivacySection } from '@/core/privacy/privacy-section';
 import { AppText } from '@/shared/ui/app-text';
 import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
@@ -125,6 +126,8 @@ export function ProfileScreen() {
           onPress={() => router.push('/change-password')}
         />
       </Card>
+
+      <PrivacySection />
 
       <Button variant="secondary" title={t('home.signOut')} onPress={() => signOut().catch(() => undefined)} />
       <Button variant="link" title={t('common.back')} onPress={() => router.back()} />

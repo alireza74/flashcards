@@ -82,6 +82,34 @@ export type Database = {
           },
         ];
       };
+      consents: {
+        Row: {
+          created_at: string;
+          granted: boolean;
+          id: string;
+          purpose: string;
+          text_version: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          granted: boolean;
+          id?: string;
+          purpose: string;
+          text_version: string;
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          granted?: boolean;
+          id?: string;
+          purpose?: string;
+          text_version?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       feature_flags: {
         Row: {
           created_at: string;
@@ -210,6 +238,7 @@ export type Database = {
         Row: {
           active_organization_id: string | null;
           created_at: string;
+          deletion_requested_at: string | null;
           display_name: string | null;
           id: string;
           locale: string;
@@ -221,6 +250,7 @@ export type Database = {
         Insert: {
           active_organization_id?: string | null;
           created_at?: string;
+          deletion_requested_at?: string | null;
           display_name?: string | null;
           id: string;
           locale?: string;
@@ -231,6 +261,7 @@ export type Database = {
         Update: {
           active_organization_id?: string | null;
           created_at?: string;
+          deletion_requested_at?: string | null;
           display_name?: string | null;
           id?: string;
           locale?: string;
@@ -323,10 +354,28 @@ export type Database = {
       };
     };
     Views: {
-      [_ in never]: never;
+      current_consents: {
+        Row: {
+          created_at: string;
+          granted: boolean;
+          purpose: string;
+          text_version: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Relationships: [];
+      };
     };
     Functions: {
-      [_ in never]: never;
+      cancel_account_deletion: {
+        Args: Record<PropertyKey, never>;
+        Returns: undefined;
+      };
+      export_my_data: { Args: Record<PropertyKey, never>; Returns: Json };
+      request_account_deletion: {
+        Args: Record<PropertyKey, never>;
+        Returns: string;
+      };
     };
     Enums: {
       [_ in never]: never;

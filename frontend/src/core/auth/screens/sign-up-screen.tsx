@@ -85,6 +85,11 @@ export function SignUpScreen() {
       />
 
       <Button title={t('auth.signUp.submit')} onPress={onSubmit} loading={isSubmitting} />
+      <Button
+        variant="link"
+        title={t('auth.signUp.legalHint')}
+        onPress={() => router.push('/privacy-policy')}
+      />
       <Button variant="link" title={t('auth.signUp.toSignIn')} onPress={() => router.back()} />
     </Screen>
   );

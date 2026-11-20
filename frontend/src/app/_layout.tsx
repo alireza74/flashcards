@@ -57,10 +57,14 @@ function RootNavigator() {
     return null;
   }
 
+  // Ziel, wenn eine Seite gerade nicht erlaubt ist. Ausdruecklich gesetzt (redirectTo):
+  // ohne Angabe springt Expo Router auf den "Anker" des Navigators - das war das Impressum.
+  const home = isPasswordRecovery ? '/new-password' : '/';
+
   return (
     <Stack screenOptions={{ headerShown: false }}>
       {/* nicht angemeldet */}
-      <Stack.Protected guard={!signedIn}>
+      <Stack.Protected guard={!signedIn} redirectTo={home}>
         <Stack.Screen name="sign-in" />
         <Stack.Screen name="sign-up" />
         <Stack.Screen name="verify-code" />
@@ -68,16 +72,20 @@ function RootNavigator() {
       </Stack.Protected>
 
       {/* angemeldet ueber Passwort-Code: erst neues Passwort vergeben */}
-      <Stack.Protected guard={signedIn && isPasswordRecovery}>
+      <Stack.Protected guard={signedIn && isPasswordRecovery} redirectTo={signedIn ? '/' : '/sign-in'}>
         <Stack.Screen name="new-password" />
       </Stack.Protected>
 
       {/* angemeldet */}
-      <Stack.Protected guard={signedIn && !isPasswordRecovery}>
+      <Stack.Protected guard={signedIn && !isPasswordRecovery} redirectTo={signedIn ? home : '/sign-in'}>
         <Stack.Screen name="index" />
         <Stack.Screen name="profile" />
         <Stack.Screen name="change-password" />
       </Stack.Protected>
+
+      {/* immer erreichbar (Store-Pflicht: Datenschutzerklaerung auch ohne Konto) */}
+      <Stack.Screen name="privacy-policy" />
+      <Stack.Screen name="imprint" />
     </Stack>
   );
 }

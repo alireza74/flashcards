@@ -201,6 +201,8 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
 | 20.11.2026 | `tsc`: `Cannot find name 'describe'` | TypeScript 6 laedt `@types/jest` nicht mehr automatisch | `"types": ["jest"]` in `tsconfig.json` |
 | 20.11.2026 | Jest-Pakete landeten in `dependencies` | `npx expo install ... -- --save-dev` hat das Flag nicht durchgereicht | danach `npm install --save-dev` mit denselben Versionen |
 | 20.11.2026 | `docker info`: Pipe nicht gefunden | Rancher Desktop nicht gestartet | Rancher Desktop starten, dann `npm run db:start` |
+| 20.11.2026 | Nach Abmelden erscheint das Impressum statt der Anmeldeseite | Stack.Protected ohne `redirectTo` springt auf den Anker des Navigators (erste ungeschuetzte Seite) | `redirectTo` an jeder Protected-Gruppe setzen (`_layout.tsx`) |
+| 20.11.2026 | "Aktuelle Einwilligung" zufaellig bei zwei Eintraegen in einer Transaktion | `now()` ist in einer Transaktion konstant | `created_at default clock_timestamp()` |
 | 20.11.2026 | "Abmelden" tut nichts, wenn Supabase nicht erreichbar ist | `signOut()` nutzt standardmaessig `scope: 'global'`; bei Netzfehler gibt supabase-js den Fehler zurueck und laesst die lokale Sitzung stehen (Quelltext auth-js `_signOut` geprueft) | `signOut({ scope: 'local' })`: loescht zuerst lokal, informiert danach den Server. Offline und online getestet (online: Sitzung in `auth.sessions` widerrufen) |
 | 20.11.2026 | App-Start dauert ca. 15 s, wenn Supabase nicht erreichbar und Token abgelaufen | `getSession` versucht mehrmals, das Token zu erneuern, bevor es zurueckkehrt | offen, siehe Technische Schulden |
 | 20.11.2026 | Dev-Server laeuft nach `TaskStop` weiter (Port belegt) | Beenden der Shell beendet den Node-Kindprozess unter Windows nicht | Dev-Server im Terminal-Tab starten und mit Strg+C beenden, oder Prozess auf Port 8081 gezielt beenden |
@@ -267,3 +269,10 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
   Design-Bausteine (AppText, Card, SegmentedControl, LoadingState, ErrorState). Im Browser getestet
   (Name speichern, DE->FA->DE, Neuladen, Passwort aendern). Persische Texte von Muttersprachler pruefen.
   RTL auf dem Handy noch nicht getestet. Lernunterlage `04-m3-profil-sprache.md`.
+- 20.11.2026 - M4 umgesetzt: Migration 0006 (consents nur anfuegen + View current_consents,
+  export_my_data, request/cancel_account_deletion mit last_owner-Pruefung, purge_deleted_accounts,
+  pg_cron taeglich 03:15 UTC), 22 neue pgTAP-Pruefungen (65 gesamt). UI: Datenschutz-Abschnitt im Profil,
+  Loeschhinweis mit Abbrechen auf der Startseite, oeffentliche Seiten /privacy-policy und /imprint
+  (Platzhaltertexte). Im Browser getestet (Einwilligung, Export, Loeschen, Wiederanmelden, Abbrechen).
+  Fehler gefunden: nach Abmelden landete man auf /imprint -> redirectTo an Stack.Protected gesetzt.
+  Lernunterlage `05-m4-datenschutz.md`.

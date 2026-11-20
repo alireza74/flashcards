@@ -121,7 +121,7 @@ export const de = {
         'Dein Konto wird sofort deaktiviert und nach 30 Tagen endgültig gelöscht. Bis dahin kannst du die Löschung abbrechen, indem du dich wieder anmeldest.',
       button: 'Konto löschen',
       confirm: 'Wirklich löschen? Tippe zur Bestätigung erneut.',
-      confirmButton: 'Ja, Konto endgültig löschen',
+      confirmButton: 'Ja, Konto löschen',
       scheduled: 'Dein Konto ist zur Löschung vorgemerkt und wird am {{date}} gelöscht.',
       cancel: 'Löschung abbrechen',
       cancelled: 'Die Löschung wurde abgebrochen.',

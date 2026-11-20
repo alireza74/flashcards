@@ -4,17 +4,22 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '@/core/auth/auth-provider';
+import { deletionDate, useCancelDeletion } from '@/core/privacy/privacy-api';
 import { useProfile } from '@/core/profile/use-profile';
 import { AppText } from '@/shared/ui/app-text';
 import { Button } from '@/shared/ui/button';
+import { Card } from '@/shared/ui/card';
+import { FormMessage } from '@/shared/ui/form-message';
 import { Screen } from '@/shared/ui/screen';
 import { ErrorState, LoadingState } from '@/shared/ui/states';
 
 export function HomeScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const { session } = useAuth();
-  const profile = useProfile(session?.user.id);
+  const userId = session?.user.id;
+  const profile = useProfile(userId);
+  const cancelDeletion = useCancelDeletion(userId);
 
   if (profile.isPending) {
     return (
@@ -33,9 +38,25 @@ export function HomeScreen() {
   }
 
   const name = profile.data.display_name ?? session?.user.email ?? '';
+  const scheduledDeletion = profile.data.status === 'deleted' ? deletionDate(profile.data.deletion_requested_at) : undefined;
 
   return (
     <Screen title={t('home.greeting', { name })}>
+      {/* Konto zur Loeschung vorgemerkt: innerhalb der 30 Tage abbrechbar */}
+      {scheduledDeletion ? (
+        <Card>
+          <FormMessage
+            tone="error"
+            text={t('privacy.deletion.scheduled', { date: scheduledDeletion.toLocaleDateString(i18n.language) })}
+          />
+          <Button
+            title={t('privacy.deletion.cancel')}
+            onPress={() => cancelDeletion.mutate()}
+            loading={cancelDeletion.isPending}
+          />
+        </Card>
+      ) : null}
+
       <AppText tone="secondary">{t('home.signedInAs', { email: session?.user.email ?? '' })}</AppText>
       {profile.data.active_organization ? (
         <AppText tone="secondary">
