@@ -12,7 +12,9 @@ Erste geplante Fachanwendung: Sprachlern-App nach der Leitner-Kartei.
 |---|---|
 | `frontend` | Expo-App (React Native, TypeScript) |
 | `backend/supabase` | Migrationen, Edge Functions, Supabase-Konfiguration |
-| `docs` | Wissensdatei, Plan, Entscheidungen |
+| `docs` | Wissensdatei, Architektur, Entscheidungen |
+| `docs/lernen` | Lernunterlagen: Aufbau, lokal starten, Anleitungen |
+| `.github/workflows` | CI: Lint, Typen, Tests, Web-Build |
 
 ## Dokumentation
 

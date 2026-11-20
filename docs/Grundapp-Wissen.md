@@ -6,10 +6,15 @@ Basis-App, aus der spaeter mehrere fachliche Apps entstehen.
 Erste Fachanwendung: Sprachlern-App nach der Leitner-Kartei.
 Weitere Idee (zurueckgestellt): Sportnachrichten auf Persisch.
 
-Ablage: `C:\Users\alh\OneDrive - abat AG\Dokumente\MY-APPS\base-app`
+Ablage: `C:\Users\alh\Documents\MY-APPS\base-app`
 
-Stand: 11.11.2026
+Stand: 20.11.2026
 Diese Datei bei jeder Sitzung lesen und mit neuen Entscheidungen ergaenzen.
+
+Inhalt: nur Wissen zur base-app (Aufbau, wichtiger Code, Fehler und Loesungen).
+Uebergreifende Entscheidungen und Fachanwendungen (Sprachlern-App, Sportnachrichten,
+WandAkte): `../../MY-APPS-Wissen.md`.
+Recherchierte Architektur, Vorgehen und ueberarbeitete Meilensteine: `Architektur-Grundlage.md`.
 
 ---
 
@@ -99,54 +104,27 @@ umgeht RLS bewusst, weil er kein Nutzer ist.
 
 ---
 
-## 6. Fachanwendung Sportnachrichten - rechtlicher Rahmen
+## 6. Offene Punkte
 
-Ausfuehrlich geprueft, Ergebnis bindend fuer die spaetere Umsetzung:
-
-- **Zulaessig:** RSS-Feeds nutzen und Titel, Teaser, Zeit, Quelle anzeigen; Artikel oeffnet
-  die Originalseite. Nutzung von Chrome Custom Tabs bzw. SFSafariViewController,
-  nicht eigene WebView (sonst Framing-Risiko). Nichts ausblenden, kein Reader-Modus.
-- **Zulaessig:** strukturierte Sportdaten (Ergebnisse, Tabellen, Aufstellungen) - Fakten sind frei.
-- **Nicht zulaessig:** Volltexte uebernehmen, Scraping, Bilder nachladen, Paywalls umgehen.
-- **Nicht tragfaehig:** Hosting im Iran, Vertrieb ohne Store, Umschreiben einzelner Artikel per KI.
-  Haftung folgt der Person in Deutschland, nicht dem Serverstandort; Agenturtexte (Reuters, AFP, dpa)
-  sind auch ueber iranische Zwischenquellen geschuetzt; Sanktionsrecht bei iranischen Dienstleistern.
-- **Moeglich mit Auflagen:** eigener Artikel aus 10+ Quellen plus geprueften Sportdaten per KI-Agent.
-  Bedingungen: nur Fakten aus mindestens drei unabhaengigen Quellen, harte Zahlen ausschliesslich
-  aus der Sportdaten-API, keine generierten Zitate, Aehnlichkeitspruefung gegen die Quelltexte,
-  presserechtliche Verantwortung liegt dann beim Betreiber.
-- Iran wird von Play Store und App Store nicht bedient; reale Zielgruppe ist die Diaspora.
-
-Empfohlener Start der Fachanwendung: nur Sportdaten plus Feed-Teaser mit Link,
-KI-Redaktion erst als zweite Stufe.
-
----
-
-## 7. Architektur (Zielbild)
-
-Cron-Job im Backend holt Feeds und Sportdaten, normalisiert, schreibt nach Postgres.
-Nur dieser Job spricht nach aussen, nie die App. App holt ihren personalisierten Feed
-ueber eine Edge Function (Cursor-Pagination, gecacht) und oeffnet Artikel im Browser-Tab.
-Auth liefert das Token, RLS entscheidet pro Zeile.
-
----
-
-## 8. Offene Punkte
 
 1. Juristische Pruefung des Datenschutzteils vor Veroeffentlichung.
 2. App-Name, Icon, Farbschema noch offen.
 3. Supabase-Projekte (Staging und Produktion) noch nicht angelegt.
 
 Entschieden am 11.11.2026, frueher offen:
-- Mandantenfaehigkeit: **nein**. Einzelnutzer-Apps, keine Organisationen.
-  Falls eine spaetere App es braucht, ist das deren Erweiterung.
+- Mandantenfaehigkeit: am 11.11. verneint, **am 20.11.2026 revidiert: ja.**
+  Organisationen von Anfang an in der Basis (`organizations`, `organization_members`,
+  `organization_id` in jeder Fachtabelle inkl. Audit-Log). Bei Registrierung wird eine
+  persoenliche Organisation angelegt; Einzelnutzer-Apps merken davon nichts.
+  Grund: Nachruesten ist laut Recherche der teuerste Umbau; WandAkte braucht Betriebe.
+  Details: `Architektur-Grundlage.md`, Abschnitt 3. Meilensteinplan dort (M0-M6) ersetzt Abschnitt 8.
 - Anmeldung: zunaechst **nur E-Mail und Passwort**. Google und Apple spaeter.
   Das Profilmodell wird aber schon so gebaut, dass ein Nutzer mehrere
   Anmeldearten haben kann (vermeidet spaetere Migration).
 
 ---
 
-## 9. Projektstruktur
+## 7. Projektstruktur
 
 ```
 base-app/
@@ -162,7 +140,7 @@ Ordnernamen englisch, Inhalte deutsch.
 
 ---
 
-## 10. Meilensteinplan der Grundapp
+## 8. Meilensteinplan der Grundapp (ueberholt, gilt: Architektur-Grundlage.md Abschnitt 15)
 
 | Nr. | Inhalt | Ergebnis |
 |---|---|---|
@@ -181,30 +159,36 @@ M5 nicht ueberspringen - ein Fehler in den Policies ist ein Datenleck.
 
 ---
 
-## 11. Erste Fachanwendung: Sprachlern-App
+## 9. Wichtiger Code
 
-Methodik: **Leitner-Kartei** (Sebastian Leitner, 1972), verteiltes Wiederholen.
+Hier zentrale Code-Stellen festhalten (Datei, Zweck, Besonderheit), sobald sie entstehen.
 
-- 5 Faecher. Neue Karte startet in Fach 1.
-- Richtig beantwortet: die Karte rueckt ein Fach weiter.
-- Falsch beantwortet: zurueck nach Fach 1, unabhaengig vom bisherigen Fach.
-- Aus Fach 5 heraus gilt die Karte als gelernt.
-- Abstaende je Fach, z. B. 1 / 2 / 4 / 9 / 14 Tage.
-
-Digital wird **nicht** die Fachgroesse abgebildet, sondern pro Karte das Fach und
-das naechste Faelligkeitsdatum; die Tagesabfrage holt alle faelligen Karten.
-Die Vorgabe "10 Vokabeln taeglich" steuert nur die Zahl **neuer** Karten;
-Wiederholungen kommen zusaetzlich und schwanken.
-
-Bewusste Entscheidung: Leitner statt SM-2 oder FSRS. Diese sind messbar
-effizienter, aber komplexer. Da pro Karte ohnehin Faelligkeitsdatum und
-Historie gespeichert werden, ist ein spaeterer Wechsel moeglich.
-
-Umsetzung erst, wenn die Grundapp vollstaendig funktioniert.
+| Datei | Zweck | Hinweis |
+|---|---|---|
+| `frontend/src/config/app-identity.json` | Name, Version, Kennungen, Farbe - einzige Stelle je Klon | JSON statt TS, weil `app.config.ts` keine weiteren TS-Dateien laden kann |
+| `frontend/app.config.ts` | Expo-Konfiguration, liest `app-identity.json` | `runtimeVersion` Policy `appVersion`; Web `output: single` (SPA, statisch auslieferbar) |
+| `frontend/src/app/` | Routen (Expo Router) | SDK 58 legt Routen unter `src/app` ab (nicht `app/` wie in Architektur-Grundlage); Routen duenn, Screens aus `src/core`/`src/features` |
+| `frontend/src/shared/lib/version.ts` | Versionsvergleich fuer Mindestversion-Schalter (M5) | erster Jest-Test |
+| `frontend/tsconfig.json` | `types: ["jest"]` | TypeScript 6 bindet `@types/*` nicht mehr automatisch ein |
+| `backend/package.json` | Supabase-CLI als devDependency, Skripte `db:*` | keine globale Installation noetig |
+| `.github/workflows/ci.yml` | Lint, Typen, Tests, Web-Build | DB-Job folgt in M1 |
 
 ---
 
-## 12. Chronik
+## 10. Fehler und Loesungen
+
+Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht werden.
+
+| Datum | Fehler | Ursache | Loesung |
+|---|---|---|---|
+| 20.11.2026 | `expo lint`/`expo install` brechen ab, `require` in `app.config.js` scheitert | `app.config.ts` importierte `src/config/app.config.ts`; Expo kann aus der Config keine weiteren TS-Dateien laden | Werte in `app-identity.json`, beide Seiten importieren das JSON |
+| 20.11.2026 | `tsc`: `Cannot find name 'describe'` | TypeScript 6 laedt `@types/jest` nicht mehr automatisch | `"types": ["jest"]` in `tsconfig.json` |
+| 20.11.2026 | Jest-Pakete landeten in `dependencies` | `npx expo install ... -- --save-dev` hat das Flag nicht durchgereicht | danach `npm install --save-dev` mit denselben Versionen |
+| 20.11.2026 | `docker info`: Pipe nicht gefunden | Rancher Desktop nicht gestartet | Rancher Desktop starten, dann `npm run db:start` |
+
+---
+
+## 11. Chronik
 
 - 10.11.2026 - Idee besprochen; Technologiewahl getroffen (React Native/Expo + Supabase),
   UI5/Cordova und MDK verworfen. Rechtslage Nachrichtenuebernahme ausfuehrlich geklaert,
@@ -217,3 +201,18 @@ Umsetzung erst, wenn die Grundapp vollstaendig funktioniert.
   Git initialisiert, README und .gitignore erstellt, Wissensdatei nach `docs` umgezogen.
   Technologiewahl auf Nachfrage erneut geprueft (Flutter, Kotlin, Firebase, eigenes Backend):
   Entscheidung fuer React Native und Supabase bestaetigt.
+- 20.11.2026 - Uebergreifende Wissensdatei `MY-APPS/MY-APPS-Wissen.md` angelegt.
+  Fachanwendungen (Abschnitte Sportnachrichten-Recht und Sprachlern-App) dorthin verschoben;
+  diese Datei enthaelt nur noch base-app-Wissen. Abschnitte Wichtiger Code und Fehler ergaenzt.
+- 20.11.2026 - Recherche zu Erfahrungen anderer (Supabase, Expo, Mandanten, Offline, Deployment);
+  Ergebnis in `Architektur-Grundlage.md` inkl. ueberarbeitetem Meilensteinplan M0-M6.
+- 20.11.2026 - Entscheidung: Organisationen (Mandanten) von Anfang an in der Basis.
+  Meilensteinplan aus `Architektur-Grundlage.md` gilt ab jetzt.
+- 20.11.2026 - Ordner aus OneDrive nach `C:\Users\alh\Documents\MY-APPS` verschoben.
+- 20.11.2026 - M0 begonnen: Expo SDK 58 (React Native 0.88, React 19.3, TypeScript 6),
+  Demo-Inhalte entfernt, Ordnerstruktur `src/app|config|core|shared|features`,
+  `app.config.ts` + `app-identity.json`, ESLint, Jest, Web-Export, expo-doctor 20/20.
+  Supabase-CLI 3.2.0 in `backend/`, `supabase init` (project_id `base-app`).
+  CI-Workflow angelegt. Lernunterlagen `docs/lernen/00-ueberblick.md`, `01-lokal-starten.md`.
+  Offen fuer M0: `supabase start` (Docker lief nicht), GitHub-Repo + erster CI-Lauf,
+  Start auf dem Handy (Expo Go).
