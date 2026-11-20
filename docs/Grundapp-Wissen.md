@@ -310,3 +310,10 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
   Optionen beim Anlegen: Data API an, "Grant API access to new tables automatically" an
   (Migrationen verlassen sich auf die Standardrechte wie lokal), "Enable RLS automatically" an.
   Erstes generiertes DB-Passwort war im Chat gelandet -> vor dem Anlegen neu erzeugt.
+- 20.11.2026 - Staging-Auth im Dashboard: Passwort min. 8 + "Letters and digits", Email OTP length 6
+  (Standard war 8 - haette jeden Code abgelehnt), Confirm email an. **Mail-Vorlagen sind ohne eigenen
+  SMTP nicht editierbar** -> Staging verschickt die Standard-Mail mit Link statt Code.
+  Entscheidung Alireza: vorerst ohne SMTP. Folge: Registrierung auf Staging per Link bestaetigen und
+  danach in der App mit Passwort anmelden; Passwort-Reset auf Staging funktioniert nicht; der
+  eingebaute Versand geht nur an Organisationsmitglieder (eigene Adresse). SMTP (EU-Anbieter) vor
+  Tests mit weiteren Personen einrichten, dann Vorlagen aus backend/supabase/templates uebernehmen.
