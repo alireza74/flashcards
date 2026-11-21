@@ -323,3 +323,8 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
   `staging` (SUPABASE_PROJECT_REF, SUPABASE_DB_PASSWORD), Variable STAGING_ENABLED=true.
   Erster manueller Lauf **Deploy Staging gruen** (3:48 min, beide Jobs): Migrationen 0001-0006 auf
   Staging (geprueft: app_settings anon lesbar, organizations anon 401), EAS Update an Kanal preview.
+- 21.11.2026 - Erster Android-Build (EAS, Profil preview, APK) erfolgreich: Build e8d706f4, Version 0.1.0,
+  Version code 1, Dauer ca. 22 min. Signierschluessel hat EAS beim ersten Build selbst erzeugt und
+  verwahrt (nicht verlieren: ohne ihn keine Updates der installierten App). Hinweis in GitHub:
+  actions/checkout@v4, setup-node@v4, expo-github-action@v8 laufen noch auf Node 20 -> spaeter
+  auf neuere Hauptversionen umstellen.
