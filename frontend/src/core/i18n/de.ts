@@ -100,6 +100,9 @@ export const de = {
     changePassword: 'Passwort ändern',
     sectionPrivacy: 'Datenschutz',
     sectionLegal: 'Rechtliches',
+    versionEmbedded: 'Version {{version}} · eingebaut (Kanal {{channel}})',
+    versionUpdate: 'Version {{version}} · Update {{update}} (Kanal {{channel}})',
+    versionWeb: 'Version {{version}} · Web',
   },
   privacy: {
     consents: {

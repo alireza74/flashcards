@@ -101,6 +101,9 @@ export const fa: Translations = {
     changePassword: 'تغییر رمز عبور',
     sectionPrivacy: 'حریم خصوصی',
     sectionLegal: 'اطلاعات حقوقی',
+    versionEmbedded: 'نسخهٔ {{version}} · داخلی (کانال {{channel}})',
+    versionUpdate: 'نسخهٔ {{version}} · به‌روزرسانی {{update}} (کانال {{channel}})',
+    versionWeb: 'نسخهٔ {{version}} · وب',
   },
   privacy: {
     consents: {

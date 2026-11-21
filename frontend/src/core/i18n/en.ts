@@ -101,6 +101,9 @@ export const en: Translations = {
     changePassword: 'Change password',
     sectionPrivacy: 'Privacy',
     sectionLegal: 'Legal',
+    versionEmbedded: 'Version {{version}} · built-in (channel {{channel}})',
+    versionUpdate: 'Version {{version}} · update {{update}} (channel {{channel}})',
+    versionWeb: 'Version {{version}} · web',
   },
   privacy: {
     consents: {

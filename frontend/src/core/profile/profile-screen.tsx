@@ -2,8 +2,11 @@
 // (Einwilligungen, Export, Konto loeschen), Rechtliches, Abmelden.
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
+import * as Updates from 'expo-updates';
+import type { TFunction } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 
@@ -11,6 +14,7 @@ import { signOut } from '@/core/auth/auth-api';
 import { useAuth } from '@/core/auth/auth-provider';
 import i18n, { languageNames, supportedLanguages, type Language } from '@/core/i18n';
 import { changeLanguage, isRtlLanguage } from '@/core/i18n/language';
+import { appMeta } from '@/core/monitoring/log-file';
 import { PrivacySection } from '@/core/privacy/privacy-section';
 import { AppText } from '@/shared/ui/app-text';
 import { Button } from '@/shared/ui/button';
@@ -131,6 +135,24 @@ export function ProfileScreen() {
 
       <Button variant="secondary" title={t('home.signOut')} onPress={() => signOut().catch(() => undefined)} />
       <Button variant="link" title={t('common.back')} onPress={() => router.back()} />
+
+      {/* Welcher Stand laeuft? Hilft beim Testen und bei Rueckfragen */}
+      <AppText variant="caption" tone="secondary" selectable style={{ textAlign: 'center' }}>
+        {versionLabel(t)}
+      </AppText>
     </Screen>
   );
+}
+
+// "Version 0.1.0 · Update 5b9c2281 (preview)" bzw. "... · eingebaut", im Web "... · Web"
+function versionLabel(t: TFunction): string {
+  const meta = appMeta();
+  const version = meta.appVersion ?? '-';
+  if (Platform.OS === 'web') {
+    return t('profile.versionWeb', { version });
+  }
+  if (Updates.isEmbeddedLaunch || !meta.updateId) {
+    return t('profile.versionEmbedded', { version, channel: meta.channel ?? '-' });
+  }
+  return t('profile.versionUpdate', { version, update: meta.updateId.slice(0, 8), channel: meta.channel ?? '-' });
 }

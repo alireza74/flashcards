@@ -11,6 +11,7 @@ uebernehmen und ob danach etwas zu tun ist ("Aktion").
 - Fehlerprotokoll auf dem Geraet (Modul `src/core/monitoring`, Sammelstelle `reportError`), nur mit
   Einwilligung, "Protokoll teilen" im Profil. Migration 0007 (Server-Tabelle) wurde mit 0008 wieder entfernt.
   Neue Text-Schluessel `monitoring.*`.
+- Profil zeigt unten App-Version, Update-Kennung und Kanal (Text-Schluessel `profile.version*`).
 
 ### Behoben
 - Build Android: Code wird vor dem Pruefschritt geholt.

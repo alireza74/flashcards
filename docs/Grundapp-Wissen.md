@@ -352,3 +352,8 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
   Teilen-Dialog, Web: Download), ohne Einwilligung nur Sitzung. Im Browser getestet (ohne/mit Einwilligung,
   Fehler mit ID, Filter, Neuladen, Widerruf). Auf dem Handy noch nicht getestet (Dateisystem).
   67 pgTAP-, 42 Jest-Tests. Juristisch offen: Speichern auf dem Endgeraet ohne Einwilligung zulaessig?
+- 21.11.2026 - Fehlerprotokoll und EAS Update auf dem Emulator bestaetigt ("funktioniert"). Erkenntnis aus
+  logcat: Update wurde geladen (NEW_UPDATE_LOADED, isUpdatePending), aber die App lief im Hintergrund weiter
+  (gleiche Prozessnummer) - erst Wegwischen bzw. "Beenden erzwingen" startet den neuen Stand.
+  Diagnose am Emulator: adb unter %LOCALAPPDATA%AndroidSdkplatform-toolsadb.exe, Filter "dev.expo.updates".
+  Neu: Versionsanzeige unten im Profil (Version, Update-Kennung bzw. "eingebaut", Kanal).
