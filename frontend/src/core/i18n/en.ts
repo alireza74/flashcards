@@ -107,7 +107,7 @@ export const en: Translations = {
       title: 'Consents',
       intro: 'Voluntary and revocable at any time. The app stays fully usable without consent.',
       analytics: 'Usage statistics (anonymized)',
-      crash_reports: 'Crash reports',
+      crash_reports: 'Crash and error reports',
       push: 'Push notifications',
       personalization: 'Personalized content',
     },
@@ -136,8 +136,16 @@ export const en: Translations = {
     imprintTitle: 'Legal notice',
     draftNotice: 'Draft - have it reviewed by a lawyer before publishing.',
     privacyBody:
-      'Controller: [name, address, email]. We only process the data required for your account: email address and display name. Data is stored on servers in the EU (Frankfurt). Optional processing (e.g. crash reports) only happens with your consent, which you can revoke at any time in the settings. You can export your data and delete your account at any time. Legal bases, recipients, retention periods and your rights: [to be completed].',
+      'Controller: [name, address, email]. We only process the data required for your account: email address and display name. Data is stored on servers in the EU (Frankfurt). Optional processing (e.g. crash reports) only happens with your consent, which you can revoke at any time in the settings. You can export your data and delete your account at any time. Legal bases, recipients, retention periods and your rights: [to be completed]. Error reports: Only if you agree, the app sends a technical report when an error occurs (error message, app version, device type, last steps in the app - without your input) to our server in the EU. Reports are deleted after 90 days.',
     imprintBody: 'Information according to § 5 DDG: [name, address, contact]. [to be completed]',
+  },
+  monitoring: {
+    title: 'Something went wrong',
+    body: 'This view could not be displayed. Please try again.',
+    errorId: 'Error ID: {{id}} - please mention it when contacting support.',
+    testButton: 'Send test report',
+    testSent: 'Test report sent. Error ID: {{id}}',
+    testDisabled: 'Allow crash reports first, then a test report is possible.',
   },
   update: {
     title: 'Update required',

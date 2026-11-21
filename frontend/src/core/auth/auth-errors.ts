@@ -1,4 +1,6 @@
 // Uebersetzt Fehler von Supabase Auth in i18n-Schluessel (auth.errors.*).
+import { reportError } from '@/core/monitoring/error-sink';
+
 // Die Codes wurden gegen das lokale Supabase geprueft (20.11.2026).
 
 const knownCodes = [
@@ -53,4 +55,6 @@ export function logUnknownAuthError(error: unknown): void {
         }
       : { type: typeof error };
   console.warn('[auth] unbekannter Fehler', details);
+  // zusaetzlich als Fehlerbericht (nur mit Einwilligung; Text wird dort gefiltert)
+  reportError(error, { level: 'warning', context: { source: 'auth' } });
 }

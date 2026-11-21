@@ -9,6 +9,7 @@ import type { Session } from '@supabase/supabase-js';
 import { useQueryClient } from '@tanstack/react-query';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 
+import { addBreadcrumb, clearBreadcrumbs } from '@/core/monitoring/breadcrumbs';
 import { supabase } from '@/core/supabase/client';
 
 type AuthContextValue = {
@@ -40,6 +41,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data } = supabase.auth.onAuthStateChange((event, newSession) => {
       setSession(newSession);
+      if (event === 'SIGNED_OUT') {
+        // Schritte des vorigen Nutzers nie in Berichte des naechsten uebernehmen
+        clearBreadcrumbs();
+      }
+      addBreadcrumb('auth', event);
       if (newSession) {
         setPendingEmail(undefined);
       }

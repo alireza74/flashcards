@@ -43,6 +43,7 @@ Danach: `npm install` in `frontend/` und `backend/`, `.env.local` wie in `docs/l
   (`docs/lernen/anleitung-neue-tabelle.md`). Test `01_security_baseline` prueft das automatisch.
 - Datenexport ergaenzen: neue Migration mit `create or replace function public.export_my_data()`,
   die Fachtabellen hinzufuegt (siehe `0006_privacy.sql`).
+- Fehler melden mit `reportError` aus `@/core/monitoring/error-sink` (siehe `docs/lernen/07-fehlerberichte.md`).
 - Texte in `frontend/src/core/i18n/de.ts`, `en.ts`, `fa.ts` - fuer Fachtexte einen eigenen
   Abschnitt (z. B. `cards: { ... }`) anlegen, damit Merges aus der Basis selten kollidieren.
 - `core/` und `shared/` moeglichst nicht im Klon aendern. Was allgemein nuetzlich ist, in der

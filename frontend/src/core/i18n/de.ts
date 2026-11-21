@@ -106,7 +106,7 @@ export const de = {
       title: 'Einwilligungen',
       intro: 'Freiwillig und jederzeit widerrufbar. Ohne Einwilligung bleibt die App voll nutzbar.',
       analytics: 'Nutzungsstatistik (anonymisiert)',
-      crash_reports: 'Absturzberichte',
+      crash_reports: 'Absturz- und Fehlerberichte',
       push: 'Push-Benachrichtigungen',
       personalization: 'Personalisierte Inhalte',
     },
@@ -135,8 +135,16 @@ export const de = {
     imprintTitle: 'Impressum',
     draftNotice: 'Entwurf - vor Veröffentlichung juristisch prüfen lassen.',
     privacyBody:
-      'Verantwortlich: [Name, Anschrift, E-Mail]. Wir verarbeiten nur die Daten, die für dein Konto nötig sind: E-Mail-Adresse und Anzeigename. Die Daten liegen auf Servern in der EU (Frankfurt). Freiwillige Verarbeitungen (z. B. Absturzberichte) erfolgen nur mit deiner Einwilligung, die du jederzeit in den Einstellungen widerrufen kannst. Du kannst deine Daten jederzeit exportieren und dein Konto löschen. Rechtsgrundlagen, Empfänger, Speicherdauer und deine Rechte: [ergänzen].',
+      'Verantwortlich: [Name, Anschrift, E-Mail]. Wir verarbeiten nur die Daten, die für dein Konto nötig sind: E-Mail-Adresse und Anzeigename. Die Daten liegen auf Servern in der EU (Frankfurt). Freiwillige Verarbeitungen (z. B. Absturzberichte) erfolgen nur mit deiner Einwilligung, die du jederzeit in den Einstellungen widerrufen kannst. Du kannst deine Daten jederzeit exportieren und dein Konto löschen. Rechtsgrundlagen, Empfänger, Speicherdauer und deine Rechte: [ergänzen]. Fehlerberichte: Nur wenn du zustimmst, sendet die App bei einem Fehler einen technischen Bericht (Fehlermeldung, App-Version, Gerätetyp, letzte Schritte in der App - ohne deine Eingaben) an unseren Server in der EU. Berichte werden nach 90 Tagen gelöscht.',
     imprintBody: 'Angaben gemäß § 5 DDG: [Name, Anschrift, Kontakt]. [ergänzen]',
+  },
+  monitoring: {
+    title: 'Etwas ist schiefgelaufen',
+    body: 'Diese Ansicht konnte nicht angezeigt werden. Bitte versuche es erneut.',
+    errorId: 'Fehler-ID: {{id}} - nenne sie bei Rückfragen dem Support.',
+    testButton: 'Testbericht senden',
+    testSent: 'Testbericht gesendet. Fehler-ID: {{id}}',
+    testDisabled: 'Erst Absturzberichte erlauben, dann ist ein Testbericht möglich.',
   },
   update: {
     title: 'Update erforderlich',

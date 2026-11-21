@@ -10,8 +10,8 @@
 // macht RLS in der Datenbank.
 import '@/core/i18n';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Stack } from 'expo-router';
+import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Stack, type ErrorBoundaryProps } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 
@@ -19,13 +19,35 @@ import { UpdateRequiredScreen } from '@/core/app-version/update-required-screen'
 import { useMinVersionCheck } from '@/core/app-version/use-min-version';
 import { AuthProvider, useAuth } from '@/core/auth/auth-provider';
 import { restoreLanguage } from '@/core/i18n/language';
+import { reportError } from '@/core/monitoring/error-sink';
+import { ErrorScreen } from '@/core/monitoring/error-screen';
+import { useMonitoring } from '@/core/monitoring/use-monitoring';
 import { useSyncProfileLanguage } from '@/core/profile/use-sync-profile-language';
 
 // Splash-Screen stehen lassen, bis Sitzung und Sprache geladen sind (kein Flackern).
 SplashScreen.preventAutoHideAsync();
 
+// Fehler beim Laden/Speichern von Daten zentral als Fehlerbericht melden (Stufe warning).
+function createQueryClient() {
+  return new QueryClient({
+    queryCache: new QueryCache({
+      onError: (error, query) =>
+        reportError(error, { level: 'warning', context: { source: `query ${String(query.queryKey[0])}` } }),
+    }),
+    mutationCache: new MutationCache({
+      onError: (error) => reportError(error, { level: 'warning', context: { source: 'mutation' } }),
+    }),
+  });
+}
+
+// Expo Router zeigt diese Komponente, wenn beim Darstellen einer Seite ein Fehler auftritt.
+export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
+  const [errorId] = useState(() => reportError(error, { level: 'fatal', context: { source: 'render' } }));
+  return <ErrorScreen errorId={errorId} onRetry={() => void retry()} />;
+}
+
 export default function RootLayout() {
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(createQueryClient);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -43,6 +65,7 @@ function RootNavigator() {
   const signedIn = session !== null;
 
   useSyncProfileLanguage();
+  useMonitoring();
 
   useEffect(() => {
     restoreLanguage().finally(() => setLanguageReady(true));

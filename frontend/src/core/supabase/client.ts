@@ -5,11 +5,14 @@ import { createClient } from '@supabase/supabase-js';
 import { AppState, Platform } from 'react-native';
 
 import { env } from '@/core/config/env';
+import { monitoredFetch } from '@/core/monitoring/monitored-fetch';
 
 import type { Database } from './database.types';
 import { LargeSecureStore } from './large-secure-store';
 
 export const supabase = createClient<Database>(env.supabaseUrl, env.supabasePublishableKey, {
+  // jede Anfrage als Schritt notieren (fuer Fehlerberichte; ohne Inhalte)
+  global: { fetch: monitoredFetch },
   auth: {
     // Handy: verschluesselt (LargeSecureStore). Web: Standard des Browsers (localStorage).
     storage: Platform.OS === 'web' ? undefined : new LargeSecureStore(),

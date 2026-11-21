@@ -1,6 +1,9 @@
 // Schaltflaeche in drei Varianten: primary (Hauptaktion), secondary, link (Textlink).
 import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native';
 
+// Ausnahme von der Schichtregel: breadcrumbs.ts hat keine weiteren Abhaengigkeiten.
+import { addBreadcrumb } from '@/core/monitoring/breadcrumbs';
+
 import { radius, spacing, usePalette } from './theme';
 
 type ButtonProps = {
@@ -32,7 +35,11 @@ export function Button({ title, onPress, variant = 'primary', loading = false, d
       aria-disabled={inactive}
       aria-busy={loading}
       disabled={inactive}
-      onPress={onPress}
+      onPress={() => {
+        // Schritt fuer Fehlerberichte: welcher Knopf (Beschriftung ist ein fester App-Text)
+        addBreadcrumb('ui', `Knopf: ${title}`);
+        onPress();
+      }}
       style={({ pressed }) => [
         styles.base,
         variant === 'link' ? styles.link : styles.box,

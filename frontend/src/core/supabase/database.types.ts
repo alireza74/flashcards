@@ -110,6 +110,75 @@ export type Database = {
         };
         Relationships: [];
       };
+      error_reports: {
+        Row: {
+          app_version: string | null;
+          breadcrumbs: NonNullable<Json>;
+          channel: string | null;
+          context: NonNullable<Json>;
+          created_at: string;
+          device_model: string | null;
+          id: string;
+          level: string;
+          message: string;
+          occurred_at: string;
+          organization_id: string | null;
+          os_version: string | null;
+          platform: string | null;
+          short_id: string;
+          stack: string | null;
+          update_id: string | null;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          app_version?: string | null;
+          breadcrumbs?: NonNullable<Json>;
+          channel?: string | null;
+          context?: NonNullable<Json>;
+          created_at?: string;
+          device_model?: string | null;
+          id?: string;
+          level?: string;
+          message: string;
+          occurred_at: string;
+          organization_id?: string | null;
+          os_version?: string | null;
+          platform?: string | null;
+          short_id: string;
+          stack?: string | null;
+          update_id?: string | null;
+          user_id?: string;
+        };
+        Update: {
+          app_version?: string | null;
+          breadcrumbs?: NonNullable<Json>;
+          channel?: string | null;
+          context?: NonNullable<Json>;
+          created_at?: string;
+          device_model?: string | null;
+          id?: string;
+          level?: string;
+          message?: string;
+          occurred_at?: string;
+          organization_id?: string | null;
+          os_version?: string | null;
+          platform?: string | null;
+          short_id?: string;
+          stack?: string | null;
+          update_id?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "error_reports_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       feature_flags: {
         Row: {
           created_at: string;

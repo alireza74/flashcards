@@ -8,12 +8,15 @@ uebernehmen und ob danach etwas zu tun ist ("Aktion").
 ### Hinzugefuegt
 - Code-Seite: Knopf "Zurueck zur Anmeldung" (neuer Text-Schluessel `auth.verifyCode.backToSignIn`).
 - Unbekannte Auth-Fehler werden zur Diagnose protokolliert (nur name, code, status).
+- Eigene Fehlerberichte (Migration 0007 `error_reports`, Modul `src/core/monitoring`, Sammelstelle
+  `reportError`), nur mit Einwilligung, 90 Tage Aufbewahrung. Neue Text-Schluessel `monitoring.*`.
 
 ### Behoben
 - Build Android: Code wird vor dem Pruefschritt geholt.
 
 ### Aktion fuer Klone
-- Eigene Sprachabschnitte pruefen: Schluessel `auth.verifyCode.backToSignIn` ist neu.
+- Eigene Sprachabschnitte pruefen: Schluessel `auth.verifyCode.backToSignIn` und `monitoring.*` sind neu.
+- `npm run db:reset` (neue Migration 0007); in eigenen Funktionen Fehler mit `reportError` melden.
 
 ## 0.1.0 - 20.11.2026
 

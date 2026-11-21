@@ -6,6 +6,8 @@ import { useTranslation } from 'react-i18next';
 
 import { signOut } from '@/core/auth/auth-api';
 import { useAuth } from '@/core/auth/auth-provider';
+import { reportError } from '@/core/monitoring/error-sink';
+import { isPreviewBuild } from '@/core/monitoring/monitoring';
 import { AppText } from '@/shared/ui/app-text';
 import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
@@ -35,6 +37,15 @@ export function PrivacySection() {
   const [message, setMessage] = useState<{ tone: 'info' | 'error'; key: string }>();
   const [isExporting, setIsExporting] = useState(false);
   const [confirmDeletion, setConfirmDeletion] = useState(false);
+  const [testInfo, setTestInfo] = useState<string>();
+
+  const onTestReport = () => {
+    const errorId = reportError(new Error('Testbericht aus den Einstellungen'), {
+      level: 'warning',
+      context: { source: 'test' },
+    });
+    setTestInfo(errorId ? t('monitoring.testSent', { id: errorId }) : t('monitoring.testDisabled'));
+  };
 
   const onExport = async () => {
     setMessage(undefined);
@@ -92,6 +103,14 @@ export function PrivacySection() {
             />
           </View>
         ))}
+
+        {/* Nur Entwicklung und Test-APK: Probe-Bericht, um die Fehlerberichte zu pruefen */}
+        {isPreviewBuild() ? (
+          <>
+            {testInfo ? <FormMessage tone="info" text={testInfo} /> : null}
+            <Button variant="link" title={t('monitoring.testButton')} onPress={onTestReport} />
+          </>
+        ) : null}
 
         <AppText variant="label">{t('privacy.export.title')}</AppText>
         <AppText variant="caption" tone="secondary">

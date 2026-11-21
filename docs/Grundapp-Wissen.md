@@ -126,7 +126,7 @@ Stand 20.11.2026 nach M0-M6:
 - Keine Oberflaechentests (Maestro) und keine Komponententests; nur Logik (Jest) und DB (pgTAP).
 - Keine Team-Funktionen: Team-Organisation anlegen, Einladungen, Rollen vergeben in der App
   (Datenbank kann es, UI fehlt) - Plan "spaeter" in Architektur-Grundlage Abschnitt 15.
-- Sentry/Absturzberichte nicht eingebaut (Einwilligung `crash_reports` existiert schon).
+- Fehlerberichte: harte native Abstuerze nicht erfasst; keine Alarm-Mail (Auswertung per SQL).
 - Tabellenrechte fuer `anon`/`authenticated` kommen aus Supabase-Standardrechten; robuster waere,
   sie in jeder Migration ausdruecklich zu vergeben (dann unabhaengig von Projekteinstellungen).
 
@@ -336,3 +336,11 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
 - 21.11.2026 - Beide Kleinigkeiten umgesetzt: Code-Seite mit "Zurueck zur Anmeldung" (DE/EN/FA);
   unbekannte Auth-Fehler werden mit name/code/status protokolliert (console.warn, ohne Nachricht,
   damit keine E-Mail-Adressen ins Protokoll gelangen; Test prueft das). Auslieferung per EAS Update.
+- 21.11.2026 - Eigene Fehlerberichte statt Sentry (Entscheidung Alireza): Migration 0007 error_reports
+  (Einwilligung per Policy erzwungen, nur anlegen, 30/h, 90 Tage, Export), App-Modul src/core/monitoring
+  (Sammelstelle reportError, Filter, 50 Schritte, Fehler-ID, Warteschlange, ErrorBoundary, Query-/Mutation-
+  Fehler, unbehandelte Fehler). 13 neue pgTAP-Pruefungen (78 gesamt), 11 neue Jest-Tests (38 gesamt).
+  Im Browser getestet: ohne Einwilligung kein Bericht, mit Einwilligung Bericht mit 10 Schritten und ohne
+  E-Mail, nach Widerruf kein Bericht. ErrorBoundary-Anzeige nicht gesondert getestet.
+  Fallstrick: eigene fetch-Huelle muss exakt typeof fetch sein, sonst verliert createClient<Database> die Typen.
+  Lernunterlage 07-fehlerberichte.md. Kein neuer Build noetig (nur Pakete, die schon in der APK sind).
