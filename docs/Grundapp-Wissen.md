@@ -357,3 +357,6 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
   (gleiche Prozessnummer) - erst Wegwischen bzw. "Beenden erzwingen" startet den neuen Stand.
   Diagnose am Emulator: adb unter %LOCALAPPDATA%AndroidSdkplatform-toolsadb.exe, Filter "dev.expo.updates".
   Neu: Versionsanzeige unten im Profil (Version, Update-Kennung bzw. "eingebaut", Kanal).
+- 21.11.2026 - **Version 0.2.0** der Basis abgeschlossen (Git-Tags v0.1.0 = Ende M6, v0.2.0 = heute).
+  Vorlagen-Version (CHANGELOG/Tag) ist getrennt von der App-Version in app-identity.json (bleibt 0.1.0,
+  sonst passen Updates nicht mehr zur installierten APK). Naechster Schritt: erste Fachanwendung als Klon.

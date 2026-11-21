@@ -3,7 +3,9 @@
 Was sich in der Basis geaendert hat - damit Klone wissen, was sie per `git merge upstream/main`
 uebernehmen und ob danach etwas zu tun ist ("Aktion").
 
-## Unveroeffentlicht
+## 0.2.0 - 21.11.2026
+
+Basis im Einsatz: Staging, APK und Updates ohne Neuinstallation auf dem Geraet getestet.
 
 ### Hinzugefuegt
 - Code-Seite: Knopf "Zurueck zur Anmeldung" (neuer Text-Schluessel `auth.verifyCode.backToSignIn`).
@@ -22,7 +24,7 @@ uebernehmen und ob danach etwas zu tun ist ("Aktion").
 
 ## 0.1.0 - 20.11.2026
 
-Erste vollstaendige Basis (Meilensteine M0 bis M6).
+Erste vollstaendige Basis (Meilensteine M0 bis M6). Git-Tag `v0.1.0`.
 
 ### Hinzugefuegt
 - **M0** Expo SDK 58 (React Native 0.88, TypeScript 6), Struktur `src/app|config|core|shared|features`,

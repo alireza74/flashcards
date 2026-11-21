@@ -62,6 +62,10 @@ Dieselben Pruefungen laufen bei jedem Push in GitHub Actions (`.github/workflows
 
 ## Stand
 
-Meilensteine M0-M6 umgesetzt. Offen sind die Schritte, die eigene Konten brauchen
-(Supabase-Cloud, Expo, GitHub-Secrets) und die juristische Pruefung der Rechtstexte -
-siehe `docs/Grundapp-Wissen.md`, Abschnitt "Offene Punkte".
+Version **0.2.0** (Git-Tag `v0.2.0`, Aenderungen in [CHANGELOG.md](CHANGELOG.md)).
+Im Einsatz auf Staging mit Test-APK; Updates kommen ohne Neuinstallation (EAS Update).
+Offen vor Store-Veroeffentlichung: eigener SMTP, juristische Pruefung der Rechtstexte,
+App-Name/Icon/Kennung, Produktionsprojekt - siehe `docs/Grundapp-Wissen.md`, Abschnitt "Offene Punkte".
+
+Hinweis: Die Vorlagen-Version (0.2.0) ist unabhaengig von der App-Version in
+`frontend/src/config/app-identity.json` (bestimmt, welche Updates zu welchem Build passen).
