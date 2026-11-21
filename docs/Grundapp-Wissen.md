@@ -328,3 +328,8 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
   verwahrt (nicht verlieren: ohne ihn keine Updates der installierten App). Hinweis in GitHub:
   actions/checkout@v4, setup-node@v4, expo-github-action@v8 laufen noch auf Node 20 -> spaeter
   auf neuere Hauptversionen umstellen.
+- 21.11.2026 - Erster Test der APK auf dem Handy gegen Staging: Registrierung, Bestaetigung, Anmeldung,
+  Profil - laut Alireza funktioniert alles. Erfahrungen: eingebauter Supabase-Mailversand ist nach
+  wenigen Mails pro Stunde erschoepft (Meldung "Too many emails requested"); Testkonten besser per
+  Dashboard "Add user" + "Auto Confirm". Offene Kleinigkeiten: Code-Seite braucht "Zurueck zur
+  Anmeldung"; unbekannte Auth-Fehler sollten den Code protokollieren (Diagnose).
