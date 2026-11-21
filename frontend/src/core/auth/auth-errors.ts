@@ -36,5 +36,21 @@ export function getAuthErrorKey(error: unknown): string {
   if (error && typeof error === 'object' && 'name' in error && error.name === 'AuthRetryableFetchError') {
     return 'auth.errors.network';
   }
+  logUnknownAuthError(error);
   return 'auth.errors.unknown';
+}
+
+// Unbekannte Fehler fuer die Diagnose protokollieren (Browser-Konsole, Android: logcat).
+// Bewusst nur technische Felder - keine Nachricht, die E-Mail oder andere Eingaben enthalten koennte.
+// Taucht ein Code hier oefter auf: in knownCodes und den Sprachdateien ergaenzen.
+export function logUnknownAuthError(error: unknown): void {
+  const details =
+    error && typeof error === 'object'
+      ? {
+          name: 'name' in error ? error.name : undefined,
+          code: 'code' in error ? error.code : undefined,
+          status: 'status' in error ? error.status : undefined,
+        }
+      : { type: typeof error };
+  console.warn('[auth] unbekannter Fehler', details);
 }

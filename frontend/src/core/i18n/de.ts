@@ -51,6 +51,7 @@ export const de = {
       resend: 'Code erneut senden',
       resent: 'Ein neuer Code ist unterwegs.',
       missingEmail: 'Dieser Schritt ist abgelaufen. Bitte melde dich erneut an oder registriere dich.',
+      backToSignIn: 'Zurück zur Anmeldung',
     },
     forgotPassword: {
       title: 'Passwort vergessen',

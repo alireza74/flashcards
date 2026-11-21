@@ -1,5 +1,33 @@
 import { getAuthErrorCode, getAuthErrorKey } from './auth-errors';
 
+// Protokollausgaben in den Tests abfangen (und pruefen, wo noetig)
+let warnSpy: jest.SpyInstance;
+beforeEach(() => {
+  warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+});
+afterEach(() => warnSpy.mockRestore());
+
+describe('Protokoll bei unbekannten Fehlern', () => {
+  it('protokolliert Code und Status, aber nie die Nachricht', () => {
+    getAuthErrorKey({
+      name: 'AuthApiError',
+      code: 'neuer_code',
+      status: 429,
+      message: 'Fehler fuer alice@example.test',
+    });
+    expect(warnSpy).toHaveBeenCalledTimes(1);
+    const logged = JSON.stringify(warnSpy.mock.calls[0]);
+    expect(logged).toContain('neuer_code');
+    expect(logged).toContain('429');
+    expect(logged).not.toContain('alice@example.test');
+  });
+
+  it('bekannte Fehler werden nicht protokolliert', () => {
+    getAuthErrorKey({ code: 'invalid_credentials' });
+    expect(warnSpy).not.toHaveBeenCalled();
+  });
+});
+
 describe('getAuthErrorKey', () => {
   it('bekannter Code wird zum i18n-Schluessel', () => {
     expect(getAuthErrorKey({ code: 'invalid_credentials', message: 'x' })).toBe(

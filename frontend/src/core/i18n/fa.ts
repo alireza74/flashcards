@@ -52,6 +52,7 @@ export const fa: Translations = {
       resend: 'ارسال دوبارهٔ کد',
       resent: 'کد جدید در راه است.',
       missingEmail: 'این مرحله منقضی شده است. لطفاً دوباره وارد شوید یا ثبت‌نام کنید.',
+      backToSignIn: 'بازگشت به ورود',
     },
     forgotPassword: {
       title: 'فراموشی رمز عبور',

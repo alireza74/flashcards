@@ -102,6 +102,12 @@ export function VerifyCodeScreen() {
         onPress={onResend}
         loading={isResending}
       />
+      {/* z. B. wenn die Bestaetigung per Link in der Mail erfolgt ist (Staging ohne eigenen SMTP) */}
+      <Button
+        variant="link"
+        title={t('auth.verifyCode.backToSignIn')}
+        onPress={() => router.replace('/sign-in')}
+      />
     </Screen>
   );
 }

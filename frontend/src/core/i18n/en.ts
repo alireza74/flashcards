@@ -52,6 +52,7 @@ export const en: Translations = {
       resend: 'Send code again',
       resent: 'A new code is on its way.',
       missingEmail: 'This step has expired. Please sign in or sign up again.',
+      backToSignIn: 'Back to sign in',
     },
     forgotPassword: {
       title: 'Forgot password',

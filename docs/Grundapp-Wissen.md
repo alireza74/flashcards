@@ -333,3 +333,6 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
   wenigen Mails pro Stunde erschoepft (Meldung "Too many emails requested"); Testkonten besser per
   Dashboard "Add user" + "Auto Confirm". Offene Kleinigkeiten: Code-Seite braucht "Zurueck zur
   Anmeldung"; unbekannte Auth-Fehler sollten den Code protokollieren (Diagnose).
+- 21.11.2026 - Beide Kleinigkeiten umgesetzt: Code-Seite mit "Zurueck zur Anmeldung" (DE/EN/FA);
+  unbekannte Auth-Fehler werden mit name/code/status protokolliert (console.warn, ohne Nachricht,
+  damit keine E-Mail-Adressen ins Protokoll gelangen; Test prueft das). Auslieferung per EAS Update.
