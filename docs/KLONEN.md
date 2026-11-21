@@ -21,6 +21,9 @@ git push -u origin main
 git config user.email "52157626+alireza74@users.noreply.github.com"
 ```
 
+Nicht `git push --tags` verwenden: Die Versions-Tags der Basis (v0.2.0 ...) gehoeren nicht ins
+Repo der Fachanwendung, sie bekommt eigene Versionsnummern.
+
 ## 2. Anpassen (nur diese Stellen)
 
 | Datei | Was |
