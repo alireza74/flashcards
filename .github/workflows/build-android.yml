@@ -17,14 +17,15 @@ jobs:
       run:
         working-directory: frontend
     steps:
+      # Zuerst den Code holen: alle run-Schritte laufen im Ordner frontend, den es erst danach gibt.
+      - uses: actions/checkout@v4
+
       - name: Konfiguration pruefen
         run: |
           if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
             echo "::error::Secret EXPO_TOKEN fehlt. Einrichtung: docs/lernen/06-m5-auslieferung.md"
             exit 1
           fi
-
-      - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:

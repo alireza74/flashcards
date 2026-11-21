@@ -214,6 +214,7 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
 | 20.11.2026 | `tsc`: `Cannot find name 'describe'` | TypeScript 6 laedt `@types/jest` nicht mehr automatisch | `"types": ["jest"]` in `tsconfig.json` |
 | 20.11.2026 | Jest-Pakete landeten in `dependencies` | `npx expo install ... -- --save-dev` hat das Flag nicht durchgereicht | danach `npm install --save-dev` mit denselben Versionen |
 | 20.11.2026 | `docker info`: Pipe nicht gefunden | Rancher Desktop nicht gestartet | Rancher Desktop starten, dann `npm run db:start` |
+| 21.11.2026 | Build Android: `No such file or directory` fuer `.../frontend` | Pruefschritt lief vor `actions/checkout`, Standard-Arbeitsordner `frontend` existierte noch nicht | checkout als ersten Schritt |
 | 20.11.2026 | Backup einspielen: `duplicate key ... app_settings_key_key` | Migrationen legen Startdaten an, das Daten-Backup enthaelt sie ebenfalls | vor dem Einspielen `truncate public.role_permissions, public.roles, public.permissions, public.app_settings cascade` |
 | 20.11.2026 | Nach Abmelden erscheint das Impressum statt der Anmeldeseite | Stack.Protected ohne `redirectTo` springt auf den Anker des Navigators (erste ungeschuetzte Seite) | `redirectTo` an jeder Protected-Gruppe setzen (`_layout.tsx`) |
 | 20.11.2026 | "Aktuelle Einwilligung" zufaellig bei zwei Eintraegen in einer Transaktion | `now()` ist in einer Transaktion konstant | `created_at default clock_timestamp()` |
