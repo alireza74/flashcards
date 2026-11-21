@@ -6,14 +6,14 @@ uebernehmen und ob danach etwas zu tun ist ("Aktion").
 ## Unveroeffentlicht
 
 ### Hinzugefuegt
-- Code-Seite: Knopf "Zurueck zur Anmeldung" (neuer Text-Schluessel ).
+- Code-Seite: Knopf "Zurueck zur Anmeldung" (neuer Text-Schluessel `auth.verifyCode.backToSignIn`).
 - Unbekannte Auth-Fehler werden zur Diagnose protokolliert (nur name, code, status).
 
 ### Behoben
 - Build Android: Code wird vor dem Pruefschritt geholt.
 
 ### Aktion fuer Klone
-- Eigene Sprachabschnitte pruefen: Schluessel  ist neu.
+- Eigene Sprachabschnitte pruefen: Schluessel `auth.verifyCode.backToSignIn` ist neu.
 
 ## 0.1.0 - 20.11.2026
 
