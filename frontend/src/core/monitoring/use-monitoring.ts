@@ -1,37 +1,39 @@
-// Verbindet die Fehlererfassung mit dem App-Zustand (im Wurzel-Layout aufgerufen):
-// - Einwilligung "crash_reports" an/aus -> Berichte an/aus
-// - aktive Organisation an Berichte haengen
+// Verbindet das Fehlerprotokoll mit dem App-Zustand (im Wurzel-Layout aufgerufen):
+// - Erfassung einrichten
+// - Einwilligung "Fehlerprotokoll" an/aus -> Datei auf dem Geraet schreiben bzw. loeschen
 // - Seitenwechsel als Schritt notieren
 import { usePathname } from 'expo-router';
 import { useEffect } from 'react';
 
 import { useAuth } from '@/core/auth/auth-provider';
 import { useConsents } from '@/core/privacy/privacy-api';
-import { useProfile } from '@/core/profile/use-profile';
 
 import { addBreadcrumb } from './breadcrumbs';
-import { installMonitoring, setMonitoringEnabled, setMonitoringOrganization } from './monitoring';
+import { installDiagnostics } from './diagnostics';
+import { setLogPersistence } from './log-file';
 
 export function useMonitoring() {
   const { session } = useAuth();
   const userId = session?.user.id;
   const consents = useConsents(userId);
-  const profile = useProfile(userId);
   const pathname = usePathname();
 
   useEffect(() => {
-    installMonitoring();
+    installDiagnostics();
   }, []);
 
-  const consentGiven = userId !== undefined && consents.data?.crash_reports === true;
+  // Solange der Stand unbekannt ist (Laden), nichts aendern - sonst wuerde die Datei
+  // bei jedem Start kurz geloescht.
+  const consentKnown = userId !== undefined && consents.data !== undefined;
+  const consentGiven = consents.data?.crash_reports === true;
   useEffect(() => {
-    setMonitoringEnabled(consentGiven);
-  }, [consentGiven]);
-
-  const organizationId = profile.data?.active_organization?.id ?? null;
-  useEffect(() => {
-    setMonitoringOrganization(organizationId);
-  }, [organizationId]);
+    if (userId === undefined) {
+      // abgemeldet: nicht weiter schreiben, Datei behalten
+      void setLogPersistence(false, { keepFile: true });
+    } else if (consentKnown) {
+      void setLogPersistence(consentGiven);
+    }
+  }, [userId, consentKnown, consentGiven]);
 
   useEffect(() => {
     addBreadcrumb('navigation', pathname);

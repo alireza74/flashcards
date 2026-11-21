@@ -126,7 +126,8 @@ Stand 20.11.2026 nach M0-M6:
 - Keine Oberflaechentests (Maestro) und keine Komponententests; nur Logik (Jest) und DB (pgTAP).
 - Keine Team-Funktionen: Team-Organisation anlegen, Einladungen, Rollen vergeben in der App
   (Datenbank kann es, UI fehlt) - Plan "spaeter" in Architektur-Grundlage Abschnitt 15.
-- Fehlerberichte: harte native Abstuerze nicht erfasst; keine Alarm-Mail (Auswertung per SQL).
+- Fehlerprotokoll: harte native Abstuerze nicht erfasst; Fehler kommen nur an, wenn der Nutzer das
+  Protokoll teilt (spaeter evtl. "Protokoll anfordern" mit Bestaetigung).
 - Tabellenrechte fuer `anon`/`authenticated` kommen aus Supabase-Standardrechten; robuster waere,
   sie in jeder Migration ausdruecklich zu vergeben (dann unabhaengig von Projekteinstellungen).
 
@@ -344,3 +345,10 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
   E-Mail, nach Widerruf kein Bericht. ErrorBoundary-Anzeige nicht gesondert getestet.
   Fallstrick: eigene fetch-Huelle muss exakt typeof fetch sein, sonst verliert createClient<Database> die Typen.
   Lernunterlage 07-fehlerberichte.md. Kein neuer Build noetig (nur Pakete, die schon in der APK sind).
+- 21.11.2026 - Entscheidung Alireza: Fehlerberichte doch nicht an den Server, sondern Protokoll auf dem Geraet,
+  das der Nutzer selbst teilt. Migration 0008 entfernt error_reports wieder (0007 bleibt, war auf Staging).
+  Datei nur mit Einwilligung (crash_reports = "Fehlerprotokoll auf dem Geraet speichern"), 1000 Eintraege /
+  7 Tage, Widerruf loescht, Abmelden pausiert (Datei bleibt). "Protokoll teilen" im Profil (Handy:
+  Teilen-Dialog, Web: Download), ohne Einwilligung nur Sitzung. Im Browser getestet (ohne/mit Einwilligung,
+  Fehler mit ID, Filter, Neuladen, Widerruf). Auf dem Handy noch nicht getestet (Dateisystem).
+  67 pgTAP-, 42 Jest-Tests. Juristisch offen: Speichern auf dem Endgeraet ohne Einwilligung zulaessig?

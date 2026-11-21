@@ -3,10 +3,11 @@
 //   import { reportError } from '@/core/monitoring/error-sink';
 //   reportError(error, { context: { source: 'cards: speichern' } });
 //
-// Wohin die Meldung geht, bestimmt monitoring.ts (registriert sich beim Start).
+// Wohin die Meldung geht, bestimmt diagnostics.ts (registriert sich beim Start):
+// Eintrag mit Fehler-ID ins Fehlerprotokoll.
 // Diese Datei hat bewusst keine Abhaengigkeiten - dadurch ueberall importierbar und testbar.
 
-import type { ErrorLevel } from './report';
+export type ErrorLevel = 'warning' | 'error' | 'fatal';
 
 export type CaptureOptions = {
   level?: ErrorLevel;
@@ -22,7 +23,7 @@ export function setErrorSink(next: Sink | null): void {
   sink = next;
 }
 
-// Liefert die Fehler-ID, wenn ein Bericht erstellt wird (nur mit Einwilligung), sonst null.
+// Liefert die Fehler-ID des Protokolleintrags (null nur, wenn die Erfassung nicht eingerichtet ist).
 export function reportError(error: unknown, options?: CaptureOptions): string | null {
   try {
     return sink ? sink(error, options) : null;

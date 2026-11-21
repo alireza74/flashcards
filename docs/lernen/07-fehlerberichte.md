@@ -1,72 +1,68 @@
-# 07 - Fehlerberichte (eigene Loesung)
+# 07 - Fehlerprotokoll auf dem Geraet
 
 Stand: 21.11.2026. Ziel: Wenn bei einem Nutzer etwas schiefgeht, nachvollziehen koennen, was passiert
-ist - ohne externen Dienst und ohne persoenliche Inhalte.
+ist - ohne externen Dienst, ohne Server-Tabelle, ohne persoenliche Inhalte.
+
+Verlauf der Entscheidung: Zuerst Berichte an eine Supabase-Tabelle (Migration 0007), am selben Tag
+ersetzt durch ein Protokoll auf dem Geraet, das der Nutzer selbst teilt (Migration 0008 entfernt die Tabelle).
 
 ## Ablauf
 
 ```
-Fehler in der App
-  -> reportError(error)                       src/core/monitoring/error-sink.ts
-  -> nur wenn Einwilligung "Absturz- und Fehlerberichte" an:
-     Bericht bauen + filtern                   report.ts, sanitize.ts
-       Fehler, Code-Stelle, App-Version, Update-Stand, Geraet,
-       letzte 50 Schritte (Seiten, Knoepfe, Anfragen)          breadcrumbs.ts
-     zuerst lokal merken, dann senden          monitoring.ts
-  -> Supabase: Tabelle error_reports           Migration 0007
-       Policy prueft Einwilligung nochmals; Nutzer duerfen nur anlegen, nicht lesen
-  -> Nutzer sieht eine Fehler-ID (z. B. NDXE-6B5D) und kann sie dem Support nennen
+Waehrend der Nutzung
+  Seitenwechsel, Knoepfe, Supabase-Anfragen, An-/Abmeldung   -> Eintrag (info)
+  Fehler (reportError, unbehandelt, Darstellung, Laden)      -> Eintrag (warn/error) mit Fehler-ID
+      |
+      v
+  Sitzungsprotokoll im Arbeitsspeicher (immer, max. 200)     breadcrumbs.ts
+      |  nur mit Einwilligung "Fehlerprotokoll auf dem Geraet speichern"
+      v
+  Datei auf dem Geraet (max. 1000 Eintraege / 7 Tage)        log-file.ts
+      Handy: App-Ordner (fehlerprotokoll.jsonl), Web: Browser-Speicher
+
+Bei Problemen
+  Profil -> Datenschutz -> "Protokoll teilen"
+      Handy: Teilen-Dialog (Mail, Messenger), Web: Download
+      Inhalt: Kopf (App-Version, Update, Kanal, Plattform, Geraet) + eine Zeile je Eintrag
+      ohne Einwilligung: nur die Eintraege der aktuellen Sitzung
 ```
 
-## Was automatisch erfasst wird
+Beispiel einer geteilten Datei:
 
-| Quelle | Wo eingebaut | Stufe |
-|---|---|---|
-| Fehler beim Darstellen einer Seite | `ErrorBoundary` in `src/app/_layout.tsx` (zeigt Fehler-ID) | fatal |
-| Unbehandelte JavaScript-Fehler | `installMonitoring()` (Handy: ErrorUtils, Web: window) | error/fatal |
-| Fehler beim Laden/Speichern von Daten | `QueryCache`/`MutationCache` in `_layout.tsx` | warning |
-| Unbekannte Anmeldefehler | `auth-errors.ts` | warning |
+```
+Fehlerprotokoll
+Erstellt:     2026-11-21 21:31:30 UTC
+App-Version:  0.1.0
+Update:       3f2a... (Kanal preview)
+Plattform:    android 15
+Geraet:       Pixel 8
+Eintraege:    42
 
-Schritte (Breadcrumbs): Seitenwechsel (`use-monitoring.ts`), jeder Knopf (`shared/ui/button.tsx`),
-jede Supabase-Anfrage mit Pfad, Status und Dauer (`monitored-fetch.ts`), An-/Abmeldung (`auth-provider.tsx`).
-
-## Datenschutz
-
-- Nur mit Einwilligung; die Datenbank-Policy prueft sie zusaetzlich. Widerruf: keine neuen Berichte,
-  noch nicht gesendete werden verworfen.
-- Gefiltert vor dem Senden: E-Mail-Adressen, Tokens, Schluessel, Zahlen ab 6 Stellen (Codes),
-  Werte in URL-Parametern. Anfragen ohne Inhalte, nur Pfad.
-- Nutzer koennen Berichte weder lesen noch aendern; im Datenexport sind die eigenen enthalten.
-- Loeschung nach 90 Tagen (pg_cron, taeglich 03:30 UTC) und mit dem Konto.
-- Hoechstens 30 Berichte pro Nutzer und Stunde (Schutz vor Fehlerschleifen).
-- In der Datenschutzerklaerung erwaehnt (Platzhaltertext, juristisch pruefen).
+2026-11-21 21:31:19 INFO  navigation: /profile
+2026-11-21 21:31:19 INFO  http: GET /rest/v1/profiles -> 200 (76 ms)
+2026-11-21 21:31:25 INFO  ui: Knopf: Speichern
+2026-11-21 21:31:25 INFO  http: PATCH /rest/v1/profiles -> 400 (50 ms)
+2026-11-21 21:31:25 WARN  error: [mutation] PostgrestError 23514 [Fehler-ID WRAP-CG36]
+```
 
 ## Einen Fehler analysieren
 
-Nutzer nennt die Fehler-ID, z. B. `NDXE-6B5D`. In Supabase Studio -> SQL Editor:
+1. Nutzer nennt die Fehler-ID (steht auf der Fehlerseite) und schickt das Protokoll.
+2. In der Datei nach der Fehler-ID suchen; die Zeilen davor zeigen, wie es dazu kam.
+3. Kopf: welche App-Version und welcher Update-Stand betroffen ist.
+4. Schritte lokal nachstellen (`npm run web`), Fehler beheben, Test schreiben, pushen.
+5. Falls der Server beteiligt war (z. B. Status 400/500): Supabase-Dashboard -> Logs (API, Postgres)
+   zum selben Zeitpunkt.
 
-```sql
-select short_id, level, message, app_version, update_id, channel, platform,
-       device_model, context, occurred_at
-from public.error_reports
-where short_id = 'NDXE-6B5D';
+## Datenschutz
 
--- die Schritte davor, lesbar
-select jsonb_pretty(breadcrumbs) from public.error_reports where short_id = 'NDXE-6B5D';
-
--- haeufigste Fehler der letzten 7 Tage
-select message, count(*) as anzahl, max(occurred_at) as zuletzt
-from public.error_reports
-where occurred_at > now() - interval '7 days'
-group by message order by anzahl desc;
-```
-
-Mit `update_id` siehst du, welcher Stand (EAS Update) betroffen war.
-
-## Testen
-
-In der Entwicklung und in der Test-APK (Kanal preview) gibt es im Profil unter Datenschutz den
-Knopf **"Testbericht senden"**. Ohne Einwilligung kommt ein Hinweis, mit Einwilligung die Fehler-ID.
+- Datei nur mit Einwilligung (Zweck `crash_reports`, Text "Fehlerprotokoll auf dem Geraet speichern").
+  Widerruf loescht die Datei sofort. Beim Abmelden wird nicht weiter geschrieben, die Datei bleibt.
+- Gefiltert beim Eintragen: E-Mail-Adressen, Tokens, Schluessel, Zahlen ab 6 Stellen (Codes),
+  Werte in URL-Parametern. Anfragen nur mit Pfad, ohne Inhalte.
+- Die Datei verlaesst das Geraet nur, wenn der Nutzer sie selbst teilt.
+- Offen fuer die juristische Pruefung: ob das Speichern auf dem Endgeraet die Einwilligung braucht
+  (vorsichtig umgesetzt: ja) und der Text in der Datenschutzerklaerung.
 
 ## In eigenen Funktionen nutzen
 
@@ -77,14 +73,28 @@ try {
   await saveCard(card);
 } catch (error) {
   const errorId = reportError(error, { context: { source: 'cards: speichern' } });
-  // errorId anzeigen, falls vorhanden
+  // errorId anzeigen, damit der Nutzer sie nennen kann
 }
 ```
 
 In `context` nur technische Angaben, nie Eingaben des Nutzers.
 
+## Dateien
+
+| Datei | Aufgabe |
+|---|---|
+| `src/core/monitoring/error-sink.ts` | Sammelstelle `reportError` (ohne Abhaengigkeiten) |
+| `src/core/monitoring/diagnostics.ts` | Fehler mit Fehler-ID eintragen, unbehandelte Fehler abfangen |
+| `src/core/monitoring/breadcrumbs.ts` | Sitzungsprotokoll im Speicher |
+| `src/core/monitoring/log-file.ts` | Datei schreiben/loeschen, `shareLog()` |
+| `src/core/monitoring/log-format.ts` | Grenzen, Textformat (getestet) |
+| `src/core/monitoring/sanitize.ts` | Filter fuer persoenliche Daten (getestet) |
+| `src/core/monitoring/monitored-fetch.ts` | Supabase-Anfragen als Schritt |
+| `src/core/monitoring/error-screen.tsx` | Fehlerseite mit Fehler-ID |
+| `src/core/monitoring/use-monitoring.ts` | Einwilligung -> Datei an/aus, Seitenwechsel |
+
 ## Grenzen
 
 - Harte Abstuerze im nativen Teil (App beendet sich ohne JavaScript-Fehler) werden nicht erfasst.
-  Falls noetig spaeter: Sentry oder GlitchTip (EU) hinter derselben Sammelstelle `reportError`.
-- Keine Alarm-Mail bei neuen Fehlern; Auswertung per SQL.
+- Du erfaehrst von Fehlern nur, wenn der Nutzer das Protokoll schickt. Spaeter moeglich:
+  "Protokoll anfordern" mit Bestaetigung durch den Nutzer und Upload in einen privaten Speicher.

@@ -1,31 +1,53 @@
-// Merkt sich die letzten Schritte des Nutzers (nur im Arbeitsspeicher).
-// Wird nur bei einem Fehlerbericht mitgeschickt - und nur mit Einwilligung.
+// Protokoll der aktuellen Sitzung im Arbeitsspeicher: Schritte (Seiten, Knoepfe, Anfragen)
+// und Fehler. Gefiltert beim Eintragen. Ob die Eintraege zusaetzlich in eine Datei auf dem
+// Geraet geschrieben werden, entscheidet log-file.ts (nur mit Einwilligung).
 
+import type { LogCategory, LogEntry, LogLevel } from './log-format';
 import { sanitizeText } from './sanitize';
 
-export type BreadcrumbCategory = 'navigation' | 'ui' | 'http' | 'auth' | 'app';
+export const MAX_BREADCRUMBS = 200;
 
-export type Breadcrumb = {
-  at: string; // ISO-Zeitpunkt
-  category: BreadcrumbCategory;
-  message: string;
-};
+type Listener = (entry: LogEntry) => void;
 
-export const MAX_BREADCRUMBS = 50;
+let buffer: LogEntry[] = [];
+const listeners = new Set<Listener>();
 
-let buffer: Breadcrumb[] = [];
-
-export function addBreadcrumb(category: BreadcrumbCategory, message: string, now: Date = new Date()): void {
-  buffer.push({ at: now.toISOString(), category, message: sanitizeText(message, 200) });
+export function addLogEntry(
+  level: LogLevel,
+  category: LogCategory,
+  message: string,
+  options?: { errorId?: string; now?: Date },
+): LogEntry {
+  const entry: LogEntry = {
+    at: (options?.now ?? new Date()).toISOString(),
+    level,
+    category,
+    message: sanitizeText(message, 1500),
+    ...(options?.errorId ? { errorId: options.errorId } : {}),
+  };
+  buffer.push(entry);
   if (buffer.length > MAX_BREADCRUMBS) {
     buffer = buffer.slice(buffer.length - MAX_BREADCRUMBS);
   }
+  listeners.forEach((listener) => listener(entry));
+  return entry;
 }
 
-export function getBreadcrumbs(): Breadcrumb[] {
+// Kurzform fuer einen normalen Schritt
+export function addBreadcrumb(category: LogCategory, message: string, now?: Date): void {
+  addLogEntry('info', category, sanitizeText(message, 200), { now });
+}
+
+export function getBreadcrumbs(): LogEntry[] {
   return [...buffer];
 }
 
 export function clearBreadcrumbs(): void {
   buffer = [];
+}
+
+// Benachrichtigung bei jedem neuen Eintrag (fuer die Datei)
+export function subscribeLog(listener: Listener): () => void {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
 }

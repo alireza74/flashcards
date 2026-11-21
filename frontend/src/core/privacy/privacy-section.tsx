@@ -6,8 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import { signOut } from '@/core/auth/auth-api';
 import { useAuth } from '@/core/auth/auth-provider';
-import { reportError } from '@/core/monitoring/error-sink';
-import { isPreviewBuild } from '@/core/monitoring/monitoring';
+import { shareLog } from '@/core/monitoring/log-file';
 import { AppText } from '@/shared/ui/app-text';
 import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
@@ -37,14 +36,19 @@ export function PrivacySection() {
   const [message, setMessage] = useState<{ tone: 'info' | 'error'; key: string }>();
   const [isExporting, setIsExporting] = useState(false);
   const [confirmDeletion, setConfirmDeletion] = useState(false);
-  const [testInfo, setTestInfo] = useState<string>();
+  const [isSharingLog, setIsSharingLog] = useState(false);
 
-  const onTestReport = () => {
-    const errorId = reportError(new Error('Testbericht aus den Einstellungen'), {
-      level: 'warning',
-      context: { source: 'test' },
-    });
-    setTestInfo(errorId ? t('monitoring.testSent', { id: errorId }) : t('monitoring.testDisabled'));
+  const onShareLog = async () => {
+    setMessage(undefined);
+    setIsSharingLog(true);
+    try {
+      await shareLog();
+      setMessage({ tone: 'info', key: 'monitoring.share.done' });
+    } catch {
+      setMessage({ tone: 'error', key: 'common.error' });
+    } finally {
+      setIsSharingLog(false);
+    }
   };
 
   const onExport = async () => {
@@ -104,13 +108,16 @@ export function PrivacySection() {
           </View>
         ))}
 
-        {/* Nur Entwicklung und Test-APK: Probe-Bericht, um die Fehlerberichte zu pruefen */}
-        {isPreviewBuild() ? (
-          <>
-            {testInfo ? <FormMessage tone="info" text={testInfo} /> : null}
-            <Button variant="link" title={t('monitoring.testButton')} onPress={onTestReport} />
-          </>
-        ) : null}
+        <AppText variant="label">{t('monitoring.share.title')}</AppText>
+        <AppText variant="caption" tone="secondary">
+          {t('monitoring.share.intro')}
+        </AppText>
+        <Button
+          variant="secondary"
+          title={t('monitoring.share.button')}
+          onPress={onShareLog}
+          loading={isSharingLog}
+        />
 
         <AppText variant="label">{t('privacy.export.title')}</AppText>
         <AppText variant="caption" tone="secondary">

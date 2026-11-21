@@ -139,5 +139,12 @@ select results_eq(
   'Taeglicher Loeschjob ist eingeplant'
 );
 
+select hasnt_table('public', 'error_reports', 'Fehlerberichte-Tabelle ist entfernt (0008)');
+select results_eq(
+  $$ select count(*)::int from cron.job where jobname = 'purge-old-error-reports' $$,
+  array[0],
+  'Kein Loeschjob fuer Fehlerberichte mehr'
+);
+
 select * from finish();
 rollback;
