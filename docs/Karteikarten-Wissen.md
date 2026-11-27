@@ -3,7 +3,7 @@
 Lern-App mit Karteikarten (Arbeitstitel "Karteikarten"). Klon der base-app.
 
 Ablage: `C:\Users\alh\Documents\MY-APPS\flashcards`
-Repo: noch nicht angelegt (geplant github.com/alireza74/flashcards, privat), upstream: github.com/alireza74/base-app
+Repo: github.com/alireza74/flashcards (privat, seit 27.11.2026), upstream: github.com/alireza74/base-app
 Basis: base-app `main` vom 27.11.2026 (Tag v0.3.0 plus Commit dfb2e33 "App-Version 0.3.0")
 
 Stand: 27.11.2026
@@ -20,7 +20,7 @@ Uebergreifendes: `../MY-APPS-Wissen.md`.
   App-Version 0.1.0, lokales Supabase `project_id = "flashcards"`, `supportEmail` leer (Feedback-Knopf aus),
   `easProjectId` leer bis `eas init`.
 - Naechste Schritte:
-  1. GitHub-Repo anlegen und pushen (KLONEN.md Abschnitt 1) - braucht Alirezas Konto.
+  1. (erledigt 27.11.) GitHub-Repo angelegt und gepusht.
   2. Offline-Abgleich recherchieren und entscheiden (Abschnitt 5).
   3. Datenmodell entwerfen und mit Alireza abstimmen.
   4. Einfuehrungsseiten (`config/onboarding.ts`) fachlich anpassen - aktuell noch die der Basis.
