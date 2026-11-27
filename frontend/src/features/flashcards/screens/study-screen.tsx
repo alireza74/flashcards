@@ -74,7 +74,9 @@ function StudyRun({ initial, deckIds, ctx }: { initial: StudyLoad; deckIds: stri
     startedAt: Date.now(),
   }));
 
-  const schedulerConfig = schedulerConfigOf(initial.config);
+  // Termine nach den Lernoptionen des Decks der Karte (jedes Deck kann eigene haben)
+  const configFor = (card: StudyCard) =>
+    schedulerConfigOf((card.config_id && initial.configs[card.config_id]) || initial.config);
   const buttons: Rating[] = initial.config.answer_buttons === 4 ? [1, 2, 3, 4] : [1, 3];
 
   // Inhalt und Termine der aktuellen Karte
@@ -93,7 +95,7 @@ function StudyRun({ initial, deckIds, ctx }: { initial: StudyLoad; deckIds: stri
       return {
         front: renderTemplate(row?.front_template ?? '', fields),
         back: renderTemplate(row?.back_template ?? '', fields),
-        due: await previewDue(schedulerConfig, current!.id, current!, now),
+        due: await previewDue(configFor(current!), current!.id, current!, now),
         now,
       };
     },
@@ -119,7 +121,7 @@ function StudyRun({ initial, deckIds, ctx }: { initial: StudyLoad; deckIds: stri
         rating,
         now,
         durationMs: now - shownAt,
-        config: schedulerConfig,
+        config: configFor(current),
         newId: ctx.newId,
         organizationId: ctx.organizationId,
       });

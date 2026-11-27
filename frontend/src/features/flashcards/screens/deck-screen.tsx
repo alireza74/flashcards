@@ -1,4 +1,4 @@
-// Deckseite: Kartei-Box, Unterdecks, Karten mit Suche. Menue: umbenennen, Unterdeck, loeschen.
+// Deckseite: Kartei-Box (Faecher anklickbar), Unterdecks, Zeile "Karten ansehen" (eigene Seite /browse). Menue: umbenennen, Unterdeck, loeschen.
 
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -16,8 +16,8 @@ import { TextField } from '@/shared/ui/text-field';
 import { spacing } from '@/shared/ui/theme';
 
 import { BoxBar } from '../components/box-bar';
+import { countNotes } from '../data/card-browser';
 import { createDeck, deleteDeckTree, getDeck, getDeckPath, listChildDecks, renameDeck } from '../data/decks';
-import { listNotes } from '../data/notes';
 import { getDeckCounts } from '../data/stats';
 import { useLocalMutation, useLocalQuery } from '../data/use-local-data';
 
@@ -27,7 +27,6 @@ export function DeckScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const [search, setSearch] = useState('');
   const [sheet, setSheet] = useState<SheetMode>(null);
   const [sheetName, setSheetName] = useState('');
 
@@ -46,10 +45,10 @@ export function DeckScreen() {
       deck,
       path: await getDeckPath(db, id),
       counts: await getDeckCounts(db, id, now),
+      noteCount: await countNotes(db, { deckId: id, search: '', level: null, box: null }),
       children,
     };
   });
-  const notes = useLocalQuery(['deck-notes', id, search], (db) => listNotes(db, id, search));
 
   const rename = useLocalMutation((ctx, name: string) => renameDeck(ctx, id, name));
   const addSubdeck = useLocalMutation((ctx, name: string) => {
@@ -82,7 +81,7 @@ export function DeckScreen() {
     );
   }
 
-  const { deck, path, counts, children } = details.data;
+  const { deck, path, counts, children, noteCount } = details.data;
 
   function openSheet(mode: SheetMode) {
     setSheetName(mode === 'rename' ? deck.name : '');
@@ -113,6 +112,11 @@ export function DeckScreen() {
               key: 'subdeck',
               label: t('flashcards.deck.addSubdeck'),
               onPress: () => openSheet('subdeck'),
+            },
+            {
+              key: 'pensum',
+              label: t('flashcards.deck.pensum'),
+              onPress: () => router.push({ pathname: '/pensum', params: { deck: id } }),
             },
             {
               key: 'import',
@@ -151,7 +155,7 @@ export function DeckScreen() {
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         {path.length > 1 ? <AppText tone="secondary">{path.slice(0, -1).join(' › ')}</AppText> : null}
 
-        <BoxBar counts={counts} />
+        <BoxBar counts={counts} onSelect={(box) => router.push({ pathname: '/browse', params: { deck: id, box } })} />
 
         {children.length > 0 ? (
           <View style={styles.section}>
@@ -175,31 +179,11 @@ export function DeckScreen() {
           </View>
         ) : null}
 
-        <View style={styles.section}>
-          <AppText variant="heading">{t('flashcards.deck.cards')}</AppText>
-          <TextField
-            label={t('flashcards.deck.search')}
-            value={search}
-            onChangeText={setSearch}
-            autoCapitalize="none"
-          />
-          {notes.data && notes.data.length === 0 ? (
-            <AppText tone="secondary">{search ? t('flashcards.deck.noResults') : t('flashcards.deck.noCards')}</AppText>
-          ) : null}
-          {notes.data?.map((note) => (
-            <ListRow
-              key={note.id}
-              title={note.title}
-              subtitle={[note.subtitle, note.level].filter(Boolean).join(' · ')}
-              onPress={() =>
-                router.push({
-                  pathname: '/cards/[noteId]',
-                  params: { noteId: note.id },
-                })
-              }
-            />
-          ))}
-        </View>
+        <ListRow
+          title={t('flashcards.deck.browseCards')}
+          subtitle={t('flashcards.deck.cardCount', { count: noteCount })}
+          onPress={() => router.push({ pathname: '/browse', params: { deck: id } })}
+        />
       </ScrollView>
 
       <BottomSheet

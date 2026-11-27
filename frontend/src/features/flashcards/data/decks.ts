@@ -60,14 +60,12 @@ export async function getDeckTreeIds(db: LocalDb, id: string): Promise<string[]>
   return rows.map((row) => row.id);
 }
 
-/** Standard-Lernoptionen der Organisation; beim ersten Aufruf anlegen. */
-export async function ensureDefaultConfig(ctx: DataContext, name: string): Promise<string> {
-  const existing = await ctx.db.getFirstAsync<{ id: string }>(
-    'SELECT id FROM deck_configs WHERE deleted_at IS NULL ORDER BY created_at LIMIT 1',
-    [],
-  );
-  if (existing) return existing.id;
-
+/** Neue Lernoptionen anlegen (Standardwerte, einzelne Werte ueberschreibbar). */
+export async function createConfig(
+  ctx: DataContext,
+  name: string,
+  values: Partial<Pick<LocalRow, 'new_per_day' | 'reviews_per_day'>> = {},
+): Promise<string> {
   const id = ctx.newId();
   await saveRow(
     ctx.db,
@@ -83,6 +81,7 @@ export async function ensureDefaultConfig(ctx: DataContext, name: string): Promi
       reviews_per_day: 200,
       answer_buttons: 2,
       maximum_interval: 36500,
+      ...values,
       created_at: null,
       updated_at: null,
       deleted_at: null,
@@ -90,6 +89,15 @@ export async function ensureDefaultConfig(ctx: DataContext, name: string): Promi
     ctx.now(),
   );
   return id;
+}
+
+/** Standard-Lernoptionen der Organisation; beim ersten Aufruf anlegen. */
+export async function ensureDefaultConfig(ctx: DataContext, name: string): Promise<string> {
+  const existing = await ctx.db.getFirstAsync<{ id: string }>(
+    'SELECT id FROM deck_configs WHERE deleted_at IS NULL ORDER BY created_at LIMIT 1',
+    [],
+  );
+  return existing ? existing.id : createConfig(ctx, name);
 }
 
 export type NewDeck = {

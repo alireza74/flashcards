@@ -2,7 +2,7 @@
 // Farbe ist nie das einzige Signal - jede Farbe steht mit Name und Zahl in der Legende.
 
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, useColorScheme, View } from 'react-native';
+import { Pressable, StyleSheet, useColorScheme, View } from 'react-native';
 
 import { AppText } from '@/shared/ui/app-text';
 import { radius, spacing, usePalette } from '@/shared/ui/theme';
@@ -26,10 +26,21 @@ const BOX_COLORS = {
 
 const COMPARTMENTS = ['new', 'learning', 'young', 'mature'] as const;
 
-export function BoxBar({ counts }: { counts: BoxCounts }) {
+/** Farben der Kartei-Box-Faecher fuer das aktuelle Farbschema (gruen = gefestigt, auch fuer "geschafft"). */
+export function useBoxColors() {
+  return BOX_COLORS[useColorScheme() === 'dark' ? 'dark' : 'light'];
+}
+
+type BoxBarProps = {
+  counts: BoxCounts;
+  /** Tippen auf ein Fach der Legende (z. B. Karten dieses Fachs zeigen) */
+  onSelect?: (box: (typeof COMPARTMENTS)[number]) => void;
+};
+
+export function BoxBar({ counts, onSelect }: BoxBarProps) {
   const { t } = useTranslation();
   const palette = usePalette();
-  const colors = BOX_COLORS[useColorScheme() === 'dark' ? 'dark' : 'light'];
+  const colors = useBoxColors();
 
   return (
     <View style={styles.wrapper}>
@@ -53,10 +64,16 @@ export function BoxBar({ counts }: { counts: BoxCounts }) {
       </View>
       <View style={styles.legend}>
         {COMPARTMENTS.map((key) => (
-          <View key={key} style={styles.legendItem}>
+          <Pressable
+            key={key}
+            role={onSelect ? 'button' : undefined}
+            disabled={!onSelect || counts[key] === 0}
+            onPress={() => onSelect?.(key)}
+            style={[styles.legendItem, onSelect && counts[key] > 0 ? { borderColor: palette.border } : null]}
+          >
             <View style={[styles.dot, { backgroundColor: colors[key] }]} />
             <AppText variant="caption">{`${t(`flashcards.box.${key}`)} ${counts[key]}`}</AppText>
-          </View>
+          </Pressable>
         ))}
       </View>
     </View>
@@ -72,6 +89,15 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   legend: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md },
-  legendItem: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    borderWidth: 1,
+    borderColor: 'transparent',
+    borderRadius: radius.md,
+    paddingVertical: 2,
+    paddingHorizontal: spacing.xs,
+  },
   dot: { width: 10, height: 10, borderRadius: 5 },
 });

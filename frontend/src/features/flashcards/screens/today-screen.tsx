@@ -1,4 +1,5 @@
-// Startseite "Heute": eine grosse Zahl (faellig), ein grosser Knopf, darunter die Bereiche.
+// Startseite "Heute": Fortschrittsring (heute erledigt / offen, gruen wenn geschafft), ein grosser Knopf,
+// darunter die Bereiche.
 // Ohne Decks geht es direkt zur Einrichtung "Was moechtest du lernen?".
 
 import { Redirect, useRouter } from 'expo-router';
@@ -15,22 +16,30 @@ import { ErrorState, LoadingState } from '@/shared/ui/states';
 import { spacing, usePalette } from '@/shared/ui/theme';
 
 import { SyncNotice } from '../components/sync-notice';
-import { listChildDecks } from '../data/decks';
-import { getDeckCounts, getTodayCounts } from '../data/stats';
+import { getDeckTreeIds, listChildDecks } from '../data/decks';
+import { getDeckCounts, getTodayCounts, getTodayProgress, type TodayProgress } from '../data/stats';
+import { ProgressRing } from '../components/progress-ring';
+import { useBoxColors } from '../components/box-bar';
 import { useDataContext, useLocalQuery } from '../data/use-local-data';
 
 export function TodayScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const palette = usePalette();
+  const boxColors = useBoxColors();
 
   const context = useDataContext();
   const overview = useLocalQuery(['today'], async (db) => {
     const now = Date.now();
     const decks = await listChildDecks(db, null);
     const withCounts = [];
-    for (const deck of decks) withCounts.push({ deck, counts: await getDeckCounts(db, deck.id, now) });
-    return { totals: await getTodayCounts(db, now), decks: withCounts };
+    for (const deck of decks) {
+      const counts = await getDeckCounts(db, deck.id, now);
+      const progress = await getTodayProgress(db, now, counts, await getDeckTreeIds(db, deck.id));
+      withCounts.push({ deck, counts, progress });
+    }
+    const totals = await getTodayCounts(db, now);
+    return { totals, progress: await getTodayProgress(db, now, totals), decks: withCounts };
   });
 
   if (overview.isPending || context.isPending) {
@@ -58,7 +67,8 @@ export function TodayScreen() {
     return <Redirect href="/setup" />;
   }
 
-  const { totals, decks } = overview.data;
+  const { totals, progress, decks } = overview.data;
+  const finished = progress.status === 'done';
   const dueNow = totals.due + totals.newToday;
 
   return (
@@ -84,17 +94,48 @@ export function TodayScreen() {
         <SyncNotice />
 
         <View style={styles.hero}>
-          <AppText style={[styles.bigNumber, { color: palette.text }]}>{dueNow}</AppText>
-          <AppText tone="secondary">{t('flashcards.today.dueLabel')}</AppText>
-          <AppText tone="secondary">{t('flashcards.today.newToday', { count: totals.newToday })}</AppText>
+          <ProgressRing
+            ratio={finished ? 1 : progress.ratio}
+            color={finished ? boxColors.mature : palette.primary}
+            label={
+              finished
+                ? t('flashcards.today.doneAll')
+                : t('flashcards.today.progress', { done: progress.done, total: progress.done + progress.open })
+            }
+          >
+            {finished ? (
+              <AppText style={[styles.check, { color: boxColors.mature }]}>✓</AppText>
+            ) : (
+              <>
+                <AppText style={[styles.bigNumber, { color: palette.text }]}>{dueNow}</AppText>
+                <AppText variant="caption" tone="secondary">
+                  {t('flashcards.today.openLabel')}
+                </AppText>
+              </>
+            )}
+          </ProgressRing>
+          <AppText variant="heading">
+            {finished
+              ? t('flashcards.today.doneAll')
+              : progress.status === 'nothing'
+                ? t('flashcards.today.nothingToday')
+                : t('flashcards.today.progress', { done: progress.done, total: progress.done + progress.open })}
+          </AppText>
+          {!finished && totals.newToday > 0 ? (
+            <AppText tone="secondary">{t('flashcards.today.newToday', { count: totals.newToday })}</AppText>
+          ) : null}
+          {progress.comingBack > 0 ? (
+            <AppText tone="secondary">{t('flashcards.today.comingBack', { count: progress.comingBack })}</AppText>
+          ) : null}
         </View>
 
         <Button title={t('flashcards.today.learn')} onPress={() => router.push('/study')} disabled={dueNow === 0} />
 
         <AppText variant="heading">{t('flashcards.today.areas')}</AppText>
-        {decks.map(({ deck, counts }) => (
+        {decks.map(({ deck, counts, progress: area }) => (
           <ListRow
             key={deck.id}
+            leading={<AreaRing progress={area} />}
             title={deck.name}
             subtitle={t('flashcards.today.deckSubtitle', {
               due: counts.due + counts.newToday,
@@ -111,7 +152,32 @@ export function TodayScreen() {
 const styles = StyleSheet.create({
   content: { gap: spacing.md, paddingBottom: spacing.lg },
   hero: { alignItems: 'center', paddingVertical: spacing.lg, gap: spacing.xs },
-  bigNumber: { fontSize: 64, fontWeight: '700', lineHeight: 72 },
+  bigNumber: { fontSize: 48, fontWeight: '700', lineHeight: 56 },
+  check: { fontSize: 64, fontWeight: '700', lineHeight: 72 },
+  smallCheck: { fontSize: 16, fontWeight: '700', lineHeight: 20 },
   footer: { flexDirection: 'row', gap: spacing.sm },
   footerButton: { flex: 1 },
 });
+
+/** Kleiner Ring je Bereich: blau = Anteil erledigt, gruen mit Haken = heute fertig, leer = nichts faellig. */
+function AreaRing({ progress }: { progress: TodayProgress }) {
+  const { t } = useTranslation();
+  const palette = usePalette();
+  const boxColors = useBoxColors();
+  const finished = progress.status === 'done';
+  return (
+    <ProgressRing
+      size={36}
+      stroke={4}
+      ratio={finished ? 1 : progress.ratio}
+      color={finished ? boxColors.mature : palette.primary}
+      label={
+        finished
+          ? t('flashcards.today.doneAll')
+          : t('flashcards.today.progress', { done: progress.done, total: progress.done + progress.open })
+      }
+    >
+      {finished ? <AppText style={[styles.smallCheck, { color: boxColors.mature }]}>✓</AppText> : null}
+    </ProgressRing>
+  );
+}

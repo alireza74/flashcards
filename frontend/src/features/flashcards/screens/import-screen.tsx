@@ -21,7 +21,7 @@ import { ErrorState, LoadingState } from '@/shared/ui/states';
 import { radius, spacing, usePalette } from '@/shared/ui/theme';
 
 import type { DataContext } from '../data/context';
-import { getDeck, getDeckPath, type Deck } from '../data/decks';
+import { getDeck, getDeckPath, listChildDecks, type Deck } from '../data/decks';
 import { LEVELS, type Level } from '../data/notes';
 import { localQueryKey, useDataContext, useLocalQuery } from '../data/use-local-data';
 import { SYSTEM_NOTE_TYPE_IDS } from '../db/system-note-types';
@@ -64,7 +64,10 @@ export function ImportScreen() {
   const context = useDataContext();
   const target = useLocalQuery(['import-target', deckId], async (db) => {
     const deck = await getDeck(db, deckId);
-    return deck ? { deck, path: await getDeckPath(db, deckId) } : null;
+    if (!deck) return null;
+    // Bei einem Bereich (oberstes Deck) waehlt man das Unterdeck, in das die Karten kommen
+    const children = deck.parent_id === null ? await listChildDecks(db, deckId) : [];
+    return { deck, path: await getDeckPath(db, deckId), children };
   });
 
   const title = t('flashcards.import.title');
@@ -82,11 +85,21 @@ export function ImportScreen() {
       </Screen>
     );
   }
-  return <ImportFlow ctx={context.data} deck={target.data.deck} path={target.data.path} />;
+  return (
+    <ImportFlow ctx={context.data} start={target.data.deck} path={target.data.path} subdecks={target.data.children} />
+  );
 }
 
-function ImportFlow({ ctx, deck, path }: { ctx: DataContext; deck: Deck; path: string[] }) {
+type ImportFlowProps = { ctx: DataContext; start: Deck; path: string[]; subdecks: Deck[] };
+
+function ImportFlow({ ctx, start, path, subdecks }: ImportFlowProps) {
   const { t } = useTranslation();
+  // Ziel: Vorschlag Vokabeln (bei einem Sprachbereich), sonst das erste Unterdeck, sonst das Deck selbst
+  const [targetId, setTargetId] = useState(
+    () => (subdecks.find((d) => d.kind === 'vocabulary') ?? subdecks[0] ?? start).id,
+  );
+  const deck = subdecks.find((d) => d.id === targetId) ?? start;
+  const targetPath = deck.id === start.id ? path : [...path, deck.name];
   const router = useRouter();
   const queryClient = useQueryClient();
   const { session } = useAuth();
@@ -186,7 +199,18 @@ function ImportFlow({ ctx, deck, path }: { ctx: DataContext; deck: Deck; path: s
         }
       >
         <ScrollView contentContainerStyle={styles.content}>
-          <AppText>{t('flashcards.import.intro', { path: path.join(' › ') })}</AppText>
+          {subdecks.length > 0 ? (
+            <ChipSelect
+              label={t('flashcards.import.target')}
+              value={targetId}
+              onChange={setTargetId}
+              options={[
+                ...subdecks.map((d) => ({ value: d.id, label: d.name })),
+                { value: start.id, label: t('flashcards.import.targetDirect', { name: start.name }) },
+              ]}
+            />
+          ) : null}
+          <AppText>{t('flashcards.import.intro', { path: targetPath.join(' › ') })}</AppText>
           <AppText tone="secondary">{t('flashcards.import.introDetails')}</AppText>
           {step.error ? <FormMessage tone="error" text={step.error} /> : null}
         </ScrollView>

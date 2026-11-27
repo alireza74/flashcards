@@ -48,6 +48,8 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm + 4,
     fontSize: 16,
     textAlign: 'auto',
+    // Browser: Fokusrahmen nach innen - aussen schneidet ihn eine ScrollView am Rand ab
+    outlineOffset: -2,
   },
   message: { fontSize: 13 },
 });

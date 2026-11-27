@@ -26,6 +26,8 @@ Uebergreifendes: `../MY-APPS-Wissen.md`.
   4. (erledigt 27.11.) Erste Oberflaeche - `docs/lernen/12-oberflaeche-1.md`.
      (erledigt 27.11.) Lernen mit FSRS - `docs/lernen/13-lernen.md`. 
      (erledigt 27.11.) Anki-Import (altes .apkg-Format, nur Text) - `docs/lernen/14-anki-import.md`.
+     (erledigt 27.11.) Lernpensum: Tageslimits je Deck - `docs/lernen/15-lernpensum.md`.
+     (erledigt 27.11.) Kartenliste mit Filtern, Verschieben, Import-Ziel - `docs/lernen/16-kartenliste.md`.
   5. Einfuehrungsseiten (`config/onboarding.ts`) fachlich anpassen - aktuell noch die der Basis.
   6. Offen fuer die veroeffentlichte Web-App: Webserver muss COOP/COEP-Header senden (expo-sqlite).
   7. Abgleich und Oberflaeche auf dem Android-Emulator noch nicht ausprobiert (nur Browser + Tests).
@@ -168,7 +170,10 @@ offizielle Schnittstelle bekannt - pruefen.
 | `frontend/src/features/flashcards/sync/` | Offline-Abgleich (Warteschlange, Senden, Holen, Ausloeser, Status) | Erklaerung `docs/lernen/11-abgleich.md` |
 | `frontend/metro.config.js` | `wasm` + COOP/COEP fuer expo-sqlite im Browser | nur Dev-Server; Webserver spaeter gleich einstellen |
 | `frontend/jest.integration.config.js` | Tests gegen lokales Supabase (`npm run test:integration`) | ohne jest-expo-Preset (ersetzt fetch) |
-| `app/_layout.tsx` | bindet `<SyncTriggers />` ein | einzige Aenderung an Basis-Datei |
+| `app/_layout.tsx` | bindet `<SyncTriggers />` und die Fachseiten ein | Aenderung an Basis-Datei |
+| `shared/ui/list-row.tsx` | Eigenschaft `leading` (z. B. kleiner Ring) | Aenderung an Basis-Datei; Kandidat fuer base-app |
+| `shared/ui/text-field.tsx` | `outlineOffset: -2` (Fokusrahmen nach innen) | Aenderung an Basis-Datei; Kandidat fuer base-app |
+| `study/queue.ts` `limitingDecks` | Tageslimit je Deck; Bereich ohne Gesamtlimit | Erklaerung `docs/lernen/15-lernpensum.md` |
 | `frontend/src/features/flashcards/import/` | Anki-Import: lesen, Zuordnung, Richtung, Vorschau, Speichern | Erklaerung `docs/lernen/14-anki-import.md` |
 
 ## 8. Fehler und Loesungen
@@ -208,3 +213,19 @@ offizielle Schnittstelle bekannt - pruefen.
   12 neue Tests (60 im Bereich gruen). Alireza hat sein Deck Deutsch-Persisch B2-C1 (3213 Notizen) im Browser
   importiert; Befund: 262 Notizen dort Deutsch-Deutsch (so im Deck), ~1400 Woerter doppelt in Gegenrichtung.
   Karten-Editor: alle Felder mehrzeilig (mehrzeilige Anki-Felder waren abgeschnitten).
+- 27.11.2026 - Baustein Lernpensum: Seite "Lernpensum" (neu/Wiederholungen pro Tag je Deck, Summe je Bereich,
+  wartende neue Karten). Limit gilt je Deck fuer seine Unterdecks, Bereich ohne Gesamtlimit; heute gelernte
+  zaehlen ueber alle Startdecks. Neue Sprachbereiche: Vokabeln 20, Grammatik 10, Redewendungen 5. Termine mit
+  den Lernoptionen des Kartendecks. 6 neue Tests (113 gruen). Seite im Browser angezeigt; Speichern im Browser
+  nicht selbst durchgeklickt (Alireza testete parallel).
+- 27.11.2026 - Kartenliste: Deckseite ohne lange Liste, "Karten ansehen" + anklickbare Kartei-Box-Faecher,
+  eigene Seite mit Suche/Filtern/Mehr laden/Verschieben. Import bei einem Bereich fragt nach dem Unterdeck
+  (Vorschlag Vokabeln). Lernpensum: Zeile "Direkt in <Bereich>", Summe = was heute wirklich kommt.
+  Anlass: Alirezas 6422 Karten lagen direkt im Bereich "Deutsch". 5 neue Tests (118 gruen). Im Browser
+  (Testkonto) Kartei-Box -> Liste "Jung" geprueft; Verschieben im Browser nicht durchgeklickt.
+- 27.11.2026 - Fortschrittsring auf "Heute" (erledigt/offen, gruen mit Haken wenn geschafft, Hinweis auf
+  Lernkarten spaeter heute). 2 neue Tests (120 gruen). Im Browser (Testkonto) "Heute geschafft" gesehen.
+  Feld "am Rand abgeschnitten": Fokusrahmen des Browsers liegt ausserhalb des Feldes und wird von der
+  ScrollView abgeschnitten -> `outlineOffset: -2` in `shared/ui/text-field.tsx` (Basis-Datei geaendert,
+  gilt fuer alle Eingabefelder). Im Browser geprueft: Rahmen ringsum sichtbar.
+- 27.11.2026 - Kleine Fortschrittsringe je Bereich auf "Heute". 1 neuer Test (121 gruen). Im Browser geprueft.

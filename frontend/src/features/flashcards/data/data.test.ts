@@ -52,16 +52,20 @@ describe('Einrichtung', () => {
       ['Redewendungen', 'phrases', 'en'],
       ['Grammatik', 'grammar', 'en'],
     ]);
-    const configs = await ctx.db.getAllAsync<{ new_per_day: number }>('SELECT new_per_day FROM deck_configs', []);
-    expect(configs).toEqual([{ new_per_day: 20 }]);
-    // zweiter Bereich nutzt dieselben Lernoptionen
+    // Standard fuer den Bereich + eigene Lernoptionen je Unterdeck (neu pro Tag 20 / 5 / 10)
+    const configs = await ctx.db.getAllAsync<{ new_per_day: number }>(
+      'SELECT new_per_day FROM deck_configs ORDER BY created_at, id',
+      [],
+    );
+    expect(configs.map((c) => c.new_per_day)).toEqual([20, 20, 5, 10]);
+    // zweiter Bereich nutzt die Standard-Lernoptionen
     await createArea(ctx, {
       kind: 'subject',
       name: 'Mathe',
       lang: null,
       defaultConfigName: 'Standard',
     });
-    expect((await ctx.db.getAllAsync('SELECT id FROM deck_configs', [])).length).toBe(1);
+    expect((await ctx.db.getAllAsync('SELECT id FROM deck_configs', [])).length).toBe(4);
     expect((await listChildDecks(ctx.db, null)).map((d) => d.name)).toEqual(['Englisch', 'Mathe']);
   });
 
@@ -69,7 +73,7 @@ describe('Einrichtung', () => {
     const ctx = await context();
     await englishArea(ctx);
     const outbox = await ctx.db.getFirstAsync<{ n: number }>('SELECT count(*) AS n FROM sync_outbox', []);
-    expect(outbox?.n).toBe(5); // 1 Lernoptionen + 4 Decks
+    expect(outbox?.n).toBe(8); // 4 Lernoptionen (Standard + je Unterdeck) + 4 Decks
   });
 });
 

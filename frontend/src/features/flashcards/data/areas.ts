@@ -2,7 +2,7 @@
 // Die Vorlagen sind Daten - neue Bereiche brauchen nur einen Eintrag hier.
 
 import type { DataContext } from './context';
-import { createDeck, ensureDefaultConfig, type DeckKind } from './decks';
+import { createConfig, createDeck, ensureDefaultConfig, type DeckKind } from './decks';
 
 export type AreaKind = 'language' | 'subject' | 'exam' | 'free';
 
@@ -11,6 +11,9 @@ export const AREA_LANGUAGES = ['de', 'en', 'fa', 'fr', 'es', 'it', 'tr', 'ar'] a
 
 /** Unterdecks eines Sprachbereichs; Namen kommen aus den Texten flashcards.deckKinds.<kind>. */
 export const LANGUAGE_SUBDECKS: DeckKind[] = ['vocabulary', 'phrases', 'grammar'];
+
+/** Vorgabe "neu pro Tag" je Unterdeck eines Sprachbereichs (eigene Lernoptionen je Unterdeck). */
+export const LANGUAGE_NEW_PER_DAY: Partial<Record<DeckKind, number>> = { vocabulary: 20, grammar: 10, phrases: 5 };
 
 export type AreaInput = {
   kind: AreaKind;
@@ -39,15 +42,19 @@ export async function createArea(ctx: DataContext, input: AreaInput): Promise<st
   );
   if (input.kind === 'language') {
     for (const kind of LANGUAGE_SUBDECKS) {
+      const name = input.subdeckNames?.[kind] ?? kind;
+      const subdeckConfigId = await createConfig(ctx, `${input.name} › ${name}`, {
+        new_per_day: LANGUAGE_NEW_PER_DAY[kind] ?? 20,
+      });
       await createDeck(
         ctx,
         {
-          name: input.subdeckNames?.[kind] ?? kind,
+          name,
           parentId: rootId,
           kind,
           lang: input.lang,
         },
-        configId,
+        subdeckConfigId,
       );
     }
   }

@@ -1,4 +1,5 @@
 // Antippbare Zeile mit Titel, Untertitel und Pfeil (fuer Listen von Objekten, Raeumen ...).
+import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { addBreadcrumb } from '@/core/monitoring/breadcrumbs';
@@ -8,10 +9,12 @@ import { radius, spacing, usePalette } from '@/shared/ui/theme';
 type ListRowProps = {
   title: string;
   subtitle?: string;
+  /** optional links vor dem Text (z. B. ein kleines Symbol oder Diagramm) */
+  leading?: ReactNode;
   onPress: () => void;
 };
 
-export function ListRow({ title, subtitle, onPress }: ListRowProps) {
+export function ListRow({ title, subtitle, leading, onPress }: ListRowProps) {
   const palette = usePalette();
 
   return (
@@ -28,6 +31,7 @@ export function ListRow({ title, subtitle, onPress }: ListRowProps) {
         pressed && styles.pressed,
       ]}
     >
+      {leading}
       <View style={styles.texts}>
         <AppText variant="label">{title}</AppText>
         {subtitle ? (
