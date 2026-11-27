@@ -149,6 +149,19 @@ offizielle Schnittstelle bekannt - pruefen.
 
 ---
 
+## 7a. Wichtiger Code
+
+| Datei | Zweck | Hinweis |
+|---|---|---|
+| `backend/supabase/migrations/20261127161130_flashcards.sql` | 8 Fachtabellen, Rechte, RLS, Abgleich-Trigger, Export | Erklaerung `docs/lernen/10-datenmodell.md` |
+| `private.flashcards_sync_row()` | setzt `server_updated_at` (clock_timestamp), verwirft aelteres `updated_at`, verbietet Org-Wechsel | gilt fuer alle Tabellen ausser review_logs |
+| `frontend/src/features/flashcards/db/schema.ts` | SQLite-Schema als Migrationsliste (`PRAGMA user_version`) | ausgelieferte Migrationen nie aendern |
+| `frontend/src/features/flashcards/db/system-note-types.ts` | eingebaute Notiztypen mit festen IDs | muss mit der Supabase-Migration uebereinstimmen |
+| Rechte `decks.manage`, `cards.write` | owner + member | admin bewusst nicht: Basis-Test 01 prueft Admin-Rechte exakt |
+
+Noch nicht verdrahtet: expo-sqlite im Browser braucht `wasm` in den Metro-assetExts und COOP/COEP-Header
+(Dev-Server und Webserver) - beim ersten Einsatz der lokalen DB einrichten.
+
 ## 8. Fehler und Loesungen
 
 | Datum | Fehler | Ursache | Loesung |
@@ -157,3 +170,7 @@ offizielle Schnittstelle bekannt - pruefen.
 ## 9. Chronik
 
 - 27.11.2026 - Ideen gesammelt, Fachkonzept Version 1 festgelegt, Klon von base-app angelegt.
+- 27.11.2026 - Recherche Oberflaeche/Datenmodell, Konzept-Version1.md freigegeben; Probelauf ts-fsrs/fzstd ok.
+- 27.11.2026 - Baustein Datenmodell: Supabase-Migration (8 Tabellen), 29 pgTAP-Pruefungen (95 gesamt gruen),
+  db lint ohne Befund, Typen erzeugt; SQLite-Schema + Migrationslauf, 5 Jest-Tests. expo-sqlite installiert.
+  Lokaler Publishable Key in frontend/.env.local eingetragen.

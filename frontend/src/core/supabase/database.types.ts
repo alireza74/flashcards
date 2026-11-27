@@ -82,6 +82,159 @@ export type Database = {
           },
         ];
       };
+      card_templates: {
+        Row: {
+          back_template: string;
+          created_at: string;
+          deleted_at: string | null;
+          front_template: string;
+          id: string;
+          name: string;
+          note_type_id: string;
+          ord: number;
+          organization_id: string | null;
+          server_updated_at: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          back_template: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          front_template: string;
+          id?: string;
+          name: string;
+          note_type_id: string;
+          ord: number;
+          organization_id?: string | null;
+          server_updated_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          back_template?: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          front_template?: string;
+          id?: string;
+          name?: string;
+          note_type_id?: string;
+          ord?: number;
+          organization_id?: string | null;
+          server_updated_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "card_templates_note_type_id_fkey";
+            columns: ["note_type_id"];
+            isOneToOne: false;
+            referencedRelation: "note_types";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "card_templates_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      cards: {
+        Row: {
+          created_at: string;
+          deck_id: string;
+          deleted_at: string | null;
+          difficulty: number;
+          due_at: string;
+          fsrs_model: string;
+          id: string;
+          lapses: number;
+          last_review_at: string | null;
+          learning_step: number;
+          note_id: string;
+          organization_id: string;
+          reps: number;
+          scheduled_days: number;
+          server_updated_at: string;
+          stability: number;
+          stability_fast: number;
+          state: number;
+          suspended: boolean;
+          template_ord: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          deck_id: string;
+          deleted_at?: string | null;
+          difficulty?: number;
+          due_at?: string;
+          fsrs_model?: string;
+          id?: string;
+          lapses?: number;
+          last_review_at?: string | null;
+          learning_step?: number;
+          note_id: string;
+          organization_id: string;
+          reps?: number;
+          scheduled_days?: number;
+          server_updated_at?: string;
+          stability?: number;
+          stability_fast?: number;
+          state?: number;
+          suspended?: boolean;
+          template_ord: number;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          deck_id?: string;
+          deleted_at?: string | null;
+          difficulty?: number;
+          due_at?: string;
+          fsrs_model?: string;
+          id?: string;
+          lapses?: number;
+          last_review_at?: string | null;
+          learning_step?: number;
+          note_id?: string;
+          organization_id?: string;
+          reps?: number;
+          scheduled_days?: number;
+          server_updated_at?: string;
+          stability?: number;
+          stability_fast?: number;
+          state?: number;
+          suspended?: boolean;
+          template_ord?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "cards_organization_id_deck_id_fkey";
+            columns: ["organization_id", "deck_id"];
+            isOneToOne: false;
+            referencedRelation: "decks";
+            referencedColumns: ["organization_id", "id"];
+          },
+          {
+            foreignKeyName: "cards_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cards_organization_id_note_id_fkey";
+            columns: ["organization_id", "note_id"];
+            isOneToOne: false;
+            referencedRelation: "notes";
+            referencedColumns: ["organization_id", "id"];
+          },
+        ];
+      };
       consents: {
         Row: {
           created_at: string;
@@ -110,6 +263,134 @@ export type Database = {
         };
         Relationships: [];
       };
+      deck_configs: {
+        Row: {
+          answer_buttons: number;
+          created_at: string;
+          deleted_at: string | null;
+          desired_retention: number;
+          id: string;
+          learning_steps: string[];
+          maximum_interval: number;
+          name: string;
+          new_per_day: number;
+          organization_id: string;
+          relearning_steps: string[];
+          reviews_per_day: number;
+          server_updated_at: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          answer_buttons?: number;
+          created_at?: string;
+          deleted_at?: string | null;
+          desired_retention?: number;
+          id?: string;
+          learning_steps?: string[];
+          maximum_interval?: number;
+          name: string;
+          new_per_day?: number;
+          organization_id: string;
+          relearning_steps?: string[];
+          reviews_per_day?: number;
+          server_updated_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          answer_buttons?: number;
+          created_at?: string;
+          deleted_at?: string | null;
+          desired_retention?: number;
+          id?: string;
+          learning_steps?: string[];
+          maximum_interval?: number;
+          name?: string;
+          new_per_day?: number;
+          organization_id?: string;
+          relearning_steps?: string[];
+          reviews_per_day?: number;
+          server_updated_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "deck_configs_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      decks: {
+        Row: {
+          config_id: string | null;
+          created_at: string;
+          deleted_at: string | null;
+          id: string;
+          kind: string;
+          lang: string | null;
+          name: string;
+          organization_id: string;
+          parent_id: string | null;
+          position: number;
+          server_updated_at: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          config_id?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          kind?: string;
+          lang?: string | null;
+          name: string;
+          organization_id: string;
+          parent_id?: string | null;
+          position?: number;
+          server_updated_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          config_id?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          kind?: string;
+          lang?: string | null;
+          name?: string;
+          organization_id?: string;
+          parent_id?: string | null;
+          position?: number;
+          server_updated_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "decks_organization_id_config_id_fkey";
+            columns: ["organization_id", "config_id"];
+            isOneToOne: false;
+            referencedRelation: "deck_configs";
+            referencedColumns: ["organization_id", "id"];
+          },
+          {
+            foreignKeyName: "decks_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "decks_organization_id_parent_id_fkey";
+            columns: ["organization_id", "parent_id"];
+            isOneToOne: false;
+            referencedRelation: "decks";
+            referencedColumns: ["organization_id", "id"];
+          },
+        ];
+      };
       feature_flags: {
         Row: {
           created_at: string;
@@ -137,6 +418,186 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      note_type_fields: {
+        Row: {
+          created_at: string;
+          deleted_at: string | null;
+          field_key: string;
+          id: string;
+          name: string;
+          note_type_id: string;
+          ord: number;
+          organization_id: string | null;
+          server_updated_at: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          deleted_at?: string | null;
+          field_key: string;
+          id?: string;
+          name: string;
+          note_type_id: string;
+          ord: number;
+          organization_id?: string | null;
+          server_updated_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          deleted_at?: string | null;
+          field_key?: string;
+          id?: string;
+          name?: string;
+          note_type_id?: string;
+          ord?: number;
+          organization_id?: string | null;
+          server_updated_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "note_type_fields_note_type_id_fkey";
+            columns: ["note_type_id"];
+            isOneToOne: false;
+            referencedRelation: "note_types";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "note_type_fields_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      note_types: {
+        Row: {
+          created_at: string;
+          deleted_at: string | null;
+          id: string;
+          key: string | null;
+          kind: string;
+          name: string;
+          organization_id: string | null;
+          server_updated_at: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          key?: string | null;
+          kind?: string;
+          name: string;
+          organization_id?: string | null;
+          server_updated_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          key?: string | null;
+          kind?: string;
+          name?: string;
+          organization_id?: string | null;
+          server_updated_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "note_types_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      notes: {
+        Row: {
+          created_at: string;
+          deck_id: string;
+          dedupe_key: string | null;
+          deleted_at: string | null;
+          external_guid: string | null;
+          fields: NonNullable<Json>;
+          id: string;
+          lang: string | null;
+          level: string | null;
+          note_type_id: string;
+          organization_id: string;
+          server_updated_at: string;
+          source: string | null;
+          tags: string[];
+          topic: string | null;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          deck_id: string;
+          dedupe_key?: string | null;
+          deleted_at?: string | null;
+          external_guid?: string | null;
+          fields?: NonNullable<Json>;
+          id?: string;
+          lang?: string | null;
+          level?: string | null;
+          note_type_id: string;
+          organization_id: string;
+          server_updated_at?: string;
+          source?: string | null;
+          tags?: string[];
+          topic?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          deck_id?: string;
+          dedupe_key?: string | null;
+          deleted_at?: string | null;
+          external_guid?: string | null;
+          fields?: NonNullable<Json>;
+          id?: string;
+          lang?: string | null;
+          level?: string | null;
+          note_type_id?: string;
+          organization_id?: string;
+          server_updated_at?: string;
+          source?: string | null;
+          tags?: string[];
+          topic?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "notes_note_type_id_fkey";
+            columns: ["note_type_id"];
+            isOneToOne: false;
+            referencedRelation: "note_types";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "notes_organization_id_deck_id_fkey";
+            columns: ["organization_id", "deck_id"];
+            isOneToOne: false;
+            referencedRelation: "decks";
+            referencedColumns: ["organization_id", "id"];
+          },
+          {
+            foreignKeyName: "notes_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       organization_members: {
         Row: {
@@ -273,6 +734,82 @@ export type Database = {
           {
             foreignKeyName: "profiles_active_organization_id_fkey";
             columns: ["active_organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      review_logs: {
+        Row: {
+          card_id: string;
+          created_at: string;
+          difficulty: number;
+          due_at: string;
+          duration_ms: number | null;
+          id: string;
+          is_test: boolean;
+          last_review_at: string | null;
+          learning_step: number;
+          organization_id: string;
+          rating: number;
+          reviewed_at: string;
+          scheduled_days: number;
+          server_updated_at: string;
+          stability: number;
+          stability_fast: number;
+          state: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          card_id: string;
+          created_at?: string;
+          difficulty: number;
+          due_at: string;
+          duration_ms?: number | null;
+          id?: string;
+          is_test?: boolean;
+          last_review_at?: string | null;
+          learning_step?: number;
+          organization_id: string;
+          rating: number;
+          reviewed_at: string;
+          scheduled_days: number;
+          server_updated_at?: string;
+          stability: number;
+          stability_fast?: number;
+          state: number;
+        };
+        Update: {
+          card_id?: string;
+          created_at?: string;
+          difficulty?: number;
+          due_at?: string;
+          duration_ms?: number | null;
+          id?: string;
+          is_test?: boolean;
+          last_review_at?: string | null;
+          learning_step?: number;
+          organization_id?: string;
+          rating?: number;
+          reviewed_at?: string;
+          scheduled_days?: number;
+          server_updated_at?: string;
+          stability?: number;
+          stability_fast?: number;
+          state?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "review_logs_organization_id_card_id_fkey";
+            columns: ["organization_id", "card_id"];
+            isOneToOne: false;
+            referencedRelation: "cards";
+            referencedColumns: ["organization_id", "id"];
+          },
+          {
+            foreignKeyName: "review_logs_organization_id_fkey";
+            columns: ["organization_id"];
             isOneToOne: false;
             referencedRelation: "organizations";
             referencedColumns: ["id"];
