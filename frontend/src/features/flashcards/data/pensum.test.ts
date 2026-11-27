@@ -222,3 +222,34 @@ describe('Fortschritt je Bereich (kleine Ringe)', () => {
     expect(await getTodayProgress(ctx.db, NOW, await getTodayCounts(ctx.db, NOW))).toMatchObject({ done: 2, open: 1 });
   });
 });
+
+describe('Neue Karten nur begrenzt laden', () => {
+  it('liefert trotz Gegenrichtung und heute beantworteter Notizen die volle Zahl', async () => {
+    const { ctx, vocabulary } = await setup();
+    for (let i = 0; i < 40; i++)
+      await createNote(ctx, {
+        deckId: vocabulary.id,
+        noteTypeId: SYSTEM_NOTE_TYPE_IDS.vocabulary, // zwei Karten je Notiz
+        fields: { word: `w${i}`, meaning: `m${i}`, example: '' },
+        level: null,
+        lang: 'de',
+      });
+    const first = await freshByDeck(ctx, vocabulary.id);
+    expect(first.total).toBe(20);
+    expect(new Set(first.load.queue.map((c) => c.note_id)).size).toBe(20); // je Notiz nur eine Karte
+    for (const card of first.load.queue.slice(0, 12))
+      await answerCard(ctx.db, {
+        card,
+        rating: 4,
+        now: NOW,
+        durationMs: 1000,
+        config: schedulerConfigOf(DEFAULT_CONFIG, false),
+        newId: ctx.newId,
+        organizationId: ctx.organizationId,
+      });
+    const second = await freshByDeck(ctx, vocabulary.id);
+    expect(second.total).toBe(8); // 20 - 12
+    const answeredNotes = new Set(first.load.queue.slice(0, 12).map((c) => c.note_id));
+    expect(second.load.queue.some((c) => answeredNotes.has(c.note_id))).toBe(false); // Gegenrichtung erst morgen
+  });
+});

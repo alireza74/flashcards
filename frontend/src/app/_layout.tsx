@@ -136,6 +136,7 @@ function RootNavigator() {
           <Stack.Screen name="import" />
           <Stack.Screen name="pensum" />
           <Stack.Screen name="browse" />
+          <Stack.Screen name="quiz" />
         </Stack.Protected>
 
         {/* immer erreichbar (Store-Pflicht: Datenschutzerklaerung auch ohne Konto) */}

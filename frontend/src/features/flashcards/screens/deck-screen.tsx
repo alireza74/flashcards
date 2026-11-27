@@ -114,6 +114,11 @@ export function DeckScreen() {
               onPress: () => openSheet('subdeck'),
             },
             {
+              key: 'test',
+              label: t('flashcards.deck.test'),
+              onPress: () => router.push({ pathname: '/quiz', params: { deck: id } }),
+            },
+            {
               key: 'pensum',
               label: t('flashcards.deck.pensum'),
               onPress: () => router.push({ pathname: '/pensum', params: { deck: id } }),

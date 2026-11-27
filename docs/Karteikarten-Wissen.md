@@ -28,15 +28,22 @@ Uebergreifendes: `../MY-APPS-Wissen.md`.
      (erledigt 27.11.) Anki-Import (altes .apkg-Format, nur Text) - `docs/lernen/14-anki-import.md`.
      (erledigt 27.11.) Lernpensum: Tageslimits je Deck - `docs/lernen/15-lernpensum.md`.
      (erledigt 27.11.) Kartenliste mit Filtern, Verschieben, Import-Ziel - `docs/lernen/16-kartenliste.md`.
+     (erledigt 27.11.) Testmodus (aendert keine Termine) - `docs/lernen/17-testmodus.md`.
+     Noch offen fuer Version 1: Statistikseite (Niveau-Balken, Vorschau Wiederholungen, Serie).
   5. Einfuehrungsseiten (`config/onboarding.ts`) fachlich anpassen - aktuell noch die der Basis.
   6. Offen fuer die veroeffentlichte Web-App: Webserver muss COOP/COEP-Header senden (expo-sqlite).
-  7. Abgleich und Oberflaeche auf dem Android-Emulator noch nicht ausprobiert (nur Browser + Tests).
+  7. (erledigt 27.11.) Android-Emulator (Expo Go 58): Alireza hat alles durchgetestet - "funktioniert alles".
   8. Basis-Text `common.offline` ("Aenderungen koennen nicht gespeichert werden") passt nicht zum Offline-Lernen.
   9. Integrationstests loeschen ihre Nutzer; deren persoenliche Organisationen mit Testdaten bleiben im lokalen Supabase.
 
 Hinweis lokal: base-app, wandakte und flashcards nutzen dieselben lokalen Ports (Supabase 54321 ff.,
 Web 8081) - immer nur ein lokales Supabase gleichzeitig (im anderen `backend/` `npx supabase stop`).
 Nach einem anderen Projekt den Dev-Server mit `--clear` starten (geteilter Metro-Cache).
+Emulator (Pixel_9_Pro, Expo Go 58): `adb reverse tcp:8081 tcp:8081` und `adb reverse tcp:54321 tcp:54321`
+(sonst erreicht das Handy weder Metro noch das lokale Supabase unter 127.0.0.1), dann
+`adb shell am start -a android.intent.action.VIEW -d "exp://127.0.0.1:8081" host.exp.exponent`.
+Fenster unsichtbar? Lag ausserhalb des Bildschirms (y = -947, frueherer zweiter Monitor) - per
+user32 MoveWindow auf den Bildschirm geholt.
 `frontend/.env.local` ist aus `.env.example` kopiert; Publishable Key aus `npm run db:status` eintragen.
 
 ---
@@ -183,6 +190,8 @@ offizielle Schnittstelle bekannt - pruefen.
 | 27.11.2026 | Admin-API in Jest: `"undefined" is not valid JSON` | jest-expo-Setup ersetzt `fetch` durch Platzhalter | Integrationstests mit eigener Jest-Konfiguration ohne Preset |
 | 27.11.2026 | Dateiauswahl im Browser liest die Datei doppelt | expo-document-picker hat `base64: true` als Standard | `base64: false` setzen, Bytes aus `asset.file` |
 | 27.11.2026 | Anki-Deck mit gemischter Richtung (Persisch mal vorne, mal hinten), Woerter doppelt | so im Deck angelegt | Richtung ueber die Schrift angleichen (`import/scripts.ts`), danach Duplikate erkennen |
+| 27.11.2026 | Jest fuehrt `app/test.tsx` als Testdatei aus | Name passt auf das Jest-Muster fuer Tests | Route `app/quiz.tsx` |
+| 27.11.2026 | `FSRSValidationError: both stabilities must be positive` im Test | Testdaten ohne `stability_fast` | gelernte Karten in Tests mit `stability_fast > 0` |
 | 27.11.2026 | (vorab vermieden) `withExclusiveTransactionAsync` | gibt es im Browser nicht (expo-sqlite-Doku) | eigene Schreibsperre `writeTransaction` mit `withTransactionAsync` |
 
 ## 9. Chronik
@@ -229,3 +238,9 @@ offizielle Schnittstelle bekannt - pruefen.
   ScrollView abgeschnitten -> `outlineOffset: -2` in `shared/ui/text-field.tsx` (Basis-Datei geaendert,
   gilt fuer alle Eingabefelder). Im Browser geprueft: Rahmen ringsum sichtbar.
 - 27.11.2026 - Kleine Fortschrittsringe je Bereich auf "Heute". 1 neuer Test (121 gruen). Im Browser geprueft.
+- 27.11.2026 - Test auf dem Android-Emulator in Expo Go: Alireza hat die App durchgetestet, "funktioniert alles".
+- 27.11.2026 - Tempo gemessen (6400 Vokabeln / 12 800 Karten): neue Karten wurden bei jeder Zaehlung alle geladen.
+  Jetzt je Deck nur so viele wie noetig -> Startseite 133 -> 24 ms, Kartenauswahl 47 -> 9 ms. 122 Tests gruen.
+- 27.11.2026 - Testmodus: Auswahl (Anzahl, Fach, Niveau, Richtung), Gewusst/Nicht gewusst mit is_test = 1
+  (Termine unveraendert), Rueckgaengig, Ergebnis mit Ring, nicht gewusste erneut testen oder bewusst neu
+  lernen. 4 neue Tests (126 gruen). Im Browser (Testkonto) durchgespielt inkl. erneut testen.

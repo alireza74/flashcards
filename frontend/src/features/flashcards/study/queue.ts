@@ -84,6 +84,14 @@ async function loadConfig(db: LocalDb, deckId: string | null): Promise<DeckConfi
   );
 }
 
+/** Eine Karte mit allem, was Termine und Sitzung brauchen (z. B. fuer den Testmodus). */
+export async function loadStudyCardById(db: LocalDb, cardId: string): Promise<StudyCard | null> {
+  return db.getFirstAsync<StudyCard>(
+    `SELECT ${CARD_COLUMNS} FROM cards c JOIN decks d ON d.id = c.deck_id WHERE c.id = ? AND c.deleted_at IS NULL`,
+    [cardId],
+  );
+}
+
 /** Mischt neue Karten gleichmaessig zwischen die Wiederholungen. */
 export function interleave(reviews: StudyCard[], fresh: StudyCard[]): StudyCard[] {
   if (fresh.length === 0) return [...reviews];
@@ -119,7 +127,11 @@ export function limitingDecks(deckId: string, parents: Map<string, string | null
   return chain;
 }
 
-type LimitCounter = { take(deckId: string): boolean };
+type LimitCounter = {
+  take(deckId: string): boolean;
+  /** noch freier Platz fuer Karten dieses Decks (kleinster Wert der begrenzenden Decks) */
+  room(deckId: string): number;
+};
 
 /** Zaehler: Platz je begrenzendem Deck = Limit minus heute schon gelernt (ueber alle Unterdecks). */
 function limitCounter(
@@ -136,6 +148,10 @@ function limitCounter(
     return left.get(id)!;
   };
   return {
+    room(deckId) {
+      const chain = limitingDecks(deckId, parents);
+      return chain.length === 0 ? 0 : Math.min(...chain.map(leftOf));
+    },
     take(deckId) {
       const chain = limitingDecks(deckId, parents);
       if (chain.length === 0 || chain.some((id) => leftOf(id) <= 0)) return false;
@@ -224,9 +240,24 @@ export async function loadStudyCards(
   );
   const reviews = pick(reviewCandidates, reviewLimit);
 
-  const newCandidates = await db.getAllAsync<StudyCard>(
-    `SELECT ${CARD_COLUMNS} ${base} AND c.state = 0 ORDER BY c.created_at, c.template_ord`,
-    deckIds,
+  // Neue Karten: je Deck nur so viele laden, wie heute hoechstens drankommen koennen - nicht alle
+  // (bei 6000 neuen Karten sonst bei jeder Zaehlung alle). Reserve: Gegenrichtung derselben Notiz
+  // (je Notiz nur eine Karte) und heute schon beantwortete Notizen (bis morgen liegen gelassen).
+  const newCandidates: (StudyCard & { created_at: number })[] = [];
+  for (const deckId of deckIds) {
+    const room = newLimit.room(deckId);
+    if (room <= 0) continue;
+    const rows = await db.getAllAsync<StudyCard & { created_at: number }>(
+      `SELECT ${CARD_COLUMNS}, c.created_at FROM cards c JOIN decks d ON d.id = c.deck_id
+       WHERE c.deleted_at IS NULL AND c.suspended = 0 AND c.deck_id = ? AND c.state = 0
+       ORDER BY c.created_at, c.template_ord LIMIT ?`,
+      [deckId, room * 2 + answeredNoteIds.size + usedNotes.size],
+    );
+    newCandidates.push(...rows);
+  }
+  // wieder in die Reihenfolge des Anlegens ueber alle Decks bringen
+  newCandidates.sort(
+    (a, b) => a.created_at - b.created_at || a.template_ord - b.template_ord || (a.id < b.id ? -1 : 1),
   );
   const fresh = pick(newCandidates, newLimit);
 

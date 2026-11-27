@@ -41,3 +41,11 @@ heute schon gelernt, eigene Kopie beim Aendern, begrenzende Decks.
 ## 5. Spaeter
 
 4 Antwortknoepfe, Zielquote (heute 90 %), Lernschritte - auf derselben Seite.
+
+## 6. Tempo
+
+Neue Karten werden je Deck nur so viele geladen, wie heute hoechstens drankommen koennen
+(Platz x 2 fuer die Gegenrichtung + heute beantwortete Notizen als Reserve), danach wieder nach
+Anlegezeit sortiert. Gemessen mit 6400 Vokabeln (12 800 Karten, Node-SQLite):
+Startseite 133 -> 24 ms, Kartenauswahl eines Bereichs 47 -> 9 ms, Deckseite 70 -> 14 ms.
+Kartenliste, Suche, Pensum: 2-6 ms. Test "liefert trotz Gegenrichtung ... die volle Zahl".
