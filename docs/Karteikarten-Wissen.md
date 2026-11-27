@@ -92,9 +92,32 @@ Noch zu pruefen (nicht geraten):
 Neu (grau) | Lernen (orange) | Jung, Abstand < 21 Tage (hellgruen) | Gefestigt, >= 21 Tage (dunkelgruen).
 "Gelernt" = gefestigt. Antippen eines Fachs zeigt dessen Karten.
 
-**Offline-Abgleich - offen:** lokale SQLite-Datenbank als Hauptquelle; Abgleich selbst bauen
-(Lernhistorie nur anfuegen, Karten: letzte Aenderung gewinnt) oder fertige Loesung
-(z. B. PowerSync, WatermelonDB). Vor der Entscheidung pruefen: Expo SDK 58, Web, Kosten.
+**Offline-Abgleich - ENTSCHIEDEN 27.11.2026 (Alireza): eigener Abgleich mit expo-sqlite.**
+Ablauf: offline alles lokal schreiben, Aenderung mit Merker "nicht gesendet"; bei Netz
+1. senden (Merker loeschen), 2. holen, was sich auf dem Server seit dem letzten Abgleich geaendert hat,
+3. Zeitpunkt merken. Ausloeser: App-Start, Netz zurueck, nach einer Lernsitzung, Knopf "Jetzt abgleichen".
+Konflikt: neuere Aenderung gewinnt; Lernhistorie nur anfuegen.
+
+Recherche 27.11.2026:
+Empfehlung: **expo-sqlite (+ Drizzle) mit eigenem Abgleich** ueber supabase-js. RLS gilt unveraendert,
+kein Zusatzdienst, keine Kosten; serverseitig nur `updated_at`-Trigger und Soft-Delete-Spalten.
+Aufwand: eigene Push-Warteschlange, Checkpoints, Loeschungen, Wiederholen.
+Rueckfall: PowerSync (Open Edition selbst gehostet).
+
+| Option | Ergebnis |
+|---|---|
+| expo-sqlite + eigener Abgleich | offizielles Expo-Paket, Web mit COOP/COEP-Headern + `wasm` in Metro; Web-Build ohne FTS |
+| PowerSync | sehr aktiv, Dev-Build (op-sqlite); Lesen ueber Sync Streams statt RLS (Regeln doppelt pflegen), Logical Replication mit BYPASSRLS-Rolle, Zusatzdienst; Free begrenzt, Pro ab 49 USD/Monat |
+| WatermelonDB | seit 2025 kaum gepflegt, New Architecture offen - verworfen |
+| Legend-State | Supabase-Plugin, v3 noch Beta; State-Ansatz passt schlecht zu grosser Lernhistorie |
+| RxDB | SQLite-Speicher fuer RN nur Premium |
+| ElectricSQL | nur Lesepfad, Direct Connection (IPv6) noetig |
+| Supabase selbst | keine offizielle Offline-Loesung gefunden |
+
+Quellen: docs.expo.dev/versions/latest/sdk/sqlite, expo.dev/changelog/sdk-58,
+docs.powersync.com/integration-guides/supabase-+-powersync, www.powersync.com/pricing,
+legendapp.com/open-source/state/v3/sync/supabase, rxdb.info/rx-storage-sqlite.html,
+electric.ax/docs/integrations/supabase.
 
 Anki-Format vor dem Bau im Anki-Quelltext pruefen (ZIP mit SQLite + Medien; neuere Exporte
 komprimiert, Exportoption "Support older Anki versions"). Direkte Verbindung zu AnkiWeb: keine
