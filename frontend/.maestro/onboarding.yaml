@@ -1,0 +1,17 @@
+# Oberflaechentest (Maestro): Einfuehrung erscheint nur beim ersten Start.
+appId: de.example.baseapp
+---
+- launchApp:
+    clearState: true
+- assertVisible:
+    id: onboarding-skip
+- tapOn:
+    id: onboarding-skip
+- assertVisible:
+    id: sign-in-submit
+- stopApp
+- launchApp
+- assertNotVisible:
+    id: onboarding-skip
+- assertVisible:
+    id: sign-in-submit

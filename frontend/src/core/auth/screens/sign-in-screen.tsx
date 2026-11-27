@@ -62,6 +62,7 @@ export function SignInScreen() {
       <FormTextField
         control={control}
         name="email"
+        testID="sign-in-email"
         label={t('auth.fields.email')}
         autoCapitalize="none"
         autoComplete="email"
@@ -71,6 +72,7 @@ export function SignInScreen() {
       <FormTextField
         control={control}
         name="password"
+        testID="sign-in-password"
         label={t('auth.fields.password')}
         secureTextEntry
         autoComplete="current-password"
@@ -78,7 +80,7 @@ export function SignInScreen() {
         onSubmitEditing={() => onSubmit()}
       />
 
-      <Button title={t('auth.signIn.submit')} onPress={onSubmit} loading={isSubmitting} />
+      <Button testID="sign-in-submit" title={t('auth.signIn.submit')} onPress={onSubmit} loading={isSubmitting} />
       <Button
         variant="link"
         title={t('auth.signIn.toForgotPassword')}

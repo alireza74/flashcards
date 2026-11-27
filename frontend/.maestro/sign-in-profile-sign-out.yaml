@@ -1,0 +1,34 @@
+# Oberflaechentest (Maestro): erster Start -> Einfuehrung ueberspringen -> Anmelden -> Profil -> Abmelden.
+# Start: siehe docs/lernen/08-basis-0.3.md. Zugangsdaten nie hier eintragen, sondern beim Aufruf:
+#   maestro test -e EMAIL=... -e PASSWORD=... .maestro/sign-in-profile-sign-out.yaml
+# Elemente per testID (id:), damit der Test in jeder Sprache laeuft.
+appId: de.example.baseapp
+---
+- launchApp:
+    clearState: true
+- tapOn:
+    id: onboarding-skip
+- tapOn:
+    id: sign-in-email
+- inputText: ${EMAIL}
+- tapOn:
+    id: sign-in-password
+- inputText: ${PASSWORD}
+- hideKeyboard
+- tapOn:
+    id: sign-in-submit
+- extendedWaitUntil:
+    visible:
+      id: profile-button
+    timeout: 15000
+- tapOn:
+    id: profile-button
+- scrollUntilVisible:
+    element:
+      id: sign-out
+- tapOn:
+    id: sign-out
+- extendedWaitUntil:
+    visible:
+      id: sign-in-submit
+    timeout: 10000

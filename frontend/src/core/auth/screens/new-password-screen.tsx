@@ -2,7 +2,6 @@
 //   mode = recovery: nach "Passwort vergessen"; der Nutzer ist durch den Code bereits angemeldet
 //   mode = change:   aus dem Profil heraus ("Passwort aendern")
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +13,7 @@ import { newPasswordSchema, type NewPasswordValues } from '@/core/auth/schemas';
 import { Button } from '@/shared/ui/button';
 import { FormMessage } from '@/shared/ui/form-message';
 import { FormTextField } from '@/shared/ui/form-text-field';
+import { BackButton } from '@/shared/ui/header-buttons';
 import { Screen } from '@/shared/ui/screen';
 
 type NewPasswordScreenProps = {
@@ -22,7 +22,6 @@ type NewPasswordScreenProps = {
 
 export function NewPasswordScreen({ mode = 'recovery' }: NewPasswordScreenProps) {
   const { t } = useTranslation();
-  const router = useRouter();
   const { setPasswordRecovery } = useAuth();
   const [errorKey, setErrorKey] = useState<string>();
   const [done, setDone] = useState(false);
@@ -57,7 +56,7 @@ export function NewPasswordScreen({ mode = 'recovery' }: NewPasswordScreenProps)
   const isChange = mode === 'change';
 
   return (
-    <Screen title={t(isChange ? 'auth.changePassword.title' : 'auth.newPassword.title')}>
+    <Screen headerLeft={isChange ? <BackButton /> : undefined} title={t(isChange ? 'auth.changePassword.title' : 'auth.newPassword.title')}>
       {!isChange ? <FormMessage tone="info" text={t('auth.newPassword.intro')} /> : null}
       {done ? <FormMessage tone="info" text={t('auth.changePassword.done')} /> : null}
       {errorKey ? <FormMessage tone="error" text={t(errorKey)} /> : null}
@@ -82,11 +81,9 @@ export function NewPasswordScreen({ mode = 'recovery' }: NewPasswordScreenProps)
       />
 
       <Button title={t('auth.newPassword.submit')} onPress={onSubmit} loading={isSubmitting} />
-      {isChange ? (
-        <Button variant="link" title={t('common.back')} onPress={() => router.back()} />
-      ) : (
+      {!isChange ? (
         <Button variant="link" title={t('auth.newPassword.skip')} onPress={() => setPasswordRecovery(false)} />
-      )}
+      ) : null}
     </Screen>
   );
 }

@@ -1,10 +1,10 @@
 // Startseite nach der Anmeldung: zeigt Profil und aktive Organisation.
 // Wird spaeter durch die Startseite der jeweiligen Fachanwendung ersetzt.
-import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '@/core/auth/auth-provider';
 import { deletionDate, useCancelDeletion } from '@/core/privacy/privacy-api';
+import { ProfileButton } from '@/core/profile/profile-button';
 import { useProfile } from '@/core/profile/use-profile';
 import { AppText } from '@/shared/ui/app-text';
 import { Button } from '@/shared/ui/button';
@@ -15,7 +15,6 @@ import { ErrorState, LoadingState } from '@/shared/ui/states';
 
 export function HomeScreen() {
   const { t, i18n } = useTranslation();
-  const router = useRouter();
   const { session } = useAuth();
   const userId = session?.user.id;
   const profile = useProfile(userId);
@@ -23,7 +22,7 @@ export function HomeScreen() {
 
   if (profile.isPending) {
     return (
-      <Screen>
+      <Screen headerAction={<ProfileButton />}>
         <LoadingState />
       </Screen>
     );
@@ -31,7 +30,7 @@ export function HomeScreen() {
 
   if (profile.isError) {
     return (
-      <Screen>
+      <Screen headerAction={<ProfileButton />}>
         <ErrorState message={t('home.loadError')} onRetry={() => profile.refetch()} />
       </Screen>
     );
@@ -41,7 +40,7 @@ export function HomeScreen() {
   const scheduledDeletion = profile.data.status === 'deleted' ? deletionDate(profile.data.deletion_requested_at) : undefined;
 
   return (
-    <Screen title={t('home.greeting', { name })}>
+    <Screen title={t('home.greeting', { name })} headerAction={<ProfileButton />}>
       {/* Konto zur Loeschung vorgemerkt: innerhalb der 30 Tage abbrechbar */}
       {scheduledDeletion ? (
         <Card>
@@ -63,8 +62,6 @@ export function HomeScreen() {
           {t('home.organization', { name: profile.data.active_organization.name })}
         </AppText>
       ) : null}
-
-      <Button title={t('home.toProfile')} onPress={() => router.push('/profile')} />
     </Screen>
   );
 }

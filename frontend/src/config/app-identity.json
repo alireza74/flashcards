@@ -6,5 +6,6 @@
   "iosBundleIdentifier": "de.example.baseapp",
   "androidPackage": "de.example.baseapp",
   "primaryColor": "#208AEF",
+  "supportEmail": "support@example.com",
   "easProjectId": "2f7d1c19-fb67-4386-9984-e55865bea047"
 }

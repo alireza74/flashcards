@@ -12,9 +12,18 @@ type ButtonProps = {
   variant?: 'primary' | 'secondary' | 'link';
   loading?: boolean;
   disabled?: boolean;
+  // Kennung fuer Oberflaechentests (Maestro), unabhaengig von Sprache und Beschriftung
+  testID?: string;
 };
 
-export function Button({ title, onPress, variant = 'primary', loading = false, disabled = false }: ButtonProps) {
+export function Button({
+  title,
+  onPress,
+  variant = 'primary',
+  loading = false,
+  disabled = false,
+  testID,
+}: ButtonProps) {
   const palette = usePalette();
   const inactive = disabled || loading;
 
@@ -28,6 +37,7 @@ export function Button({ title, onPress, variant = 'primary', loading = false, d
 
   return (
     <Pressable
+      testID={testID}
       // role/aria-* statt accessibility*: wird von iOS, Android und Web gleich verstanden
       role="button"
       // Name fuer Screenreader; sonst ist die Schaltflaeche waehrend des Ladens namenlos
@@ -58,8 +68,9 @@ export function Button({ title, onPress, variant = 'primary', loading = false, d
 
 const styles = StyleSheet.create({
   base: { alignItems: 'center', justifyContent: 'center' },
-  box: { borderRadius: radius.md, paddingVertical: spacing.sm + 6, paddingHorizontal: spacing.md, minHeight: 48 },
+  // 44 px: Mindestgroesse einer Tippflaeche nach Apple/Google, kompakter als vorher (48)
+  box: { borderRadius: radius.md, paddingVertical: spacing.sm, paddingHorizontal: spacing.md, minHeight: 44 },
   link: { paddingVertical: spacing.sm },
-  text: { fontSize: 16, fontWeight: '600' },
+  text: { fontSize: 15, fontWeight: '600' },
   dimmed: { opacity: 0.6 },
 });

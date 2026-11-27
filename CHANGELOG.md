@@ -3,6 +3,32 @@
 Was sich in der Basis geaendert hat - damit Klone wissen, was sie per `git merge upstream/main`
 uebernehmen und ob danach etwas zu tun ist ("Aktion").
 
+## 0.3.0 - 27.11.2026
+
+Erfahrungen aus der WandAkte in die Basis uebernommen. **Neue APK noetig** (natives Paket react-native-svg und
+@react-native-community/netinfo); App-Version in `app-identity.json` dafuer erhoehen.
+
+### Hinzugefuegt
+- Seitenrahmen `Screen`: feste Kopfzeile (`headerLeft`, `headerAction`) und Fussleiste (`footer`); Knoepfe 44 px.
+- Profil-Knopf mit Initialen oben rechts auf der Startseite (`core/profile/profile-button.tsx`).
+- Zurueck-Knopf in der Kopfzeile; ohne Verlauf (Seite direkt geoeffnet/neu geladen) zur Startseite.
+- Bausteine in `shared/ui`: `header-buttons` (IconButton, BackButton, MoreMenu), `icons`, `list-row`,
+  `chip-select`, `confirm-button`, `bottom-sheet`, `offline-banner`.
+- Updates sichtbar: Hinweis "Neue Version geladen - jetzt neu starten?" und im Profil "Nach Updates suchen"
+  (`core/app-version/app-updates.ts`, `update-prompt.tsx`, `update-section.tsx`).
+- Leiste "Keine Verbindung" auf jeder Seite (netinfo).
+- Einfuehrung beim ersten Start (`core/onboarding`, Seiten in `config/onboarding.ts`).
+- Profil: "Feedback senden" per Mail (`supportEmail` in `app-identity.json`).
+- testIDs fuer Oberflaechentests, Maestro-Ablaeufe in `frontend/.maestro/`.
+- Pruefung vor jedem Commit (Husky + lint-staged: ESLint der geaenderten Dateien, Typpruefung).
+
+### Aktion fuer Klone
+- Sprachdateien: neue Schluessel `common.more`, `common.offline`, `updates.*`, `onboarding.*`, `feedback.*`.
+- `app-identity.json`: `supportEmail` ergaenzen; `config/onboarding.ts` anpassen.
+- Eigene Kopien von Kopfzeilen-Bausteinen (z. B. WandAkte `features/wandakte/components/header-buttons.tsx`)
+  durch `@/shared/ui/...` ersetzen.
+- `npm install` (Husky richtet den Commit-Haken ein), danach neue APK bauen.
+
 ## 0.2.0 - 21.11.2026
 
 Basis im Einsatz: Staging, APK und Updates ohne Neuinstallation auf dem Geraet getestet.
