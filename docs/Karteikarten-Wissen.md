@@ -23,7 +23,7 @@ Uebergreifendes: `../MY-APPS-Wissen.md`.
   1. (erledigt 27.11.) GitHub-Repo angelegt und gepusht.
   2. Offline-Abgleich recherchieren und entscheiden (Abschnitt 5).
   3. Datenmodell entwerfen und mit Alireza abstimmen - Vorschlag (Oberflaeche + Datenmodell + Abgleich,
-     aus Recherche 27.11.) in `docs/Konzept-Version1.md`, Freigabe offen.
+     aus Recherche 27.11.) in `docs/Konzept-Version1.md`, freigegeben 27.11.2026.
   4. Einfuehrungsseiten (`config/onboarding.ts`) fachlich anpassen - aktuell noch die der Basis.
 
 Hinweis lokal: base-app, wandakte und flashcards nutzen dieselben lokalen Ports (Supabase 54321 ff.,

@@ -1,6 +1,6 @@
 # Karteikarten - Konzept Version 1 (Oberflaeche und Datenmodell)
 
-Stand: 27.11.2026 - Vorschlag aus zwei Recherchen, **noch nicht von Alireza freigegeben**.
+Stand: 27.11.2026 - aus zwei Recherchen, **von Alireza freigegeben am 27.11.2026** (inkl. Testmodus mit is_test, Anki-Import erst altes Format, Medien in Stufe 2).
 Grundentscheidungen und Fachkonzept: `Karteikarten-Wissen.md`. Eigene Bewertungen sind als solche markiert;
 Quellen am Ende.
 
