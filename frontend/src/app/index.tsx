@@ -1,4 +1,5 @@
 // Routen-Dateien bleiben duenn: sie importieren nur den Screen aus src/.
-import { HomeScreen } from '@/core/home/home-screen';
+// Karteikarten: Startseite "Heute" statt der Startseite der Basis.
+import { TodayScreen } from '@/features/flashcards/screens/today-screen';
 
-export default HomeScreen;
+export default TodayScreen;

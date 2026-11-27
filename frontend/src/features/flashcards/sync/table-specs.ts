@@ -17,7 +17,11 @@ import type { SyncedTable } from '../db/schema';
 type ColumnKind = 'text' | 'number' | 'bool' | 'time' | 'json' | 'textArray';
 type Columns = Record<string, ColumnKind>;
 
-const SYNC_COLUMNS: Columns = { created_at: 'time', updated_at: 'time', deleted_at: 'time' };
+const SYNC_COLUMNS: Columns = {
+  created_at: 'time',
+  updated_at: 'time',
+  deleted_at: 'time',
+};
 
 export const TABLE_COLUMNS: Record<SyncedTable, Columns> = {
   deck_configs: {

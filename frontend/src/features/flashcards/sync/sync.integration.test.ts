@@ -25,7 +25,9 @@ const secretKey = process.env.FLASHCARDS_IT_SECRET_KEY;
 const enabled = Boolean(url && publishableKey && secretKey);
 
 const PASSWORD = 'Test-Passwort-123';
-const clientOptions = { auth: { persistSession: false, autoRefreshToken: false } };
+const clientOptions = {
+  auth: { persistSession: false, autoRefreshToken: false },
+};
 
 function uuid(): string {
   return globalThis.crypto.randomUUID();
@@ -33,7 +35,10 @@ function uuid(): string {
 
 async function signedInClient(email: string): Promise<SupabaseClient> {
   const client = createClient(url!, publishableKey!, clientOptions);
-  const { error } = await client.auth.signInWithPassword({ email, password: PASSWORD });
+  const { error } = await client.auth.signInWithPassword({
+    email,
+    password: PASSWORD,
+  });
   if (error) throw error;
   return client;
 }
@@ -53,14 +58,22 @@ async function signedInClient(email: string): Promise<SupabaseClient> {
 
   beforeAll(async () => {
     for (const email of [emailA, emailB]) {
-      const { data, error } = await admin.auth.admin.createUser({ email, password: PASSWORD, email_confirm: true });
+      const { data, error } = await admin.auth.admin.createUser({
+        email,
+        password: PASSWORD,
+        email_confirm: true,
+      });
       if (error) throw error;
       userIds.push(data.user.id);
     }
     clientA1 = await signedInClient(emailA);
     clientA2 = await signedInClient(emailA);
     clientB = await signedInClient(emailB);
-    const { data, error } = await clientA1.from('profiles').select('active_organization_id').eq('id', userIds[0]).single();
+    const { data, error } = await clientA1
+      .from('profiles')
+      .select('active_organization_id')
+      .eq('id', userIds[0])
+      .single();
     if (error) throw error;
     orgA = data.active_organization_id as string;
     device1 = await createMigratedTestDb();
@@ -121,9 +134,10 @@ async function signedInClient(email: string): Promise<SupabaseClient> {
     await markDeleted(device2, 'cards', ids.card, Date.now() + 5000);
     await runSync(device2, createSupabaseRemote(clientA2));
     await runSync(device1, createSupabaseRemote(clientA1));
-    const card = await device1.getFirstAsync<{ deleted_at: number | null }>('SELECT deleted_at FROM cards WHERE id = ?', [
-      ids.card,
-    ]);
+    const card = await device1.getFirstAsync<{ deleted_at: number | null }>(
+      'SELECT deleted_at FROM cards WHERE id = ?',
+      [ids.card],
+    );
     expect(card?.deleted_at).not.toBeNull();
   });
 
@@ -131,7 +145,10 @@ async function signedInClient(email: string): Promise<SupabaseClient> {
     const deviceB = await createMigratedTestDb();
     await saveRow(deviceB, 'decks', deckRow(uuid(), orgA, 'Einbruch'), Date.now());
     expect(await runSync(deviceB, createSupabaseRemote(clientB))).toBe('error');
-    const failed = await deviceB.getFirstAsync<{ n: number }>('SELECT count(*) AS n FROM sync_outbox WHERE failed = 1', []);
+    const failed = await deviceB.getFirstAsync<{ n: number }>(
+      'SELECT count(*) AS n FROM sync_outbox WHERE failed = 1',
+      [],
+    );
     expect(failed?.n).toBe(1);
     // B holt nichts von A
     const notes = await deviceB.getFirstAsync<{ n: number }>('SELECT count(*) AS n FROM notes', []);

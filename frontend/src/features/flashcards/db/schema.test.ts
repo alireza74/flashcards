@@ -8,10 +8,15 @@ import { SYSTEM_NOTE_TYPE_IDS } from './system-note-types';
 
 // Die App kennt keine Node-Typen (tsconfig "types": ["jest"]); daher nur die hier benoetigte Schnittstelle.
 type Row = Record<string, unknown>;
-type Statement = { all(...params: unknown[]): Row[]; get(...params: unknown[]): Row | undefined };
+type Statement = {
+  all(...params: unknown[]): Row[];
+  get(...params: unknown[]): Row | undefined;
+};
 type SqliteDb = { exec(sql: string): void; prepare(sql: string): Statement };
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const { DatabaseSync } = require('node:sqlite') as { DatabaseSync: new (path: string) => SqliteDb };
+const { DatabaseSync } = require('node:sqlite') as {
+  DatabaseSync: new (path: string) => SqliteDb;
+};
 
 function freshDb(): SqliteDb {
   const db = new DatabaseSync(':memory:');

@@ -10,11 +10,17 @@ type Statement = {
   get(...params: SqlValue[]): Row | undefined;
   run(...params: SqlValue[]): { changes: number | bigint };
 };
-type NodeSqlite = { exec(sql: string): void; prepare(sql: string): Statement; close(): void };
+type NodeSqlite = {
+  exec(sql: string): void;
+  prepare(sql: string): Statement;
+  close(): void;
+};
 
 // Die App kennt keine Node-Typen (tsconfig "types": ["jest"]); daher require mit eigener Beschreibung.
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const { DatabaseSync } = require('node:sqlite') as { DatabaseSync: new (path: string) => NodeSqlite };
+const { DatabaseSync } = require('node:sqlite') as {
+  DatabaseSync: new (path: string) => NodeSqlite;
+};
 
 export type TestDb = LocalDb & { raw: NodeSqlite };
 

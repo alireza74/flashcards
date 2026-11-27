@@ -127,6 +127,11 @@ function RootNavigator() {
           <Stack.Screen name="index" />
           <Stack.Screen name="profile" />
           <Stack.Screen name="change-password" />
+          {/* Karteikarten */}
+          <Stack.Screen name="setup" />
+          <Stack.Screen name="decks/[id]" />
+          <Stack.Screen name="cards/new" />
+          <Stack.Screen name="cards/[noteId]" />
         </Stack.Protected>
 
         {/* immer erreichbar (Store-Pflicht: Datenschutzerklaerung auch ohne Konto) */}

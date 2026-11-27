@@ -6,13 +6,14 @@
 // Einmal in app/_layout.tsx eingebunden; zeichnet nichts.
 
 import NetInfo from '@react-native-community/netinfo';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { AppState } from 'react-native';
 
 import { useAuth } from '@/core/auth/auth-provider';
 
 import { syncNow } from './sync-engine';
-import { resetSyncStatus } from './sync-status';
+import { resetSyncStatus, useSyncStatus } from './sync-status';
 
 const FOREGROUND_MIN_INTERVAL_MS = 30_000;
 
@@ -25,6 +26,13 @@ export function SyncTriggers() {
   const { session } = useAuth();
   const userId = session?.user.id;
   const lastForegroundSync = useRef(0);
+  const queryClient = useQueryClient();
+  const { lastSyncedAt } = useSyncStatus();
+
+  // Nach jedem erfolgreichen Abgleich die Anzeige aus der lokalen Datenbank neu laden.
+  useEffect(() => {
+    if (lastSyncedAt !== null) void queryClient.invalidateQueries({ queryKey: ['local', userId] });
+  }, [lastSyncedAt, queryClient, userId]);
 
   useEffect(() => {
     if (!userId) {

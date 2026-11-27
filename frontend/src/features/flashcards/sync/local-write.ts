@@ -62,11 +62,7 @@ export async function saveRow(db: LocalDb, table: SyncedTable, row: LocalRow, no
 export async function markDeleted(db: LocalDb, table: SyncedTable, id: string, now = Date.now()): Promise<void> {
   if (!isMutableTable(table)) throw new Error(`markDeleted: ${table} ist nur anfuegbar`);
   await writeTransaction(db, async () => {
-    const result = await db.runAsync(`UPDATE ${table} SET deleted_at = ?, updated_at = ? WHERE id = ?`, [
-      now,
-      now,
-      id,
-    ]);
+    const result = await db.runAsync(`UPDATE ${table} SET deleted_at = ?, updated_at = ? WHERE id = ?`, [now, now, id]);
     if (result.changes > 0) await enqueue(db, table, id, now);
   });
 }

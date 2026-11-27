@@ -53,7 +53,11 @@ export function createSupabaseRemote(client: SupabaseClient): SyncRemote {
         query = query.or(`server_updated_at.gt.${ts},and(server_updated_at.eq.${ts},id.gt.${after.id})`);
       }
       const { data, error } = await query;
-      if (error) return { rows: [], error: { code: error.code, message: error.message } };
+      if (error)
+        return {
+          rows: [],
+          error: { code: error.code, message: error.message },
+        };
       return { rows: (data ?? []) as ServerRow[], error: null };
     },
   };

@@ -18,7 +18,11 @@ import { isMutableTable, parseServerTime, toLocalRow, type ServerRow } from './t
 export const PULL_PAGE_SIZE = 1000;
 export const PULL_OVERLAP_MS = 5 * 60 * 1000;
 
-export type PullResult = { received: number; applied: number; error?: RemoteError };
+export type PullResult = {
+  received: number;
+  applied: number;
+  error?: RemoteError;
+};
 
 async function applyRows(db: LocalDb, table: SyncedTable, rows: ServerRow[]): Promise<number> {
   let applied = 0;
@@ -28,9 +32,10 @@ async function applyRows(db: LocalDb, table: SyncedTable, rows: ServerRow[]): Pr
     for (const serverRow of rows) {
       const local = toLocalRow(table, serverRow);
       if (isMutableTable(table)) {
-        const existing = await db.getFirstAsync<{ updated_at: number }>(`SELECT updated_at FROM ${table} WHERE id = ?`, [
-          local.id,
-        ]);
+        const existing = await db.getFirstAsync<{ updated_at: number }>(
+          `SELECT updated_at FROM ${table} WHERE id = ?`,
+          [local.id],
+        );
         if (existing && Number(local.updated_at) < existing.updated_at) continue; // lokal neuer
       }
       await upsertLocalRow(db, table, local);
@@ -61,7 +66,10 @@ async function pullTable(db: LocalDb, remote: SyncRemote, table: SyncedTable): P
     result.applied += await applyRows(db, table, page.rows);
 
     const last = page.rows[page.rows.length - 1];
-    after = { serverUpdatedAt: String(last.server_updated_at), id: String(last.id) };
+    after = {
+      serverUpdatedAt: String(last.server_updated_at),
+      id: String(last.id),
+    };
     // Seiten sind aufsteigend sortiert: die letzte Zeile ist die neueste.
     if (!newest || parseServerTime(after.serverUpdatedAt) >= parseServerTime(newest)) newest = after.serverUpdatedAt;
 

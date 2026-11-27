@@ -23,10 +23,12 @@ Uebergreifendes: `../MY-APPS-Wissen.md`.
   1. (erledigt 27.11.) GitHub-Repo angelegt und gepusht.
   2. (erledigt 27.11.) Offline-Abgleich entschieden und gebaut - `docs/lernen/11-abgleich.md`.
   3. (erledigt 27.11.) Datenmodell gebaut - `docs/lernen/10-datenmodell.md`.
-  4. Naechster Baustein: erste Oberflaeche (Start "Was moechtest du lernen?", Decks, Karte anlegen).
+  4. (erledigt 27.11.) Erste Oberflaeche - `docs/lernen/12-oberflaeche-1.md`. Naechster Baustein: Lernen (FSRS).
   5. Einfuehrungsseiten (`config/onboarding.ts`) fachlich anpassen - aktuell noch die der Basis.
   6. Offen fuer die veroeffentlichte Web-App: Webserver muss COOP/COEP-Header senden (expo-sqlite).
-  7. Abgleich auf dem Android-Emulator noch nicht ausprobiert (nur Browser + Tests).
+  7. Abgleich und Oberflaeche auf dem Android-Emulator noch nicht ausprobiert (nur Browser + Tests).
+  8. Basis-Text `common.offline` ("Aenderungen koennen nicht gespeichert werden") passt nicht zum Offline-Lernen.
+  9. Integrationstests loeschen ihre Nutzer; deren persoenliche Organisationen mit Testdaten bleiben im lokalen Supabase.
 
 Hinweis lokal: base-app, wandakte und flashcards nutzen dieselben lokalen Ports (Supabase 54321 ff.,
 Web 8081) - immer nur ein lokales Supabase gleichzeitig (im anderen `backend/` `npx supabase stop`).
@@ -183,3 +185,9 @@ offizielle Schnittstelle bekannt - pruefen.
 - 27.11.2026 - Baustein Offline-Abgleich: DB je Nutzer, Warteschlange, Senden/Holen mit Sicherheitsfenster,
   "neuere gewinnt", Ausloeser, Status. 18 Tests ohne Server + 5 gegen lokales Supabase gruen. Im Browser
   geprueft (crossOriginIsolated, Abgleich nach Anmeldung ohne Fehler). Lokales Testkonto web-test@example.test.
+- 27.11.2026 - Baustein Oberflaeche 1: Heute, Einrichtung, Deckseite mit Kartei-Box, Karte anlegen/bearbeiten,
+  Duplikat-Hinweis; Texte DE/EN/FA (FA von Muttersprachler pruefen). 12 neue Tests (77 + 5 Integration gruen).
+  Im Browser in Handygroesse durchgeklickt (Einrichtung Englisch, Vokabel B1, Speichern und naechste,
+  Duplikat-Hinweis, Startseite 2 faellig); Daten in Supabase angekommen. Emulator nicht getestet.
+  Fallstrick: `npx prettier` ohne Projektkonfiguration formatiert mit doppelten Anfuehrungszeichen -
+  im Projekt `--single-quote --print-width 120` verwenden.

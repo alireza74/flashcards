@@ -13,7 +13,13 @@ export type SyncStatus = {
   lastError: string | null;
 };
 
-let status: SyncStatus = { phase: 'idle', lastSyncedAt: null, pendingCount: 0, failedCount: 0, lastError: null };
+let status: SyncStatus = {
+  phase: 'idle',
+  lastSyncedAt: null,
+  pendingCount: 0,
+  failedCount: 0,
+  lastError: null,
+};
 const listeners = new Set<() => void>();
 
 export function getSyncStatus(): SyncStatus {
@@ -26,7 +32,13 @@ export function setSyncStatus(changes: Partial<SyncStatus>): void {
 }
 
 export function resetSyncStatus(): void {
-  setSyncStatus({ phase: 'idle', lastSyncedAt: null, pendingCount: 0, failedCount: 0, lastError: null });
+  setSyncStatus({
+    phase: 'idle',
+    lastSyncedAt: null,
+    pendingCount: 0,
+    failedCount: 0,
+    lastError: null,
+  });
 }
 
 function subscribe(listener: () => void): () => void {

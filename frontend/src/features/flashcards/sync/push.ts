@@ -15,7 +15,12 @@ import { isMutableTable, toServerRow, type LocalRow } from './table-specs';
 
 export const PUSH_BATCH_SIZE = 200;
 
-export type PushResult = { sent: number; failed: number; offline: boolean; lastError?: RemoteError };
+export type PushResult = {
+  sent: number;
+  failed: number;
+  offline: boolean;
+  lastError?: RemoteError;
+};
 
 function inList(count: number): string {
   return Array.from({ length: count }, () => '?').join(', ');
@@ -56,10 +61,17 @@ export async function pushChanges(db: LocalDb, remote: SyncRemote): Promise<Push
 
     for (let start = 0; start < ids.length; start += PUSH_BATCH_SIZE) {
       const batchIds = ids.slice(start, start + PUSH_BATCH_SIZE);
-      const rows = await db.getAllAsync<LocalRow>(`SELECT * FROM ${table} WHERE id IN (${inList(batchIds.length)})`, batchIds);
+      const rows = await db.getAllAsync<LocalRow>(
+        `SELECT * FROM ${table} WHERE id IN (${inList(batchIds.length)})`,
+        batchIds,
+      );
       const ignoreDuplicates = !isMutableTable(table);
 
-      const error = await remote.upsert(table, rows.map((row) => toServerRow(table, row)), ignoreDuplicates);
+      const error = await remote.upsert(
+        table,
+        rows.map((row) => toServerRow(table, row)),
+        ignoreDuplicates,
+      );
       if (!error) {
         await removeFromOutbox(db, table, batchIds, maxSeq);
         result.sent += rows.length;

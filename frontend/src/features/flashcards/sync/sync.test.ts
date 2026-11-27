@@ -39,7 +39,10 @@ class FakeRemote implements SyncRemote {
       if (existing && 'updated_at' in row && String(row.updated_at) < String(existing.updated_at)) continue;
       // Mikrosekunden wie Postgres, damit parseServerTime mitgetestet wird
       const serverUpdatedAt = new Date((this.clock += 1000)).toISOString().replace('Z', '123+00:00');
-      this.table(table).set(String(row.id), { ...row, server_updated_at: serverUpdatedAt });
+      this.table(table).set(String(row.id), {
+        ...row,
+        server_updated_at: serverUpdatedAt,
+      });
     }
     return null;
   }
@@ -75,16 +78,28 @@ async function seedVocabulary(db: TestDb, now = 1000) {
 
 describe('Umwandlung Handy <-> Server', () => {
   it('wandelt Zeiten, Wahrheitswerte, Listen und JSON hin und zurueck', () => {
-    const local = { ...cardRow('c1', ORG, 'n1', 'd1'), suspended: 1, created_at: 5, updated_at: 6 };
+    const local = {
+      ...cardRow('c1', ORG, 'n1', 'd1'),
+      suspended: 1,
+      created_at: 5,
+      updated_at: 6,
+    };
     const server = toServerRow('cards', local);
     expect(server.suspended).toBe(true);
     expect(server.due_at).toBe('2026-11-27T08:00:00.000Z');
     expect(toLocalRow('cards', server)).toEqual(local);
 
-    const note = { ...vocabularyNoteRow('n1', ORG, 'd1', 'house'), created_at: 1, updated_at: 2 };
+    const note = {
+      ...vocabularyNoteRow('n1', ORG, 'd1', 'house'),
+      created_at: 1,
+      updated_at: 2,
+    };
     const serverNote = toServerRow('notes', note);
     expect(serverNote.tags).toEqual(['test']);
-    expect(serverNote.fields).toEqual({ word: 'house', meaning: 'Bedeutung von house' });
+    expect(serverNote.fields).toEqual({
+      word: 'house',
+      meaning: 'Bedeutung von house',
+    });
     expect(toLocalRow('notes', serverNote)).toEqual(note);
   });
 
@@ -97,10 +112,10 @@ describe('lokal schreiben', () => {
   it('speichert Zeile und Eintrag in der Warteschlange, setzt Zeiten', async () => {
     const db = await createMigratedTestDb();
     await saveRow(db, 'decks', deckRow('d1', ORG), 1234);
-    const deck = await db.getFirstAsync<{ created_at: number; updated_at: number }>(
-      "SELECT created_at, updated_at FROM decks WHERE id = 'd1'",
-      [],
-    );
+    const deck = await db.getFirstAsync<{
+      created_at: number;
+      updated_at: number;
+    }>("SELECT created_at, updated_at FROM decks WHERE id = 'd1'", []);
     expect(deck).toEqual({ created_at: 1234, updated_at: 1234 });
     expect(await outboxCount(db)).toBe(1);
   });
@@ -122,7 +137,10 @@ describe('senden', () => {
     await seedVocabulary(db);
     const result = await pushChanges(db, remote);
     expect(result).toMatchObject({ sent: 4, failed: 0, offline: false });
-    expect(remote.table('notes').get('n1')?.fields).toEqual({ word: 'house', meaning: 'Bedeutung von house' });
+    expect(remote.table('notes').get('n1')?.fields).toEqual({
+      word: 'house',
+      meaning: 'Bedeutung von house',
+    });
     expect(await outboxCount(db)).toBe(0);
   });
 
@@ -229,7 +247,10 @@ describe('holen', () => {
     await markDeleted(device2, 'notes', 'n1', 5000);
     await runSync(device2, remote);
     await runSync(device1, remote);
-    const note = await device1.getFirstAsync<{ deleted_at: number }>("SELECT deleted_at FROM notes WHERE id = 'n1'", []);
+    const note = await device1.getFirstAsync<{ deleted_at: number }>(
+      "SELECT deleted_at FROM notes WHERE id = 'n1'",
+      [],
+    );
     expect(note?.deleted_at).toBe(5000);
   });
 

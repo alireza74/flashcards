@@ -38,7 +38,10 @@ async function updateCounts(db: LocalDb): Promise<void> {
      FROM sync_outbox`,
     [],
   );
-  setSyncStatus({ pendingCount: row?.pending ?? 0, failedCount: row?.failed ?? 0 });
+  setSyncStatus({
+    pendingCount: row?.pending ?? 0,
+    failedCount: row?.failed ?? 0,
+  });
 }
 
 let running: Promise<SyncOutcome> | null = null;
@@ -65,14 +68,24 @@ async function syncSignedInUser(): Promise<SyncOutcome> {
     const outcome = await runSync(db, createSupabaseRemote(supabase));
     await updateCounts(db);
     if (outcome === 'done') {
-      setSyncStatus({ phase: 'idle', lastSyncedAt: Date.now(), lastError: null });
+      setSyncStatus({
+        phase: 'idle',
+        lastSyncedAt: Date.now(),
+        lastError: null,
+      });
     } else {
-      setSyncStatus({ phase: outcome === 'offline' ? 'offline' : 'error', lastError: outcome });
+      setSyncStatus({
+        phase: outcome === 'offline' ? 'offline' : 'error',
+        lastError: outcome,
+      });
     }
     return outcome;
   } catch (error) {
     reportError(error, { context: { source: 'flashcards sync' } });
-    setSyncStatus({ phase: 'error', lastError: error instanceof Error ? error.message : String(error) });
+    setSyncStatus({
+      phase: 'error',
+      lastError: error instanceof Error ? error.message : String(error),
+    });
     return 'error';
   }
 }

@@ -12,7 +12,13 @@ type SystemNoteType = {
   key: string;
   name: string;
   fields: { id: string; ord: number; fieldKey: string; name: string }[];
-  templates: { id: string; ord: number; name: string; front: string; back: string }[];
+  templates: {
+    id: string;
+    ord: number;
+    name: string;
+    front: string;
+    back: string;
+  }[];
 };
 
 export const SYSTEM_NOTE_TYPES: SystemNoteType[] = [
@@ -21,11 +27,27 @@ export const SYSTEM_NOTE_TYPES: SystemNoteType[] = [
     key: 'basic',
     name: 'Einfach',
     fields: [
-      { id: '00000000-0000-4000-8000-000000000201', ord: 0, fieldKey: 'front', name: 'Vorderseite' },
-      { id: '00000000-0000-4000-8000-000000000202', ord: 1, fieldKey: 'back', name: 'Rueckseite' },
+      {
+        id: '00000000-0000-4000-8000-000000000201',
+        ord: 0,
+        fieldKey: 'front',
+        name: 'Vorderseite',
+      },
+      {
+        id: '00000000-0000-4000-8000-000000000202',
+        ord: 1,
+        fieldKey: 'back',
+        name: 'Rueckseite',
+      },
     ],
     templates: [
-      { id: '00000000-0000-4000-8000-000000000301', ord: 0, name: 'Vorwaerts', front: '{{front}}', back: '{{back}}' },
+      {
+        id: '00000000-0000-4000-8000-000000000301',
+        ord: 0,
+        name: 'Vorwaerts',
+        front: '{{front}}',
+        back: '{{back}}',
+      },
     ],
   },
   {
@@ -33,12 +55,34 @@ export const SYSTEM_NOTE_TYPES: SystemNoteType[] = [
     key: 'basic_reverse',
     name: 'Einfach mit Rueckrichtung',
     fields: [
-      { id: '00000000-0000-4000-8000-000000000203', ord: 0, fieldKey: 'front', name: 'Vorderseite' },
-      { id: '00000000-0000-4000-8000-000000000204', ord: 1, fieldKey: 'back', name: 'Rueckseite' },
+      {
+        id: '00000000-0000-4000-8000-000000000203',
+        ord: 0,
+        fieldKey: 'front',
+        name: 'Vorderseite',
+      },
+      {
+        id: '00000000-0000-4000-8000-000000000204',
+        ord: 1,
+        fieldKey: 'back',
+        name: 'Rueckseite',
+      },
     ],
     templates: [
-      { id: '00000000-0000-4000-8000-000000000302', ord: 0, name: 'Vorwaerts', front: '{{front}}', back: '{{back}}' },
-      { id: '00000000-0000-4000-8000-000000000303', ord: 1, name: 'Rueckwaerts', front: '{{back}}', back: '{{front}}' },
+      {
+        id: '00000000-0000-4000-8000-000000000302',
+        ord: 0,
+        name: 'Vorwaerts',
+        front: '{{front}}',
+        back: '{{back}}',
+      },
+      {
+        id: '00000000-0000-4000-8000-000000000303',
+        ord: 1,
+        name: 'Rueckwaerts',
+        front: '{{back}}',
+        back: '{{front}}',
+      },
     ],
   },
   {
@@ -46,9 +90,24 @@ export const SYSTEM_NOTE_TYPES: SystemNoteType[] = [
     key: 'vocabulary',
     name: 'Vokabel',
     fields: [
-      { id: '00000000-0000-4000-8000-000000000205', ord: 0, fieldKey: 'word', name: 'Wort' },
-      { id: '00000000-0000-4000-8000-000000000206', ord: 1, fieldKey: 'meaning', name: 'Bedeutung' },
-      { id: '00000000-0000-4000-8000-000000000207', ord: 2, fieldKey: 'example', name: 'Beispielsatz' },
+      {
+        id: '00000000-0000-4000-8000-000000000205',
+        ord: 0,
+        fieldKey: 'word',
+        name: 'Wort',
+      },
+      {
+        id: '00000000-0000-4000-8000-000000000206',
+        ord: 1,
+        fieldKey: 'meaning',
+        name: 'Bedeutung',
+      },
+      {
+        id: '00000000-0000-4000-8000-000000000207',
+        ord: 2,
+        fieldKey: 'example',
+        name: 'Beispielsatz',
+      },
     ],
     templates: [
       {
