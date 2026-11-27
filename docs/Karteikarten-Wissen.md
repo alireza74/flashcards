@@ -21,10 +21,12 @@ Uebergreifendes: `../MY-APPS-Wissen.md`.
   `easProjectId` leer bis `eas init`.
 - Naechste Schritte:
   1. (erledigt 27.11.) GitHub-Repo angelegt und gepusht.
-  2. Offline-Abgleich recherchieren und entscheiden (Abschnitt 5).
-  3. Datenmodell entwerfen und mit Alireza abstimmen - Vorschlag (Oberflaeche + Datenmodell + Abgleich,
-     aus Recherche 27.11.) in `docs/Konzept-Version1.md`, freigegeben 27.11.2026.
-  4. Einfuehrungsseiten (`config/onboarding.ts`) fachlich anpassen - aktuell noch die der Basis.
+  2. (erledigt 27.11.) Offline-Abgleich entschieden und gebaut - `docs/lernen/11-abgleich.md`.
+  3. (erledigt 27.11.) Datenmodell gebaut - `docs/lernen/10-datenmodell.md`.
+  4. Naechster Baustein: erste Oberflaeche (Start "Was moechtest du lernen?", Decks, Karte anlegen).
+  5. Einfuehrungsseiten (`config/onboarding.ts`) fachlich anpassen - aktuell noch die der Basis.
+  6. Offen fuer die veroeffentlichte Web-App: Webserver muss COOP/COEP-Header senden (expo-sqlite).
+  7. Abgleich auf dem Android-Emulator noch nicht ausprobiert (nur Browser + Tests).
 
 Hinweis lokal: base-app, wandakte und flashcards nutzen dieselben lokalen Ports (Supabase 54321 ff.,
 Web 8081) - immer nur ein lokales Supabase gleichzeitig (im anderen `backend/` `npx supabase stop`).
@@ -159,13 +161,17 @@ offizielle Schnittstelle bekannt - pruefen.
 | `frontend/src/features/flashcards/db/system-note-types.ts` | eingebaute Notiztypen mit festen IDs | muss mit der Supabase-Migration uebereinstimmen |
 | Rechte `decks.manage`, `cards.write` | owner + member | admin bewusst nicht: Basis-Test 01 prueft Admin-Rechte exakt |
 
-Noch nicht verdrahtet: expo-sqlite im Browser braucht `wasm` in den Metro-assetExts und COOP/COEP-Header
-(Dev-Server und Webserver) - beim ersten Einsatz der lokalen DB einrichten.
+| `frontend/src/features/flashcards/sync/` | Offline-Abgleich (Warteschlange, Senden, Holen, Ausloeser, Status) | Erklaerung `docs/lernen/11-abgleich.md` |
+| `frontend/metro.config.js` | `wasm` + COOP/COEP fuer expo-sqlite im Browser | nur Dev-Server; Webserver spaeter gleich einstellen |
+| `frontend/jest.integration.config.js` | Tests gegen lokales Supabase (`npm run test:integration`) | ohne jest-expo-Preset (ersetzt fetch) |
+| `app/_layout.tsx` | bindet `<SyncTriggers />` ein | einzige Aenderung an Basis-Datei |
 
 ## 8. Fehler und Loesungen
 
 | Datum | Fehler | Ursache | Loesung |
 |---|---|---|---|
+| 27.11.2026 | Admin-API in Jest: `"undefined" is not valid JSON` | jest-expo-Setup ersetzt `fetch` durch Platzhalter | Integrationstests mit eigener Jest-Konfiguration ohne Preset |
+| 27.11.2026 | (vorab vermieden) `withExclusiveTransactionAsync` | gibt es im Browser nicht (expo-sqlite-Doku) | eigene Schreibsperre `writeTransaction` mit `withTransactionAsync` |
 
 ## 9. Chronik
 
@@ -174,3 +180,6 @@ Noch nicht verdrahtet: expo-sqlite im Browser braucht `wasm` in den Metro-assetE
 - 27.11.2026 - Baustein Datenmodell: Supabase-Migration (8 Tabellen), 29 pgTAP-Pruefungen (95 gesamt gruen),
   db lint ohne Befund, Typen erzeugt; SQLite-Schema + Migrationslauf, 5 Jest-Tests. expo-sqlite installiert.
   Lokaler Publishable Key in frontend/.env.local eingetragen.
+- 27.11.2026 - Baustein Offline-Abgleich: DB je Nutzer, Warteschlange, Senden/Holen mit Sicherheitsfenster,
+  "neuere gewinnt", Ausloeser, Status. 18 Tests ohne Server + 5 gegen lokales Supabase gruen. Im Browser
+  geprueft (crossOriginIsolated, Abgleich nach Anmeldung ohne Fehler). Lokales Testkonto web-test@example.test.

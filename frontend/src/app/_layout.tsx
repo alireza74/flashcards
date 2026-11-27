@@ -26,6 +26,7 @@ import { useMonitoring } from '@/core/monitoring/use-monitoring';
 import { OnboardingScreen } from '@/core/onboarding/onboarding-screen';
 import { useOnboarding } from '@/core/onboarding/use-onboarding';
 import { useSyncProfileLanguage } from '@/core/profile/use-sync-profile-language';
+import { SyncTriggers } from '@/features/flashcards/sync/sync-triggers';
 
 // Splash-Screen stehen lassen, bis Sitzung und Sprache geladen sind (kein Flackern).
 SplashScreen.preventAutoHideAsync();
@@ -105,6 +106,8 @@ function RootNavigator() {
     <>
       {/* Hinweis, sobald ein Update geladen ist (nur Handy, nicht im Browser/Entwicklungsmodus) */}
       <UpdatePrompt />
+      {/* Karteikarten: Offline-Abgleich automatisch starten (zeichnet nichts) */}
+      <SyncTriggers />
       <Stack screenOptions={{ headerShown: false }}>
         {/* nicht angemeldet */}
         <Stack.Protected guard={!signedIn} redirectTo={home}>

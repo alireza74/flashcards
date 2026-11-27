@@ -190,6 +190,12 @@ CREATE TABLE sync_state (
   last_pulled_at  TEXT
 );
 
+-- Lokale Einstellungen ohne Abgleich, z. B. organization_id (damit offline geschrieben werden kann).
+CREATE TABLE local_meta (
+  key   TEXT PRIMARY KEY NOT NULL,
+  value TEXT
+);
+
 ${systemNoteTypeInserts()}
 `;
 
