@@ -1,11 +1,11 @@
 {
-  "name": "Base App",
-  "slug": "base-app",
-  "scheme": "baseapp",
-  "version": "0.3.0",
-  "iosBundleIdentifier": "de.example.baseapp",
-  "androidPackage": "de.example.baseapp",
-  "primaryColor": "#208AEF",
-  "supportEmail": "support@example.com",
-  "easProjectId": "2f7d1c19-fb67-4386-9984-e55865bea047"
+  "name": "Karteikarten",
+  "slug": "flashcards",
+  "scheme": "flashcards",
+  "version": "0.1.0",
+  "iosBundleIdentifier": "de.example.flashcards",
+  "androidPackage": "de.example.flashcards",
+  "primaryColor": "#2E9E6B",
+  "supportEmail": "",
+  "easProjectId": ""
 }
