@@ -2,7 +2,7 @@
   "name": "Base App",
   "slug": "base-app",
   "scheme": "baseapp",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "iosBundleIdentifier": "de.example.baseapp",
   "androidPackage": "de.example.baseapp",
   "primaryColor": "#208AEF",
