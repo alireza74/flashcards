@@ -14,10 +14,20 @@ type ProgressRingProps = {
   size?: number;
   stroke?: number;
   label: string;
+  /** Farbe des leeren Rings; Standard = Flaechenfarbe (fuer Ringe auf dem Seitenhintergrund) */
+  trackColor?: string;
   children?: ReactNode;
 };
 
-export function ProgressRing({ ratio, color, size = 168, stroke = 14, label, children }: ProgressRingProps) {
+export function ProgressRing({
+  ratio,
+  color,
+  size = 168,
+  stroke = 14,
+  label,
+  trackColor,
+  children,
+}: ProgressRingProps) {
   const palette = usePalette();
   const radius = (size - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -26,7 +36,14 @@ export function ProgressRing({ ratio, color, size = 168, stroke = 14, label, chi
   return (
     <View role="img" aria-label={label} style={{ width: size, height: size }}>
       <Svg width={size} height={size}>
-        <Circle cx={size / 2} cy={size / 2} r={radius} stroke={palette.surface} strokeWidth={stroke} fill="none" />
+        <Circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke={trackColor ?? palette.surface}
+          strokeWidth={stroke}
+          fill="none"
+        />
         {filled > 0 ? (
           <Circle
             cx={size / 2}

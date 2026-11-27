@@ -29,7 +29,7 @@ Uebergreifendes: `../MY-APPS-Wissen.md`.
      (erledigt 27.11.) Lernpensum: Tageslimits je Deck - `docs/lernen/15-lernpensum.md`.
      (erledigt 27.11.) Kartenliste mit Filtern, Verschieben, Import-Ziel - `docs/lernen/16-kartenliste.md`.
      (erledigt 27.11.) Testmodus (aendert keine Termine) - `docs/lernen/17-testmodus.md`.
-     Noch offen fuer Version 1: Statistikseite (Niveau-Balken, Vorschau Wiederholungen, Serie).
+     (erledigt 27.11.) Statistikseite - `docs/lernen/18-statistik.md`. Damit ist der Umfang von Version 1 gebaut.
   5. Einfuehrungsseiten (`config/onboarding.ts`) fachlich anpassen - aktuell noch die der Basis.
   6. Offen fuer die veroeffentlichte Web-App: Webserver muss COOP/COEP-Header senden (expo-sqlite).
   7. (erledigt 27.11.) Android-Emulator (Expo Go 58): Alireza hat alles durchgetestet - "funktioniert alles".
@@ -244,3 +244,6 @@ offizielle Schnittstelle bekannt - pruefen.
 - 27.11.2026 - Testmodus: Auswahl (Anzahl, Fach, Niveau, Richtung), Gewusst/Nicht gewusst mit is_test = 1
   (Termine unveraendert), Rueckgaengig, Ergebnis mit Ring, nicht gewusste erneut testen oder bewusst neu
   lernen. 4 neue Tests (126 gruen). Im Browser (Testkonto) durchgespielt inkl. erneut testen.
+- 27.11.2026 - Statistikseite: Ueberblick, Niveau-Balken, Serie (Tag zaehlt ab 1 Karte), 7-Tage-Leiste,
+  Aktivitaet 30 Tage, Vorschau 14 Tage, Trefferquote/Ziel/Test. Kartei-Box-Farben auf gepruefte Gruenstufen
+  umgestellt. 2 neue Tests (128 gruen), 65 ms bei 12 800 Karten. Im Browser (Testkonto) angesehen.

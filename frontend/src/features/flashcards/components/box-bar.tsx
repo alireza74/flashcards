@@ -9,18 +9,21 @@ import { radius, spacing, usePalette } from '@/shared/ui/theme';
 
 import type { BoxCounts } from '../data/stats';
 
+// Die Faecher sind eine Reihenfolge (neu -> gefestigt): EIN Farbton, hell -> dunkel (im Dunkelmodus
+// umgekehrt: dunkel -> hell). Mit dem Diagramm-Pruefskript (dataviz, --ordinal) gegen die Flaechenfarbe
+// geprueft: Helligkeit steigt gleichmaessig, Abstaende >= 0.06, hellstes Fach >= 2:1 zur Flaeche.
 const BOX_COLORS = {
   light: {
-    new: '#B9BBC6',
-    learning: '#F2A33A',
-    young: '#8BD4A0',
-    mature: '#2E9E6B',
+    new: '#6DBB92',
+    learning: '#3E9E70',
+    young: '#217A51',
+    mature: '#0D5134',
   },
   dark: {
-    new: '#5A5C66',
-    learning: '#D9892A',
-    young: '#4E9B68',
-    mature: '#3FBF86',
+    new: '#2D6B4E',
+    learning: '#3F9468',
+    young: '#5BBF8B',
+    mature: '#A2E6C0',
   },
 } as const;
 
@@ -35,22 +38,28 @@ type BoxBarProps = {
   counts: BoxCounts;
   /** Tippen auf ein Fach der Legende (z. B. Karten dieses Fachs zeigen) */
   onSelect?: (box: (typeof COMPARTMENTS)[number]) => void;
+  /** ohne Ueberschrift und "x von y gefestigt" (wenn die Seite das schon gross zeigt) */
+  compact?: boolean;
 };
 
-export function BoxBar({ counts, onSelect }: BoxBarProps) {
+export function BoxBar({ counts, onSelect, compact = false }: BoxBarProps) {
   const { t } = useTranslation();
   const palette = usePalette();
   const colors = useBoxColors();
 
   return (
     <View style={styles.wrapper}>
-      <AppText variant="label">{t('flashcards.box.title')}</AppText>
-      <AppText tone="secondary">
-        {t('flashcards.box.learned', {
-          mature: counts.mature,
-          total: counts.total,
-        })}
-      </AppText>
+      {compact ? null : (
+        <>
+          <AppText variant="label">{t('flashcards.box.title')}</AppText>
+          <AppText tone="secondary">
+            {t('flashcards.box.learned', {
+              mature: counts.mature,
+              total: counts.total,
+            })}
+          </AppText>
+        </>
+      )}
       <View
         style={[styles.bar, { backgroundColor: palette.surface }]}
         role="img"

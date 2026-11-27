@@ -4,7 +4,7 @@
 
 import { Redirect, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { ProfileButton } from '@/core/profile/profile-button';
 import { AppText } from '@/shared/ui/app-text';
@@ -20,6 +20,7 @@ import { getDeckTreeIds, listChildDecks } from '../data/decks';
 import { getDeckCounts, getTodayCounts, getTodayProgress, type TodayProgress } from '../data/stats';
 import { ProgressRing } from '../components/progress-ring';
 import { useBoxColors } from '../components/box-bar';
+import { markDayDone } from '../data/statistics';
 import { useDataContext, useLocalQuery } from '../data/use-local-data';
 
 export function TodayScreen() {
@@ -36,10 +37,13 @@ export function TodayScreen() {
     for (const deck of decks) {
       const counts = await getDeckCounts(db, deck.id, now);
       const progress = await getTodayProgress(db, now, counts, await getDeckTreeIds(db, deck.id));
+      if (progress.status === 'done') await markDayDone(db, now, deck.id);
       withCounts.push({ deck, counts, progress });
     }
     const totals = await getTodayCounts(db, now);
-    return { totals, progress: await getTodayProgress(db, now, totals), decks: withCounts };
+    const progress = await getTodayProgress(db, now, totals);
+    if (progress.status === 'done') await markDayDone(db, now, null); // fuer die 7-Tage-Leiste der Statistik
+    return { totals, progress, decks: withCounts };
   });
 
   if (overview.isPending || context.isPending) {
@@ -93,7 +97,12 @@ export function TodayScreen() {
       <ScrollView contentContainerStyle={styles.content}>
         <SyncNotice />
 
-        <View style={styles.hero}>
+        <Pressable
+          role="button"
+          aria-label={t('flashcards.stats.open')}
+          onPress={() => router.push('/stats')}
+          style={styles.hero}
+        >
           <ProgressRing
             ratio={finished ? 1 : progress.ratio}
             color={finished ? boxColors.mature : palette.primary}
@@ -127,7 +136,10 @@ export function TodayScreen() {
           {progress.comingBack > 0 ? (
             <AppText tone="secondary">{t('flashcards.today.comingBack', { count: progress.comingBack })}</AppText>
           ) : null}
-        </View>
+          <AppText variant="caption" tone="secondary">
+            {t('flashcards.stats.open')} ›
+          </AppText>
+        </Pressable>
 
         <Button title={t('flashcards.today.learn')} onPress={() => router.push('/study')} disabled={dueNow === 0} />
 
