@@ -28,7 +28,8 @@ Repo der Fachanwendung, sie bekommt eigene Versionsnummern.
 
 | Datei | Was |
 |---|---|
-| `frontend/src/config/app-identity.json` | name, slug, scheme, iosBundleIdentifier, androidPackage, primaryColor; `easProjectId` leer lassen bis `eas init` |
+| `frontend/src/config/app-identity.json` | name, slug, scheme, iosBundleIdentifier, androidPackage, primaryColor, supportEmail (Feedback-Adresse, leer = Knopf aus); `easProjectId` leer lassen bis `eas init` |
+| `frontend/src/config/onboarding.ts` + i18n `onboarding.pages.*` | Seiten der Einfuehrung beim ersten Start (leere Liste = keine) |
 | `frontend/assets/images/*` | Icon, Splash, Favicon |
 | `backend/supabase/config.toml` | `project_id` (z. B. `vokabel-app`) - sonst kollidieren die lokalen Docker-Container mit der base-app |
 | `frontend/package.json` | `name` (optional) |

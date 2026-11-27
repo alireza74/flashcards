@@ -10,6 +10,7 @@ import { Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 
+import { UpdateSection } from '@/core/app-version/update-section';
 import { signOut } from '@/core/auth/auth-api';
 import { useAuth } from '@/core/auth/auth-provider';
 import i18n, { languageNames, supportedLanguages, type Language } from '@/core/i18n';
@@ -21,10 +22,12 @@ import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
 import { FormMessage } from '@/shared/ui/form-message';
 import { FormTextField } from '@/shared/ui/form-text-field';
+import { BackButton } from '@/shared/ui/header-buttons';
 import { Screen } from '@/shared/ui/screen';
 import { SegmentedControl } from '@/shared/ui/segmented-control';
 import { ErrorState, LoadingState } from '@/shared/ui/states';
 
+import { FeedbackSection } from './feedback-section';
 import { useProfile, useUpdateProfile } from './use-profile';
 
 const displayNameSchema = z.object({
@@ -83,7 +86,7 @@ export function ProfileScreen() {
 
   if (profile.isPending) {
     return (
-      <Screen title={t('profile.title')}>
+      <Screen headerLeft={<BackButton />} title={t('profile.title')}>
         <LoadingState />
       </Screen>
     );
@@ -91,14 +94,14 @@ export function ProfileScreen() {
 
   if (profile.isError) {
     return (
-      <Screen title={t('profile.title')}>
+      <Screen headerLeft={<BackButton />} title={t('profile.title')}>
         <ErrorState message={t('home.loadError')} onRetry={() => profile.refetch()} />
       </Screen>
     );
   }
 
   return (
-    <Screen title={t('profile.title')}>
+    <Screen headerLeft={<BackButton />} title={t('profile.title')}>
       {messageKey ? <FormMessage tone={messageKey.tone} text={t(messageKey.key)} /> : null}
 
       <Card title={t('profile.sectionProfile')}>
@@ -133,8 +136,16 @@ export function ProfileScreen() {
 
       <PrivacySection />
 
-      <Button variant="secondary" title={t('home.signOut')} onPress={() => signOut().catch(() => undefined)} />
-      <Button variant="link" title={t('common.back')} onPress={() => router.back()} />
+      <FeedbackSection />
+
+      <UpdateSection />
+
+      <Button
+        testID="sign-out"
+        variant="secondary"
+        title={t('home.signOut')}
+        onPress={() => signOut().catch(() => undefined)}
+      />
 
       {/* Welcher Stand laeuft? Hilft beim Testen und bei Rueckfragen */}
       <AppText variant="caption" tone="secondary" selectable style={{ textAlign: 'center' }}>

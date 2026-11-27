@@ -13,6 +13,7 @@
 //   iosBundleIdentifier  eindeutige Kennung im App Store (Platzhalter bis Name feststeht)
 //   androidPackage       eindeutige Kennung im Play Store (Platzhalter bis Name feststeht)
 //   primaryColor         Hauptfarbe (Splash-Screen)
+//   supportEmail         Adresse fuer "Feedback senden" im Profil (leer = Knopf ausgeblendet; Platzhalter ersetzen)
 import identity from './app-identity.json';
 
 export const appIdentity = identity;

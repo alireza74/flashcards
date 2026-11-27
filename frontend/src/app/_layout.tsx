@@ -15,6 +15,7 @@ import { Stack, type ErrorBoundaryProps } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 
+import { UpdatePrompt } from '@/core/app-version/update-prompt';
 import { UpdateRequiredScreen } from '@/core/app-version/update-required-screen';
 import { useMinVersionCheck } from '@/core/app-version/use-min-version';
 import { AuthProvider, useAuth } from '@/core/auth/auth-provider';
@@ -22,6 +23,8 @@ import { restoreLanguage } from '@/core/i18n/language';
 import { reportError } from '@/core/monitoring/error-sink';
 import { ErrorScreen } from '@/core/monitoring/error-screen';
 import { useMonitoring } from '@/core/monitoring/use-monitoring';
+import { OnboardingScreen } from '@/core/onboarding/onboarding-screen';
+import { useOnboarding } from '@/core/onboarding/use-onboarding';
 import { useSyncProfileLanguage } from '@/core/profile/use-sync-profile-language';
 
 // Splash-Screen stehen lassen, bis Sitzung und Sprache geladen sind (kein Flackern).
@@ -62,6 +65,7 @@ function RootNavigator() {
   const { session, isLoading, isPasswordRecovery } = useAuth();
   const [languageReady, setLanguageReady] = useState(false);
   const { updateRequired } = useMinVersionCheck();
+  const onboarding = useOnboarding();
   const signedIn = session !== null;
 
   useSyncProfileLanguage();
@@ -71,7 +75,7 @@ function RootNavigator() {
     restoreLanguage().finally(() => setLanguageReady(true));
   }, []);
 
-  const ready = !isLoading && languageReady;
+  const ready = !isLoading && languageReady && onboarding.isReady;
 
   useEffect(() => {
     if (ready) {
@@ -88,35 +92,44 @@ function RootNavigator() {
     return <UpdateRequiredScreen />;
   }
 
+  // erster Start: Einfuehrung (config/onboarding.ts), danach nie wieder
+  if (onboarding.showOnboarding) {
+    return <OnboardingScreen onDone={onboarding.finish} />;
+  }
+
   // Ziel, wenn eine Seite gerade nicht erlaubt ist. Ausdruecklich gesetzt (redirectTo):
   // ohne Angabe springt Expo Router auf den "Anker" des Navigators - das war das Impressum.
   const home = isPasswordRecovery ? '/new-password' : '/';
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      {/* nicht angemeldet */}
-      <Stack.Protected guard={!signedIn} redirectTo={home}>
-        <Stack.Screen name="sign-in" />
-        <Stack.Screen name="sign-up" />
-        <Stack.Screen name="verify-code" />
-        <Stack.Screen name="forgot-password" />
-      </Stack.Protected>
+    <>
+      {/* Hinweis, sobald ein Update geladen ist (nur Handy, nicht im Browser/Entwicklungsmodus) */}
+      <UpdatePrompt />
+      <Stack screenOptions={{ headerShown: false }}>
+        {/* nicht angemeldet */}
+        <Stack.Protected guard={!signedIn} redirectTo={home}>
+          <Stack.Screen name="sign-in" />
+          <Stack.Screen name="sign-up" />
+          <Stack.Screen name="verify-code" />
+          <Stack.Screen name="forgot-password" />
+        </Stack.Protected>
 
-      {/* angemeldet ueber Passwort-Code: erst neues Passwort vergeben */}
-      <Stack.Protected guard={signedIn && isPasswordRecovery} redirectTo={signedIn ? '/' : '/sign-in'}>
-        <Stack.Screen name="new-password" />
-      </Stack.Protected>
+        {/* angemeldet ueber Passwort-Code: erst neues Passwort vergeben */}
+        <Stack.Protected guard={signedIn && isPasswordRecovery} redirectTo={signedIn ? '/' : '/sign-in'}>
+          <Stack.Screen name="new-password" />
+        </Stack.Protected>
 
-      {/* angemeldet */}
-      <Stack.Protected guard={signedIn && !isPasswordRecovery} redirectTo={signedIn ? home : '/sign-in'}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="profile" />
-        <Stack.Screen name="change-password" />
-      </Stack.Protected>
+        {/* angemeldet */}
+        <Stack.Protected guard={signedIn && !isPasswordRecovery} redirectTo={signedIn ? home : '/sign-in'}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="profile" />
+          <Stack.Screen name="change-password" />
+        </Stack.Protected>
 
-      {/* immer erreichbar (Store-Pflicht: Datenschutzerklaerung auch ohne Konto) */}
-      <Stack.Screen name="privacy-policy" />
-      <Stack.Screen name="imprint" />
-    </Stack>
+        {/* immer erreichbar (Store-Pflicht: Datenschutzerklaerung auch ohne Konto) */}
+        <Stack.Screen name="privacy-policy" />
+        <Stack.Screen name="imprint" />
+      </Stack>
+    </>
   );
 }

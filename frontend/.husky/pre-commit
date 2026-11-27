@@ -1,0 +1,5 @@
+# Pruefung vor jedem Commit (Husky): geaenderte Dateien linten, ganzes Projekt typpruefen.
+# Ueberspringen nur im Notfall: git commit --no-verify
+cd frontend
+npx lint-staged
+npm run typecheck

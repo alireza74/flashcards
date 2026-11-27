@@ -3,6 +3,8 @@ import type { Translations } from './de';
 // Persische Texte (Rechts-nach-links). Bitte von einer muttersprachlichen Person pruefen lassen.
 export const fa: Translations = {
   common: {
+    offline: 'اتصال برقرار نیست - تغییرات فعلاً ذخیره نمی‌شوند.',
+    more: 'کارهای بیشتر',
     back: 'بازگشت',
     loading: 'در حال بارگذاری ...',
     retry: 'تلاش دوباره',
@@ -155,5 +157,36 @@ export const fa: Translations = {
   update: {
     title: 'به‌روزرسانی لازم است',
     body: 'این نسخه از برنامه دیگر پشتیبانی نمی‌شود. لطفاً جدیدترین نسخه را نصب کنید.',
+  },
+  updates: {
+    title: 'به‌روزرسانی برنامه',
+    check: 'جستجوی به‌روزرسانی',
+    downloading: 'در حال دریافت به‌روزرسانی ...',
+    ready: 'نسخه جدید دریافت شد. پس از راه‌اندازی دوباره فعال می‌شود.',
+    upToDate: 'برنامه به‌روز است.',
+    error: 'جستجو ناموفق بود. لطفاً اتصال اینترنت را بررسی کنید.',
+    promptTitle: 'نسخه جدید موجود است',
+    promptText: 'نسخه جدیدی از برنامه دریافت شد. اکنون دوباره راه‌اندازی شود؟',
+    restartNow: 'راه‌اندازی دوباره',
+    later: 'بعداً',
+  },
+  onboarding: {
+    next: 'بعدی',
+    skip: 'رد کردن',
+    start: 'شروع',
+    progress: 'صفحه {{current}} از {{total}}',
+    pages: {
+      welcome: { title: 'خوش آمدید', text: 'خوشحالیم که اینجا هستید. اینجا کوتاه نوشته می‌شود که برنامه برای چیست.' },
+      privacy: { title: 'داده‌های شما', text: 'فقط آنچه برنامه لازم دارد ذخیره می‌شود. رضایت‌ها را هر زمان در نمایه تغییر دهید.' },
+      start: { title: 'آماده', text: 'برای شروع وارد شوید یا حساب بسازید.' },
+    },
+  },
+  feedback: {
+    title: 'بازخورد',
+    intro: 'ایده، خطا یا سؤال دارید؟ برای ما بنویسید.',
+    send: 'ارسال بازخورد',
+    subject: 'بازخورد درباره {{app}}',
+    bodyHint: 'پیام شما:',
+    noMailApp: 'برنامه ایمیل پیدا نشد. لطفاً به {{email}} بنویسید.',
   },
 };

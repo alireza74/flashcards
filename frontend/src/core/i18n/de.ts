@@ -2,6 +2,8 @@
 // Jeder Schluessel muss auch in en.ts und fa.ts existieren (TypeScript prueft das).
 export const de = {
   common: {
+    offline: 'Keine Verbindung - Änderungen können gerade nicht gespeichert werden.',
+    more: 'Weitere Aktionen',
     back: 'Zurück',
     loading: 'Wird geladen ...',
     retry: 'Erneut versuchen',
@@ -155,6 +157,37 @@ export const de = {
   update: {
     title: 'Update erforderlich',
     body: 'Diese Version der App wird nicht mehr unterstützt. Bitte installiere die neueste Version.',
+  },
+  updates: {
+    title: 'App-Updates',
+    check: 'Nach Updates suchen',
+    downloading: 'Update wird geladen ...',
+    ready: 'Neue Version geladen. Sie wird nach einem Neustart aktiv.',
+    upToDate: 'Die App ist aktuell.',
+    error: 'Suche fehlgeschlagen. Bitte Internetverbindung prüfen.',
+    promptTitle: 'Neue Version verfügbar',
+    promptText: 'Eine neue Version der App wurde geladen. Jetzt neu starten, um sie zu verwenden?',
+    restartNow: 'Jetzt neu starten',
+    later: 'Später',
+  },
+  onboarding: {
+    next: 'Weiter',
+    skip: 'Überspringen',
+    start: "Los geht's",
+    progress: 'Seite {{current}} von {{total}}',
+    pages: {
+      welcome: { title: 'Willkommen', text: 'Schön, dass du da bist. Hier steht kurz, wofür die App da ist.' },
+      privacy: { title: 'Deine Daten', text: 'Wir speichern nur, was die App braucht. Einwilligungen kannst du jederzeit im Profil ändern.' },
+      start: { title: 'Bereit', text: 'Melde dich an oder lege ein Konto an, um zu beginnen.' },
+    },
+  },
+  feedback: {
+    title: 'Feedback',
+    intro: 'Idee, Fehler oder Frage? Schreib uns.',
+    send: 'Feedback senden',
+    subject: 'Feedback zu {{app}}',
+    bodyHint: 'Deine Nachricht:',
+    noMailApp: 'Kein Mailprogramm gefunden. Bitte schreib an {{email}}.',
   },
 } as const;
 

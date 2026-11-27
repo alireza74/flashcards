@@ -8,7 +8,7 @@ Weitere Idee (zurueckgestellt): Sportnachrichten auf Persisch.
 
 Ablage: `C:\Users\alh\Documents\MY-APPS\base-app`
 
-Stand: 20.11.2026
+Stand: 27.11.2026
 Diese Datei bei jeder Sitzung lesen und mit neuen Entscheidungen ergaenzen.
 
 Inhalt: nur Wissen zur base-app (Aufbau, wichtiger Code, Fehler und Loesungen).
@@ -201,6 +201,13 @@ Hier zentrale Code-Stellen festhalten (Datei, Zweck, Besonderheit), sobald sie e
 | `frontend/src/core/supabase/large-secure-store.ts` | verschluesselte Sitzung | Muster Supabase-Doku, aber expo-crypto statt react-native-get-random-values (in Expo Go enthalten) |
 | `frontend/src/app/_layout.tsx` | Zugangsschutz | `Stack.Protected`; Gruppe new-password nur bei `isPasswordRecovery` |
 | `frontend/src/core/auth/auth-api.ts` | Auth-Aufrufe | verifyOtp: Registrierung `type: 'email'`, Passwort `type: 'recovery'` (lokal geprueft) |
+| `frontend/src/shared/ui/screen.tsx` | Seitenrahmen | `headerLeft`/`headerAction` = feste Kopfzeile, `footer` = feste Fussleiste; darin `OfflineBanner` |
+| `frontend/src/shared/ui/header-buttons.tsx` | IconButton (44 x 44), BackButton, MoreMenu | BackButton: `canGoBack()` sonst `replace('/')` - wichtig im Browser nach Neuladen |
+| `frontend/src/core/app-version/app-updates.ts` | Updates suchen/laden/neu starten | `updatesSupported` = nicht Web, nicht `__DEV__`, `Updates.isEnabled` |
+| `frontend/src/core/app-version/update-prompt.tsx` | Hinweis nach geladenem Update | `useUpdates().isUpdatePending`; eigene Suche nur beim Wechsel in den Vordergrund (max. alle 10 min), beim Start sucht expo-updates selbst |
+| `frontend/src/core/onboarding/` | Einfuehrung beim ersten Start | Merker `onboarding-done-v1` in AsyncStorage; Seiten in `config/onboarding.ts` |
+| `frontend/.husky/pre-commit` | Pruefung vor Commit | `prepare`: `cd .. && husky frontend/.husky` (Repo-Wurzel liegt eine Ebene hoeher) |
+| `frontend/.maestro/*.yaml` | Oberflaechentests | per `testID`, Zugangsdaten nur per `-e EMAIL=... -e PASSWORD=...` |
 | `backend/supabase/templates/*.html` | Mail-Vorlagen mit Code | `{{ .Token }}`; config.toml `[auth.email.template.*]`; Aenderung erst nach `supabase stop/start` |
 
 ---
@@ -226,6 +233,9 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
 | 20.11.2026 | Schaltflaechen ohne Namen fuer Screenreader (Web) | `accessibilityLabel`/`accessibilityRole` an Pressable wirkt in react-native-web 0.21 nicht | `role`, `aria-label`, `aria-disabled`, `aria-busy` verwenden |
 | 20.11.2026 | Typfehler bei `router.push('/neue-seite')` | `.expo/types/router.d.ts` veraltet; wird nur von `expo start` erzeugt, nicht von `expo export` | Dev-Server einmal starten. In der CI fehlt die Datei, dort sind Routen nur grob typisiert |
 | 20.11.2026 | `onSubmitEditing={onSubmit}` Typfehler | react-hook-form `handleSubmit` erwartet ein anderes Event als TextInput liefert | `onSubmitEditing={() => onSubmit()}` |
+| 27.11.2026 | Browser zeigt Name/Version der WandAkte statt der Grundapp | Metro-Zwischenspeicher (Temp-Ordner) wird zwischen Projekten geteilt; expo-constants bettet die App-Konfiguration beim Bundeln ein | Dev-Server mit `--clear` starten, wenn vorher ein anderes Projekt lief |
+| 27.11.2026 | `supabase start`: Port 54322 belegt | Container eines anderen Projekts (WandAkte) laufen noch | im anderen `backend/` `npx supabase stop` (Daten bleiben), dann starten |
+| 27.11.2026 | Offline-Leiste im Browser nicht testbar mit `offline`-Ereignis | netinfo hoert in Chrome auf `navigator.connection` `change`, nicht auf `offline` | zum Testen `navigator.onLine` ueberschreiben und `navigator.connection.dispatchEvent(new Event('change'))` |
 | 20.11.2026 | `supabase start` bricht ab: `timed out dialing Hyper-V socket` | Kubernetes in Rancher Desktop abgeschaltet -> VM-Neustart, Verbindung Windows-VM hing danach | Rancher Desktop komplett neu starten (`rdctl shutdown`, dann App/`rdctl start`), danach `supabase start` erneut; Images bleiben erhalten |
 
 ---
@@ -360,3 +370,13 @@ Aufgetretene Fehler mit Ursache und Loesung, damit sie nicht zweimal gesucht wer
 - 21.11.2026 - **Version 0.2.0** der Basis abgeschlossen (Git-Tags v0.1.0 = Ende M6, v0.2.0 = heute).
   Vorlagen-Version (CHANGELOG/Tag) ist getrennt von der App-Version in app-identity.json (bleibt 0.1.0,
   sonst passen Updates nicht mehr zur installierten APK). Naechster Schritt: erste Fachanwendung als Klon.
+- 27.11.2026 - **Basis 0.3.0** (Branch `feature/basis-0.3`): Erfahrungen aus der WandAkte uebernommen - Kopfzeile mit
+  Zurueck/Profil-Knopf, Fussleiste, Knoepfe 44 px, Bausteine (Menue "...", Icons, Listenzeile, Kacheln,
+  Zwei-Schritt-Loeschen, Blatt von unten) nach `shared/ui`. Neu: Update-Hinweis + "Nach Updates suchen"
+  (Wunsch Alireza, wie SAP Mobile Services), Offline-Leiste, Einfuehrung beim ersten Start, Feedback per Mail,
+  Maestro-Ablaeufe, Husky-Pruefung vor Commit. Vergleich mit Vorlagen Obytes/Ignite: Basis hat mehr
+  (Datenschutz, Organisationen, Updates), fehlte Maestro/Husky. Im Browser getestet: Einfuehrung (einmalig),
+  Anmeldung, Profil-Knopf, Zurueck (auch nach Neuladen), Offline-Leiste, Feedback-Abschnitt sichtbar.
+  NICHT getestet: Update-Hinweis/-Suche (nur in APK), Maestro (braucht Maestro + APK), Mailprogramm am Handy.
+  Zurueckgestellt (brauchen Konten): Push (Firebase/FCM, Apple), Anmeldung Google/Apple (Google Cloud, Apple
+  Developer Program). iPhone: Expo Go zum Testen, eigene App nur mit Apple Developer Program (99 USD/Jahr).

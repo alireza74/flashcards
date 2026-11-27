@@ -3,6 +3,8 @@ import type { Translations } from './de';
 // Englische Texte. Fehlt ein Schluessel aus de.ts, meldet TypeScript einen Fehler.
 export const en: Translations = {
   common: {
+    offline: 'No connection - changes cannot be saved right now.',
+    more: 'More actions',
     back: 'Back',
     loading: 'Loading ...',
     retry: 'Try again',
@@ -156,5 +158,36 @@ export const en: Translations = {
   update: {
     title: 'Update required',
     body: 'This version of the app is no longer supported. Please install the latest version.',
+  },
+  updates: {
+    title: 'App updates',
+    check: 'Check for updates',
+    downloading: 'Downloading update ...',
+    ready: 'New version downloaded. It becomes active after a restart.',
+    upToDate: 'The app is up to date.',
+    error: 'Check failed. Please check your internet connection.',
+    promptTitle: 'New version available',
+    promptText: 'A new version of the app has been downloaded. Restart now to use it?',
+    restartNow: 'Restart now',
+    later: 'Later',
+  },
+  onboarding: {
+    next: 'Next',
+    skip: 'Skip',
+    start: "Let's go",
+    progress: 'Page {{current}} of {{total}}',
+    pages: {
+      welcome: { title: 'Welcome', text: 'Great to have you here. This is a short note on what the app is for.' },
+      privacy: { title: 'Your data', text: 'We only store what the app needs. You can change your consents in your profile at any time.' },
+      start: { title: 'Ready', text: 'Sign in or create an account to get started.' },
+    },
+  },
+  feedback: {
+    title: 'Feedback',
+    intro: 'An idea, a bug or a question? Write to us.',
+    send: 'Send feedback',
+    subject: 'Feedback on {{app}}',
+    bodyHint: 'Your message:',
+    noMailApp: 'No mail app found. Please write to {{email}}.',
   },
 };
