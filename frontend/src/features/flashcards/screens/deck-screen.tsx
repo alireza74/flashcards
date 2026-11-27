@@ -125,10 +125,22 @@ export function DeckScreen() {
         />
       }
       footer={
-        <Button
-          title={t('flashcards.deck.addCard')}
-          onPress={() => router.push({ pathname: '/cards/new', params: { deck: id } })}
-        />
+        <View style={styles.footer}>
+          <View style={styles.footerButton}>
+            <Button
+              variant="secondary"
+              title={t('flashcards.deck.addCard')}
+              onPress={() => router.push({ pathname: '/cards/new', params: { deck: id } })}
+            />
+          </View>
+          <View style={styles.footerButton}>
+            <Button
+              title={t('flashcards.study.learn')}
+              onPress={() => router.push({ pathname: '/study', params: { deck: id } })}
+              disabled={counts.due + counts.newToday === 0}
+            />
+          </View>
+        </View>
       }
     >
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
@@ -213,4 +225,6 @@ export function DeckScreen() {
 const styles = StyleSheet.create({
   content: { gap: spacing.lg, paddingBottom: spacing.lg },
   section: { gap: spacing.sm },
+  footer: { flexDirection: 'row', gap: spacing.sm },
+  footerButton: { flex: 1 },
 });

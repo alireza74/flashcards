@@ -23,7 +23,8 @@ Uebergreifendes: `../MY-APPS-Wissen.md`.
   1. (erledigt 27.11.) GitHub-Repo angelegt und gepusht.
   2. (erledigt 27.11.) Offline-Abgleich entschieden und gebaut - `docs/lernen/11-abgleich.md`.
   3. (erledigt 27.11.) Datenmodell gebaut - `docs/lernen/10-datenmodell.md`.
-  4. (erledigt 27.11.) Erste Oberflaeche - `docs/lernen/12-oberflaeche-1.md`. Naechster Baustein: Lernen (FSRS).
+  4. (erledigt 27.11.) Erste Oberflaeche - `docs/lernen/12-oberflaeche-1.md`.
+     (erledigt 27.11.) Lernen mit FSRS - `docs/lernen/13-lernen.md`. Naechster Baustein: Anki-Import (Wunsch Alireza).
   5. Einfuehrungsseiten (`config/onboarding.ts`) fachlich anpassen - aktuell noch die der Basis.
   6. Offen fuer die veroeffentlichte Web-App: Webserver muss COOP/COEP-Header senden (expo-sqlite).
   7. Abgleich und Oberflaeche auf dem Android-Emulator noch nicht ausprobiert (nur Browser + Tests).
@@ -191,3 +192,8 @@ offizielle Schnittstelle bekannt - pruefen.
   Duplikat-Hinweis, Startseite 2 faellig); Daten in Supabase angekommen. Emulator nicht getestet.
   Fallstrick: `npx prettier` ohne Projektkonfiguration formatiert mit doppelten Anfuehrungszeichen -
   im Projekt `--single-quote --print-width 120` verwenden.
+- 27.11.2026 - Baustein Lernen: Lernsitzung mit FSRS-7 (allowModelOverride false -> Lernschritte 1/10 min),
+  2 Knoepfe mit Termin, Tastatur im Browser, Rueckgaengig solange nicht gesendet, Abschlussbildschirm,
+  Lerntag ab 4 Uhr, Gegenrichtung erst morgen. Zaehlung "faellig" nutzt dieselbe Auswahl wie die Sitzung
+  (Fehler gefunden: Startseite zeigte 2, Sitzung brachte 1). 95 Tests + 5 Integration gruen. Im Browser
+  durchgespielt inkl. Rueckgaengig; Lernantworten in Supabase angekommen. Emulator nicht getestet.

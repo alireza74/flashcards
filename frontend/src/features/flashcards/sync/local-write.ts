@@ -46,15 +46,26 @@ async function enqueue(db: LocalDb, table: SyncedTable, rowId: string, now: numb
  * Die Zeile muss VOLLSTAENDIG sein (alle Spalten) - fehlende Spalten wuerden zu NULL.
  */
 export async function saveRow(db: LocalDb, table: SyncedTable, row: LocalRow, now = Date.now()): Promise<void> {
-  const id = row.id;
-  if (typeof id !== 'string' || id.length === 0) throw new Error('saveRow: id fehlt');
+  await saveRows(db, [{ table, row }], now);
+}
 
+/** Mehrere Zeilen in EINER Transaktion speichern (z. B. Karte + Lernantwort): alles oder nichts. */
+export async function saveRows(
+  db: LocalDb,
+  items: { table: SyncedTable; row: LocalRow }[],
+  now = Date.now(),
+): Promise<void> {
+  for (const { row } of items) {
+    if (typeof row.id !== 'string' || row.id.length === 0) throw new Error('saveRow: id fehlt');
+  }
   await writeTransaction(db, async () => {
-    const stamped: LocalRow = { ...row };
-    if (stamped.created_at === undefined || stamped.created_at === null) stamped.created_at = now;
-    if (isMutableTable(table)) stamped.updated_at = now;
-    await upsertLocalRow(db, table, stamped);
-    await enqueue(db, table, id, now);
+    for (const { table, row } of items) {
+      const stamped: LocalRow = { ...row };
+      if (stamped.created_at === undefined || stamped.created_at === null) stamped.created_at = now;
+      if (isMutableTable(table)) stamped.updated_at = now;
+      await upsertLocalRow(db, table, stamped);
+      await enqueue(db, table, String(row.id), now);
+    }
   });
 }
 

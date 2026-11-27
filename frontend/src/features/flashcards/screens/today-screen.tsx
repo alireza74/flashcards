@@ -2,7 +2,6 @@
 // Ohne Decks geht es direkt zur Einrichtung "Was moechtest du lernen?".
 
 import { Redirect, useRouter } from 'expo-router';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
@@ -24,7 +23,6 @@ export function TodayScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const palette = usePalette();
-  const [showLearnHint, setShowLearnHint] = useState(false);
 
   const context = useDataContext();
   const overview = useLocalQuery(['today'], async (db) => {
@@ -91,8 +89,7 @@ export function TodayScreen() {
           <AppText tone="secondary">{t('flashcards.today.newToday', { count: totals.newToday })}</AppText>
         </View>
 
-        <Button title={t('flashcards.today.learn')} onPress={() => setShowLearnHint(true)} disabled={dueNow === 0} />
-        {showLearnHint ? <FormMessage tone="info" text={t('flashcards.today.learnSoon')} /> : null}
+        <Button title={t('flashcards.today.learn')} onPress={() => router.push('/study')} disabled={dueNow === 0} />
 
         <AppText variant="heading">{t('flashcards.today.areas')}</AppText>
         {decks.map(({ deck, counts }) => (

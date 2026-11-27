@@ -173,7 +173,7 @@ describe('Zaehlungen und Loeschen', () => {
     const cards = await ctx.db.getAllAsync<{ id: string }>('SELECT id FROM cards ORDER BY id', []);
     await ctx.db.runAsync('UPDATE cards SET state = 1, due_at = ? WHERE id = ?', [NOW - 1, cards[0].id]);
     await ctx.db.runAsync('UPDATE cards SET state = 2, scheduled_days = 5, due_at = ? WHERE id = ?', [
-      NOW + 1e6,
+      NOW + 5 * 86_400_000,
       cards[1].id,
     ]);
     await ctx.db.runAsync('UPDATE cards SET state = 2, scheduled_days = 40, due_at = ? WHERE id = ?', [
