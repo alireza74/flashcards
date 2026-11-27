@@ -133,6 +133,7 @@ function RootNavigator() {
           <Stack.Screen name="cards/new" />
           <Stack.Screen name="cards/[noteId]" />
           <Stack.Screen name="study" />
+          <Stack.Screen name="import" />
         </Stack.Protected>
 
         {/* immer erreichbar (Store-Pflicht: Datenschutzerklaerung auch ohne Konto) */}

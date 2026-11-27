@@ -24,7 +24,8 @@ Uebergreifendes: `../MY-APPS-Wissen.md`.
   2. (erledigt 27.11.) Offline-Abgleich entschieden und gebaut - `docs/lernen/11-abgleich.md`.
   3. (erledigt 27.11.) Datenmodell gebaut - `docs/lernen/10-datenmodell.md`.
   4. (erledigt 27.11.) Erste Oberflaeche - `docs/lernen/12-oberflaeche-1.md`.
-     (erledigt 27.11.) Lernen mit FSRS - `docs/lernen/13-lernen.md`. Naechster Baustein: Anki-Import (Wunsch Alireza).
+     (erledigt 27.11.) Lernen mit FSRS - `docs/lernen/13-lernen.md`. 
+     (erledigt 27.11.) Anki-Import (altes .apkg-Format, nur Text) - `docs/lernen/14-anki-import.md`.
   5. Einfuehrungsseiten (`config/onboarding.ts`) fachlich anpassen - aktuell noch die der Basis.
   6. Offen fuer die veroeffentlichte Web-App: Webserver muss COOP/COEP-Header senden (expo-sqlite).
   7. Abgleich und Oberflaeche auf dem Android-Emulator noch nicht ausprobiert (nur Browser + Tests).
@@ -168,12 +169,15 @@ offizielle Schnittstelle bekannt - pruefen.
 | `frontend/metro.config.js` | `wasm` + COOP/COEP fuer expo-sqlite im Browser | nur Dev-Server; Webserver spaeter gleich einstellen |
 | `frontend/jest.integration.config.js` | Tests gegen lokales Supabase (`npm run test:integration`) | ohne jest-expo-Preset (ersetzt fetch) |
 | `app/_layout.tsx` | bindet `<SyncTriggers />` ein | einzige Aenderung an Basis-Datei |
+| `frontend/src/features/flashcards/import/` | Anki-Import: lesen, Zuordnung, Richtung, Vorschau, Speichern | Erklaerung `docs/lernen/14-anki-import.md` |
 
 ## 8. Fehler und Loesungen
 
 | Datum | Fehler | Ursache | Loesung |
 |---|---|---|---|
 | 27.11.2026 | Admin-API in Jest: `"undefined" is not valid JSON` | jest-expo-Setup ersetzt `fetch` durch Platzhalter | Integrationstests mit eigener Jest-Konfiguration ohne Preset |
+| 27.11.2026 | Dateiauswahl im Browser liest die Datei doppelt | expo-document-picker hat `base64: true` als Standard | `base64: false` setzen, Bytes aus `asset.file` |
+| 27.11.2026 | Anki-Deck mit gemischter Richtung (Persisch mal vorne, mal hinten), Woerter doppelt | so im Deck angelegt | Richtung ueber die Schrift angleichen (`import/scripts.ts`), danach Duplikate erkennen |
 | 27.11.2026 | (vorab vermieden) `withExclusiveTransactionAsync` | gibt es im Browser nicht (expo-sqlite-Doku) | eigene Schreibsperre `writeTransaction` mit `withTransactionAsync` |
 
 ## 9. Chronik
@@ -197,3 +201,10 @@ offizielle Schnittstelle bekannt - pruefen.
   Lerntag ab 4 Uhr, Gegenrichtung erst morgen. Zaehlung "faellig" nutzt dieselbe Auswahl wie die Sitzung
   (Fehler gefunden: Startseite zeigte 2, Sitzung brachte 1). 95 Tests + 5 Integration gruen. Im Browser
   durchgespielt inkl. Rueckgaengig; Lernantworten in Supabase angekommen. Emulator nicht getestet.
+- 27.11.2026 - Baustein Anki-Import: .apkg (collection.anki21/anki2) mit fflate entpacken, mit
+  deserializeDatabaseAsync im Speicher lesen; Zuordnung je Anki-Notiztyp (Vorschlag nach Feldnamen, gemerkt in
+  local_meta), HTML zu Text, Vorschau mit Gruppen neu/vorhanden/andere Bedeutung/schon importiert, Unterdecks,
+  Richtung angleichen ueber die Schrift, Speichern in Paketen zu 100 Notizen. Neues Format anki21b -> Hinweis.
+  12 neue Tests (60 im Bereich gruen). Alireza hat sein Deck Deutsch-Persisch B2-C1 (3213 Notizen) im Browser
+  importiert; Befund: 262 Notizen dort Deutsch-Deutsch (so im Deck), ~1400 Woerter doppelt in Gegenrichtung.
+  Karten-Editor: alle Felder mehrzeilig (mehrzeilige Anki-Felder waren abgeschnitten).

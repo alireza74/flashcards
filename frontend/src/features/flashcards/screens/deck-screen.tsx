@@ -115,6 +115,11 @@ export function DeckScreen() {
               onPress: () => openSheet('subdeck'),
             },
             {
+              key: 'import',
+              label: t('flashcards.deck.importAnki'),
+              onPress: () => router.push({ pathname: '/import', params: { deck: id } }),
+            },
+            {
               key: 'delete',
               label: t('flashcards.deck.delete'),
               confirmLabel: t('flashcards.deck.deleteConfirm'),

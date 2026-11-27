@@ -43,6 +43,12 @@ const NO_LEVEL = 'none';
 type LevelChoice = Level | typeof NO_LEVEL;
 type DeckOption = { id: string; path: string };
 
+/** Hoehe des Feldes in Zeilen: waechst mit dem Inhalt (ca. 32 Zeichen je Zeile), hoechstens 8. */
+function fieldRows(text: string, minimum: number): number {
+  const lines = text.split('\n').reduce((sum, line) => sum + Math.max(1, Math.ceil(line.length / 32)), 0);
+  return Math.min(8, Math.max(minimum, lines));
+}
+
 function noteTypeForDeck(deck: Deck, reverse: boolean): string {
   if (deck.kind === 'vocabulary' || deck.kind === 'phrases') return SYSTEM_NOTE_TYPE_IDS.vocabulary;
   return reverse ? SYSTEM_NOTE_TYPE_IDS.basicReverse : SYSTEM_NOTE_TYPE_IDS.basic;
@@ -244,7 +250,10 @@ function NoteForm({ title, note, initialDeckId, deckOptions }: NoteFormProps) {
                 }))
               }
               autoFocus={index === 0}
-              multiline={index > 0}
+              // Alle Felder mehrzeilig: lange Inhalte (z. B. aus Anki) werden nicht abgeschnitten
+              multiline
+              numberOfLines={fieldRows(fields[field.field_key] ?? '', index === 0 ? 1 : 2)}
+              textAlignVertical="top"
               autoCapitalize="none"
             />
           ))}
