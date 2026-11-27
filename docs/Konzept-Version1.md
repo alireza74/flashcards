@@ -102,6 +102,17 @@ Test-Auswertung), aber nie fuer FSRS verwendet. *(Eigene Einschaetzung - zur Ent
 
 ## 6. Technische Risiken - zuerst pruefen
 
+**Probelauf 27.11.2026 - erfolgreich** (Wegwerf-Seite `/probe`, Expo Go SDK 58 auf Emulator Pixel_9_Pro und im Browser):
+- ts-fsrs 6.0.1 laeuft unter Hermes und im Browser (DefaultScheduler, FSRS-7, newCard/preview/review).
+- fzstd 0.1.1 entpackt 32 KB -> 192 KB korrekt: Hermes 114 ms, Browser 31 ms.
+- Befund FSRS-7-Standard: neue Karte "Nochmal" -> 1 min, "Schwer" -> ca. 14 h, "Gut" -> ca. 5 Tage,
+  "Einfach" -> ca. 54 Tage. "Gut" ueberspringt also die 10-Minuten-Stufe; Lernschritte beim Bau der
+  Lernlogik bewusst konfigurieren und erneut pruefen.
+- Rueckgabe: Karte `stability, stabilityFast, difficulty, dueAt, lastReviewAt, state, scheduleStatus, cardId,
+  reps, lapses, scheduledDays, learningStep`; Revlog zusaetzlich `reviewTime, rating` (Zustand VOR der Antwort).
+
+Urspruengliche Risikoliste:
+
 - **ts-fsrs 6.0 (MIT, Nov. 2026)** hat eine neue, inkompatible Schnittstelle (Standard FSRS-7) und verlangt
   laut Paketangabe Node >= 24. **Ob es unter React Native (Hermes) laeuft, ist nicht belegt.**
 - Ebenso nicht belegt: `fzstd` unter Hermes.
